@@ -19,16 +19,16 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(express.json());
+//router.use(bodyParser.urlencoded({ extended: false }));
 
 
 // http://localhost:4000/api
-router.get(`/api`, function (request, response){
-    response.send('This is version 2.0 of maedns RESTful API');
+router.get('/', (request, response) => {
+    response.send("This is version 2.0 of maedns RESTful API");
 });
 
-router.get('/api/allUsers', validateAccess ,async (request, response) => {
+router.get('/allUsers', validateAccess ,async (request, response) => {
         try {
                 const result = await pool.query("select * from users");
                 response.send(result);
@@ -37,7 +37,7 @@ router.get('/api/allUsers', validateAccess ,async (request, response) => {
         }
 })
 
-router.get('/api/user/:id', validateAccess, async (request, response) => {
+router.get('/user/:id', validateAccess, async (request, response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("select * from users where userid = ?", [id]);
@@ -47,7 +47,7 @@ router.get('/api/user/:id', validateAccess, async (request, response) => {
         }
 })
 
-router.post('/api/createUser', validateAccess, checkUsername, async (request, response) => {
+router.post('/createUser', validateAccess, checkUsername, async (request, response) => {
         let user = request.body
 
         let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -60,7 +60,7 @@ router.post('/api/createUser', validateAccess, checkUsername, async (request, re
         }
 });
 
-router.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
+router.delete('/deleteUser/:id', validateAccess, async (request,response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("delete from users where userid = ?", [id]);
@@ -70,7 +70,7 @@ router.delete('/api/deleteUser/:id', validateAccess, async (request,response) =>
         }
 });
 
-router.put('/api/updateUser' ,validateAccess, checkUsername, async (request, response) => {
+router.put('/updateUser' ,validateAccess, checkUsername, async (request, response) => {
         let user = request.body;
 
         let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -83,7 +83,7 @@ router.put('/api/updateUser' ,validateAccess, checkUsername, async (request, res
         }
 });
 
-router.post('/api/loginVerification', validateAccess, async (request,response) => {
+router.post('/loginVerification', validateAccess, async (request,response) => {
         let user = request.body;
         let result = '';
         try {
@@ -130,3 +130,7 @@ async function checkUsername(request, response, next) {
                 response.sendStatus(500)
         }
 }
+
+
+//end of file
+module.exports = router
