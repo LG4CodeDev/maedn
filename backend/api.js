@@ -1,8 +1,7 @@
 const express = require('express');
 
-const app = express();
-
-const server = app.listen(4000);
+//const server = app.listen(4000);
+const router = express.Router();
 
 const mariadb = require('mariadb');
 
@@ -20,16 +19,16 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
 
 
 // http://localhost:4000/api
-app.get(`/api`, function (request, response){
+router.get(`/api`, function (request, response){
     response.send('This is version 2.0 of maedns RESTful API');
 });
 
-app.get('/api/allUsers', validateAccess ,async (request, response) => {
+router.get('/api/allUsers', validateAccess ,async (request, response) => {
         try {
                 const result = await pool.query("select * from users");
                 response.send(result);
@@ -38,7 +37,7 @@ app.get('/api/allUsers', validateAccess ,async (request, response) => {
         }
 })
 
-app.get('/api/user/:id', validateAccess, async (request, response) => {
+router.get('/api/user/:id', validateAccess, async (request, response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("select * from users where userid = ?", [id]);
@@ -48,7 +47,7 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
         }
 })
 
-app.post('/api/createUser', validateAccess, checkUsername, async (request, response) => {
+router.post('/api/createUser', validateAccess, checkUsername, async (request, response) => {
         let user = request.body
 
         let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -61,7 +60,7 @@ app.post('/api/createUser', validateAccess, checkUsername, async (request, respo
         }
 });
 
-app.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
+router.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("delete from users where userid = ?", [id]);
@@ -71,7 +70,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
         }
 });
 
-app.put('/api/updateUser' ,validateAccess, checkUsername, async (request, response) => {
+router.put('/api/updateUser' ,validateAccess, checkUsername, async (request, response) => {
         let user = request.body;
 
         let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -84,7 +83,7 @@ app.put('/api/updateUser' ,validateAccess, checkUsername, async (request, respon
         }
 });
 
-app.post('/api/loginVerification', validateAccess, async (request,response) => {
+router.post('/api/loginVerification', validateAccess, async (request,response) => {
         let user = request.body;
         let result = '';
         try {
