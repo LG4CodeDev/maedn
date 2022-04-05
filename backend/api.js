@@ -6,8 +6,6 @@
 
 const express = require('express');
 
-const app = express();
-
 const server = app.listen(4000);
 
 const mariadb = require('mariadb');
@@ -26,16 +24,15 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-// http://localhost:4000/api
 app.get(`/api`, function (request, response){
     response.send('This is version 2.1 of maedns RESTful API');
 });
 
-app.get('/api/allUsers', validateAccess ,async (request, response) => {
+app.get('/allUsers', validateAccess ,async (request, response) => {
         try {
                 const result = await pool.query("select * from users");
                 response.send(result);
@@ -44,7 +41,7 @@ app.get('/api/allUsers', validateAccess ,async (request, response) => {
         }
 })
 
-app.get('/api/user/:id', validateAccess, async (request, response) => {
+app.get('/user/:id', validateAccess, async (request, response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("select * from users where userid = ?", [id]);
@@ -67,7 +64,7 @@ app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (reque
         }
 });
 
-app.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
+app.delete('/deleteUser/:id', validateAccess, async (request,response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("delete from users where userid = ?", [id]);
@@ -90,7 +87,7 @@ app.put('/api/updateUser' ,validateAccess, checkUniquenessOfEmail, async (reques
         }
 });
 
-app.post('/api/loginVerification', validateAccess, async (request,response) => {
+app.post('/loginVerification', validateAccess, async (request,response) => {
         let user = request.body;
         let result = '';
         try {
