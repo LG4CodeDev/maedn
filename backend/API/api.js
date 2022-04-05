@@ -39,25 +39,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 app.get(`/api`, function (request, response){
-    response.send('This is version 2.2 of maedns RESTful API');
+    response.send('This is version 2.3 of maedns RESTful API');
 });
 
-app.get('/allUsers', validateAccess ,async (request, response) => {
+app.get('/api/allUsers', validateAccess ,async (request, response) => {
         try {
                 const result = await pool.query("select * from users");
                 response.send(result);
         } catch (err) {
-                throw err;
+                response.sendStatus(500);
         }
 })
 
-app.get('/user/:id', validateAccess, async (request, response) => {
+app.get('/api/user/:id', validateAccess, async (request, response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("select * from users where userid = ?", [id]);
                 response.send(result);
         } catch (err) {
-                throw err;
+                response.sendStatus(500);
         }
 })
 
@@ -70,17 +70,17 @@ app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (reque
                 if (result.warningStatus == 0) return response.status(201).json({username: user.username})
                 else response.sendStatus(400)
         } catch (err) {
-                throw err;
+                response.sendStatus(500);
         }
 });
 
-app.delete('/deleteUser/:id', validateAccess, async (request,response) => {
+app.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
         let id = request.params.id;
         try {
                 const result = await pool.query("delete from users where userid = ?", [id]);
-                console.log(result);
+                response.sendStatus(200)
         } catch (err) {
-                throw err;
+                response.sendStatus(500);
         }
 });
 
@@ -91,13 +91,13 @@ app.put('/api/updateUser' ,validateAccess, checkUniquenessOfEmail, async (reques
         try {
                 const result = await pool.query("update users set username = ?, password = ?, email = ?, firstname = ? , surname = ? where userid = ?",
                     [user.username, hashedPassword, user.email, user.firstname, user.surname, user.id]);
-                console.log(result);
+                return response.status(200).json({username: user.username})
         } catch (err) {
-                throw err;
+                response.sendStatus(500);
         }
 });
 
-app.post('/loginVerification', validateAccess, async (request,response) => {
+app.post('/api/loginVerification', validateAccess, async (request,response) => {
         let user = request.body;
         let result = '';
         try {
@@ -123,7 +123,13 @@ app.post('/loginVerification', validateAccess, async (request,response) => {
 
 function validateAccess(request, response, next){
         const authHeader = request.headers["authorization"]
-        const token = authHeader.split(" ")[1]
+        let token = ''
+        try{
+                token  = authHeader.split(" ")[1]
+        }catch (err) {
+                token = null;
+        }
+
 
         if (token == null) response.sendStatus(400).send("Token not present")
 
