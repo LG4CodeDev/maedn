@@ -1,0 +1,20 @@
+{
+  "name": "beispiel",
+  "version": "0.0.1",
+  "description": "Boilerplate Backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon"
+  },
+  "keywords": [],
+  "author": "Lukas Paffen",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.1",
+    "mariadb": "^3.0.0"
+  },
+  "type": "commonjs"
+}
