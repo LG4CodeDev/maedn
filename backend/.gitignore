@@ -7,6 +7,9 @@
 # Only exists if Bazel was run
 /bazel-out
 
+#envFiles
+/API/config
+
 # dependencies
 /API/node_modules
 /Server/node_modules

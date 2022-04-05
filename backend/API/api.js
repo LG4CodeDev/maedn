@@ -6,17 +6,27 @@
 
 const express = require('express');
 
-const server = app.listen(4000);
+const app = express();
+
+const path = require('path');
+
+const dotenv = require('dotenv');
+
+dotenv.config({ path: './config/APIConfig.env'});
 
 const mariadb = require('mariadb');
 
+
+const server = app.listen(4000);
+
+
 const pool =
     mariadb.createPool({
-        host: "167.235.24.74",
-        port: 3307,
-        user: "admin",
-        password: "MariaDB//Adm",
-        database: "maedntest"
+        host: process.env.DB_IP,
+        port: process.env.DB_PORT,
+        user: process.env.DB_User,
+        password: process.env.DB_Password,
+        database: process.env.DB_Name
 })
 
 const bodyParser = require("body-parser");
@@ -29,7 +39,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 app.get(`/api`, function (request, response){
-    response.send('This is version 2.1 of maedns RESTful API');
+    response.send('This is version 2.2 of maedns RESTful API');
 });
 
 app.get('/allUsers', validateAccess ,async (request, response) => {
