@@ -130,10 +130,11 @@ function validateAccess(request, response, next){
                 token = null;
         }
 
-        if (token == null) response.status(400).send("Token not present")
-
+        if (token == null){
+                return response.status(400).send("Token not present")
+        }
         if (token != 'testingStuff') {
-                response.status(403).send("Token invalid")
+                return response.status(403).send("Token invalid")
         }
         else {
                 next()
