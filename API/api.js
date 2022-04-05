@@ -1,3 +1,9 @@
+/* ToDo´s:
+        - create database if not existing
+        - update database user table to a new data model
+        - validate code by at least Tomasz
+ */
+
 const express = require('express');
 
 const app = express();
@@ -26,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // http://localhost:4000/api
 app.get(`/api`, function (request, response){
-    response.send('This is version 2.0 of maedns RESTful API');
+    response.send('This is version 2.1 of maedns RESTful API');
 });
 
 app.get('/api/allUsers', validateAccess ,async (request, response) => {
@@ -48,7 +54,7 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
         }
 })
 
-app.post('/api/createUser', validateAccess, checkUsername, async (request, response) => {
+app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
         let user = request.body
 
         let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -71,7 +77,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request,response) => {
         }
 });
 
-app.put('/api/updateUser' ,validateAccess, checkUsername, async (request, response) => {
+app.put('/api/updateUser' ,validateAccess, checkUniquenessOfEmail, async (request, response) => {
         let user = request.body;
 
         let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -122,9 +128,9 @@ function validateAccess(request, response, next){
         }
 }
 
-async function checkUsername(request, response, next) {
+async function checkUniquenessOfEmail(request, response, next) {
         try {
-                const result = await pool.query("select * from users where username = ?", [request.body.username]);
+                const result = await pool.query("select * from users where email = ?", [request.body.email]);
                 if (!result[0]) next()
                 else response.status(409).send("Username already used")
         } catch (err) {
