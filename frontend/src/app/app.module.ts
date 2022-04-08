@@ -15,7 +15,7 @@ import {FormsModule} from "@angular/forms";
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
   ],
   imports: [
     CommonModule,
