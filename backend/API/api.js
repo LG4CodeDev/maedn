@@ -85,7 +85,6 @@ app.post('/api/createAvatar', validateAccess, async (request, response) => {
 
         try {
                 const result = await pool.query("insert into avatar (image) values (?)", [avatar.image]);
-                console.log(result)
                 if (result.warningStatus == 0) return response.status(201).json({avatarID : result.insertId.toString()})
                 else response.sendStatus(400)
         } catch (err) {
