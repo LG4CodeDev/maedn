@@ -19,7 +19,6 @@ const mariadb = require('mariadb');
 
 const server = app.listen(4000);
 
-
 const pool =
     mariadb.createPool({
         host: process.env.DB_IP,
@@ -66,10 +65,31 @@ app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (reque
 
         let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
         try {
-                const result = await pool.query("insert into users (username, password, email, firstname, surname) values (?,?,?,?,?)", [user.username, hashedPassword, user.email, user.firstname, user.surname]);
+                const result = await pool.query("insert into users (username, password, email, firstname, surname, avatar) values (?,?,?,?,?,?)", [user.username, hashedPassword, user.email, user.firstname, user.surname, user.avatarID]);
                 if (result.warningStatus == 0) return response.status(201).json({username: user.username})
                 else response.sendStatus(400)
         } catch (err) {
+                response.sendStatus(500);
+        }
+});
+
+app.post('/api/createAvatar', validateAccess, async (request, response) => {
+        let avatar = request.body
+        try{
+                const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
+                if (result.length > 0){
+                        return response.status(200).json({avatarID : result[0]['avatarID']})
+                }
+        }catch{
+        }
+
+        try {
+                const result = await pool.query("insert into avatar (image) values (?)", [avatar.image]);
+                console.log(result)
+                if (result.warningStatus == 0) return response.status(201).json({avatarID : result.insertId.toString()})
+                else response.sendStatus(400)
+        } catch (err) {
+                throw (err);
                 response.sendStatus(500);
         }
 });
