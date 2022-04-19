@@ -1,4 +1,4 @@
-name: FTP-AutoDeploy
+name: CI-SFTP
  
 # Controls when the action will run. 
 on:
@@ -14,18 +14,19 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "SFTP"
-  deploy:
+  deploy-via-sftp:
     runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
           
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      - name: SFTP Deploy
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
         with:
-          ftp-server: 167.235.24.74
-          ftp-username: root
-          ftp-password: ${{ secrets.ftp_password }}
+          username: root
+          server: 167.235.24.74
+          port: 22 # default is 22
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
  
           
           # will put all file under this path
