@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Component({
   selector: 'app-login-page',
@@ -28,11 +28,14 @@ export class LoginPageComponent implements OnInit {
   onSubmit(): void {
     console.log("Username: ", this.form.username, "| Password: ", this.form.password)
     this.http.post<any>('http://167.235.24.74:4000/api/loginVerification', {
-      "user": {
-        "username": this.form.username,
-        "password": this.form.password
+      "username": this.form.username,
+      "password": this.form.password
+    }, {
+        headers: new HttpHeaders({
+          'authorization': 'Bearer testingStuff'
+        })
       }
-    }).subscribe(data => {
+    ).subscribe(data => {
       console.log(data);
     })
   }
