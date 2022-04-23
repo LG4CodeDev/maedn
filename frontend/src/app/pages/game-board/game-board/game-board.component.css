@@ -174,18 +174,51 @@ body{
   font-weight: bolder;
 }
 
-.field-gameboard{
-  background-color: lightblue !important;
-  height: 50px !important;
-  width: 50px !important;
-  margin: 5px !important;
-  border-radius: 25px !important;
+.field-gameboard, .field-startFinish{
+  background-color: white;
+  height: 90%;
+  width: 90%;
+  margin: 5px;
+  border-radius: 25px;
+  border: 2px solid black;
+  text-align: center;
 }
 
 .field-startFinish{
-  background-color: lightblue !important;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 80%;
+  height: 80%;
 }
 
+/*for the grid design in every part of the board*/
+
+.row_4_4{
+  height: 25%;
+}
+.col_4_4{
+  width: 25%;
+  border: 1px solid black;
+}
+
+.row_4_3{
+  height: 25%;
+}
+.col_4_3{
+  width: 33%;
+  border: 1px solid black;
+}
+
+.row_3_4{
+  height: 33%;
+}
+.col_3_4{
+  width: 25%;
+  border: 1px solid black;
+}
+
+.row_3_3{
+  height: 33.3%;
+}
+.col_3_3{
+  width: 33.3%;
+  border: 1px solid black;
+}
