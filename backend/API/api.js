@@ -1,7 +1,5 @@
 /* ToDo´s:
         - create database if not existing
-        - update database user table to a new data model
-        - validate code by at least Tomasz
  */
 
 const express = require('express');
@@ -41,13 +39,6 @@ app.options('/*', function (req, res, next) {
     next();
 });
 
-app.options('/*', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
-
-
 app.post('/*', async (request, response, next) => {
    response.header("Access-Control-Allow-Origin","*");
    response.header("Access-Control-Allow-Headers","Content-Type");
@@ -81,11 +72,12 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
 
 app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
         let user = request.body
-
         let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
         try {
                 const result = await pool.query("insert into users (username, password, email, firstname, surname, avatar) values (?,?,?,?,?,?)", [user.username, hashedPassword, user.email, user.firstname, user.surname, user.avatarID]);
-                if (result.warningStatus == 0) return response.status(201).json({username: user.username})
+                let id = parseInt(result.insertId.toString());
+                const answer = await  pool.query("INSERT INTO statsMainGame (userid) VALUES (?)" , [id]);
+                if (result.warningStatus == 0) return response.status(201).json({userid: id,username: user.username})
                 else response.sendStatus(400)
         } catch (err) {
                 response.sendStatus(500);
