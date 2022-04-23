@@ -41,6 +41,20 @@ app.options('/*', function (req, res, next) {
     next();
 });
 
+app.options('/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
+
+
+app.post('/*', async (request, response, next) => {
+   response.header("Access-Control-Allow-Origin","*");
+   response.header("Access-Control-Allow-Headers","Content-Type");
+   next();
+});
+
+
 
 app.get(`/api`, function (request, response) {
     response.send('This is version 2.3 of maedns RESTful API');
