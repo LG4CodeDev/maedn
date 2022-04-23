@@ -27,70 +27,24 @@ import { Component, OnInit } from '@angular/core';
       </div>
       <div nz-col class="side" nzFlex="auto">
         <div nz-row></div>
-        <div nz-row></div>
-        <div nz-row id="dice">
-          <div class = 'dice-container'>
-            <div class='dice'>
-              <div class='face' data-id='1'>
-                <div class="point point-middle point-center">
-                </div>
-              </div>
-              <div class='face' data-id='2'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='6'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-middle point-right">
-                </div>
-                <div class="point point-middle point-left">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='5'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-middle point-center">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='3'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-middle point-center">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='4'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
+
+        <div nz-row>
+          <div class = "scene">
+            <div class="cube">
+              <div class="cube__face cube__face--1">1</div>
+              <div class="cube__face cube__face--2">2</div>
+              <div class="cube__face cube__face--3">3</div>
+              <div class="cube__face cube__face--4">4</div>
+              <div class="cube__face cube__face--5">5</div>
+              <div class="cube__face cube__face--6">6</div>
             </div>
+            <button class ="rollBtn" (click)="tossDice()">Roll the Dice</button>
           </div>
         </div>
-        <button class="roll-btn">ROLL</button>
-        </div>
+
+        <div nz-row></div>
       </div>
+    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
@@ -101,4 +55,33 @@ export class GameBoardComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  tossDice(){
+    const cube = document.querySelector('.cube');
+    let currentClass = '';
+
+
+    function getRandomInt() {
+      return Math.floor(Math.random() * 6) +1;
+    }
+
+    function rollDice() {
+
+      const randNum = getRandomInt();
+      console.log(randNum)
+
+      const showClass = 'show-' + randNum;
+      console.log(showClass)
+
+      if ( currentClass ) {
+        console.log("Removing...")
+        cube.classList.remove( currentClass );
+      }
+
+      cube.classList.add( showClass );
+
+      currentClass = showClass;
+    }
+
+    rollDice();
+  }
 }
