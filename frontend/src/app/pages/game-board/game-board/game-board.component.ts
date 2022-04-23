@@ -95,10 +95,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent implements OnInit {
-
   constructor() { }
 
   ngOnInit(): void {
+    this.fillGridWithField();
+  }
+
+  fillGridWithField(): void {
+    var element = this.generateSingleField('ur:1:1', '0x000000', 'test', true);
+    document.getElementById('ur').appendChild(element);
+  }
+
+  generateSingleField(coordinates: string, color: string, content: string, isBig: Boolean): any{
+    var element = document.createElement("div");
+    element.setAttribute("id", coordinates);
+    if (isBig){
+      element.classList.add('field-gameboard');
+    }
+    else{
+      element.classList.add('field-startFinish');
+    }
+    element.style.backgroundColor = color;
+    element.innerText = content;
+    return element;
   }
 
 }
