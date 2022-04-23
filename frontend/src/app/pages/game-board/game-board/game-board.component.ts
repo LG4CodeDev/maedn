@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {delay} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-board',
@@ -30,7 +31,7 @@ import { Component, OnInit } from '@angular/core';
 
         <div nz-row>
           <div class = "scene">
-            <div class="cube">
+            <div id="cube">
               <div class="cube__face cube__face--1">1</div>
               <div class="cube__face cube__face--2">2</div>
               <div class="cube__face cube__face--3">3</div>
@@ -56,30 +57,21 @@ export class GameBoardComponent implements OnInit {
   }
 
   tossDice(){
-    const cube = document.querySelector('.cube');
-    let currentClass = '';
-
-
-    function getRandomInt() {
+    const cube = document.getElementById('cube');
+    cube.classList.add('cubeRotate')
+    function randInt() {
       return Math.floor(Math.random() * 6) +1;
     }
 
     function rollDice() {
+      const randNum = randInt();
+      if(cube.className === "show-" + randNum){
 
-      const randNum = getRandomInt();
-      console.log(randNum)
-
-      const showClass = 'show-' + randNum;
-      console.log(showClass)
-
-      if ( currentClass ) {
-        console.log("Removing...")
-        cube.classList.remove( currentClass );
       }
-
+      const showClass = 'show-' + randNum;
+      cube.className = "";
+      console.log(randNum)
       cube.classList.add( showClass );
-
-      currentClass = showClass;
     }
 
     rollDice();
