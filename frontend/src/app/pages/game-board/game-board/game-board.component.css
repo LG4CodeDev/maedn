@@ -1,0 +1,175 @@
+.board {
+  border: 4px solid magenta;
+}
+
+.side {
+  border: 4px solid indigo;
+  width: 20%;
+}
+
+.row {
+  max-width: 765px;
+}
+
+/*Upper game grid*/
+#ul {
+  width: 36%;
+  background-color: green;
+  aspect-ratio: 1;
+}
+#um {
+  width: 28%;
+  height: inherit;
+  background-color: red;
+}
+#ur {
+  width: 36%;
+  background-color: green;
+  aspect-ratio: 1;
+}
+
+/*Middle game grid*/
+#ml {
+  width: 36%;
+  height: inherit;
+  background-color: red;
+}
+#mm {
+  width: 28%;
+  background-color: yellow;
+  aspect-ratio: 1;
+}
+#mr {
+  width: 36%;
+  height: inherit;
+  background-color: red;
+}
+
+/*Bottom game grid*/
+#bl {
+  width: 36%;
+  background-color: green;
+  aspect-ratio: 1;
+}
+#bm {
+  width: 28%;
+  height: inherit;
+  background-color: red;
+}
+#br {
+  width: 36%;
+  background-color: green;
+  aspect-ratio: 1;
+}
+
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  min-height: 100vh;
+  background: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.dice-container{
+  width: 25vmin;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.dice{
+  position: relative;
+  width: 25vmin;
+  aspect-ratio: 1;
+  border-radius: 1vmin;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% -12.5vmin;
+  transform: rotateX(180deg) rotateY(180deg);
+  transition: transform 2s ease-in-out;
+}
+
+.face{
+  position: absolute;
+  background: radial-gradient(circle at center, #eee, #ccc);
+  width: 25vmin;
+  aspect-ratio: 1;
+  border-radius: 1vmin;
+  transform: rotateX(0deg) rotateY(180deg);
+  transform-origin: 50% 50% -12.5vmin;
+  /*backface-visibility: hidden;*/
+}
+
+.face:nth-child(1){
+  transform: rotateY(0deg);
+}
+
+.face:nth-child(2){
+  transform: rotateY(90deg);
+}
+
+.face:nth-child(3){
+  transform: rotateY(180deg);
+}
+
+.face:nth-child(4){
+  transform: rotateY(270deg);
+}
+
+.face:nth-child(5){
+  transform: rotateX(90deg);
+}
+
+.face:nth-child(6){
+  transform: rotateX(270deg);
+}
+
+.point{
+  position: absolute;
+  width: 5vmin;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  align-self: center;
+  justify-self: center;
+  background:#444;
+  box-shadow:inset 5px 0 10px #222;
+}
+
+.point-top{
+  top: 2.5vmin;
+}
+
+.point-middle{
+  top: 10vmin;
+}
+
+.point-bottom{
+  bottom: 2.5vmin;
+}
+
+.point-left{
+  left: 2.5vmin;
+}
+
+.point-center{
+  left: 10vmin;
+}
+
+.point-right{
+  right: 2.5vmin;
+}
+
+
+.roll-btn{
+  padding: 1vmin 1.5vmin;
+  border: none;
+  border-radius: 1vmin;
+  cursor: pointer;
+  font-weight: bolder;
+}
