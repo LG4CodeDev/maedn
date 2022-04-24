@@ -7,7 +7,6 @@ const app = express();
 var server = app.listen(3000);
 
 
-hi
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
