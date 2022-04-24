@@ -308,9 +308,9 @@ export class GameBoardComponent implements OnInit {
 
     //create all normal walking fields
     let walkingFields = ['um_r_2_c_3','um_r_3_c_3','um_r_4_c_3','mm_r_1_c_3','mr_r_1_c_1','mr_r_1_c_2','mr_r_1_c_3','mr_r_1_c_4','mr_r_2_c_4'];
-    //walkingFields.push('','','','','','','','','');
-    //walkingFields.push('','','','','','','','','');
-    //walkingFields.push('','','','','','','','','');
+    walkingFields.push('mr_r_3_c_3','mr_r_3_c_2','mr_r_3_c_1','mm_r_3_c_3','bm_r_1_c_3','bm_r_2_c_3','bm_r_3_c_3','bm_r_4_c_3','bm_r_4_c_2');
+    walkingFields.push('bm_r_3_c_1','bm_r_2_c_1','bm_r_1_c_1','mm_r_3_c_1','ml_r_3_c_4','ml_r_3_c_3','ml_r_3_c_2','ml_r_3_c_1','ml_r_2_c_1');
+    walkingFields.push('ml_r_1_c_2','ml_r_1_c_3','ml_r_1_c_4','mm_r_1_c_1','um_r_4_c_1','um_r_3_c_1','um_r_2_c_1','um_r_1_c_1','um_r_1_c_2');
     walkingFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
       let element = this.generateSingleField(coordinatesForField, 'white', '', true);
@@ -347,8 +347,30 @@ export class GameBoardComponent implements OnInit {
       this.renderer.appendChild(document.getElementById(currentValue), element);
     });
 
-    //let element = this.generateSingleField('ur:1:1', 'white', 'test', false);
-    //this.renderer.appendChild(document.getElementById('ur'), element);
+    var boardWritting =  this.renderer.createElement("div");
+    boardWritting.setAttribute("id", 'boardWritting_top_left');
+    boardWritting.innerText = 'Mensch';
+    boardWritting.classList.add('boardWrittingTop');
+    this.renderer.appendChild(document.getElementById('ul_r_3_c_3'), boardWritting);
+
+    boardWritting =  this.renderer.createElement("div");
+    boardWritting.setAttribute("id", 'boardWritting_top_right');
+    boardWritting.innerText = 'ärgere';
+    boardWritting.classList.add('boardWrittingTop');
+    this.renderer.appendChild(document.getElementById('ur_r_3_c_2'), boardWritting);
+
+    boardWritting =  this.renderer.createElement("div");
+    boardWritting.setAttribute("id", 'boardWritting_bottom_left');
+    boardWritting.innerText = 'dich';
+    boardWritting.classList.add('boardWrittingBottom');
+    this.renderer.appendChild(document.getElementById('bl_r_1_c_3'), boardWritting);
+
+    boardWritting =  this.renderer.createElement("div");
+    boardWritting.setAttribute("id", 'boardWritting_bottom_right');
+    boardWritting.innerText = 'nicht';
+    boardWritting.classList.add('boardWrittingBottom');
+    this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
+
   }
 
   generateSingleField(coordinates: string, color: string, content: string, isBig: Boolean): any{
