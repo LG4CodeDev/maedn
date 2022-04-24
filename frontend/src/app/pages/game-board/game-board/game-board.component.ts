@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {delay} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-board',
@@ -29,20 +28,22 @@ import {delay} from "rxjs/operators";
       <div nz-col class="side" nzFlex="auto">
         <div nz-row id="regeln">Spielregeln</div>
         <div nz-row id="dice" nzJustify="center">
-              <div class = "scene">
-                <div id="cube">
-                  <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
-                  <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
-                  <img src="assets/dice/dice-3.png" class="cube__face cube__face--3">
-                  <img src="assets/dice/dice-4.png" class="cube__face cube__face--4">
-                  <img src="assets/dice/dice-5.png" class="cube__face cube__face--5">
-                  <img src="assets/dice/dice-6.png" class="cube__face cube__face--6">
-                </div>
-              </div>
-              <button class ="rollBtn" (click)="tossDice()">Roll the Dice</button>
+          <div class = "scene">
+            <div id="cube">
+              <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
+              <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
+              <img src="assets/dice/dice-3.png" class="cube__face cube__face--3">
+              <img src="assets/dice/dice-4.png" class="cube__face cube__face--4">
+              <img src="assets/dice/dice-5.png" class="cube__face cube__face--5">
+              <img src="assets/dice/dice-6.png" class="cube__face cube__face--6">
             </div>
+          </div>
+        </div>
+        <div nz-row id="dice-btn" nzJustify="center">
+          <button class ="rollBtn" (click)="tossDice()">Roll the Dice</button>
         </div>
       </div>
+    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
@@ -55,22 +56,24 @@ export class GameBoardComponent implements OnInit {
 
   tossDice(){
     const cube = document.getElementById('cube');
-    cube.classList.add('cubeRotate')
+    cube.className = "";
     function randInt() {
       return Math.floor(Math.random() * 6) +1;
     }
 
-    function rollDice() {
-      const randNum = randInt();
-      if(cube.className === "show-" + randNum){
+    const randNum = randInt();
+    cube.classList.add('is-spinning-' + randNum);
+    cube.addEventListener("animationend", () => {
+      cube.classList.remove("is-spinning-" + randNum);
 
+
+      function rollDice() {
+        const showClass = 'show-' + randNum;
+        cube.classList.add( showClass );
+        console.log(randNum)
       }
-      const showClass = 'show-' + randNum;
-      cube.className = "";
-      console.log(randNum)
-      cube.classList.add( showClass );
-    }
 
-    rollDice();
+      rollDice();
+    }, {once: true});
   }
 }

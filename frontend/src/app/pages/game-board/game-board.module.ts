@@ -15,7 +15,7 @@ import {NzSpaceModule} from "ng-zorro-antd/space";
     CommonModule,
     GameBoardRoutingModule,
     NzGridModule,
-    NzSpaceModule
+    NzSpaceModule,
   ]
 })
 export class GameBoardModule { }
