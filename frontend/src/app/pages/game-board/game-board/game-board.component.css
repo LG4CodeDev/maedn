@@ -1,5 +1,10 @@
+.game{
+  border: 2px solid black;
+}
+
 .board {
-  border: 4px solid magenta;
+  /*border: 4px solid magenta;*/
+  background-color: antiquewhite;
 }
 
 .side {
@@ -14,17 +19,14 @@
 /*Upper game grid*/
 #ul {
   width: 36%;
-  background-color: green;
   aspect-ratio: 1;
 }
 #um {
   width: 28%;
   height: inherit;
-  background-color: red;
 }
 #ur {
   width: 36%;
-  background-color: green;
   aspect-ratio: 1;
 }
 
@@ -32,33 +34,27 @@
 #ml {
   width: 36%;
   height: inherit;
-  background-color: red;
 }
 #mm {
   width: 28%;
-  background-color: yellow;
   aspect-ratio: 1;
 }
 #mr {
   width: 36%;
   height: inherit;
-  background-color: red;
 }
 
 /*Bottom game grid*/
 #bl {
   width: 36%;
-  background-color: green;
   aspect-ratio: 1;
 }
 #bm {
   width: 28%;
   height: inherit;
-  background-color: red;
 }
 #br {
   width: 36%;
-  background-color: green;
   aspect-ratio: 1;
 }
 
@@ -201,3 +197,75 @@ label { margin-right: 10px; }
 }
 
 
+.point-right{
+  right: 2.5vmin;
+}
+
+
+.roll-btn{
+  padding: 1vmin 1.5vmin;
+  border: none;
+  border-radius: 1vmin;
+  cursor: pointer;
+  font-weight: bolder;
+}
+
+.field-gameboard, .field-startFinish{
+  background-color: white;
+  height: 90%;
+  width: 90%;
+  margin: 5px;
+  border-radius: 90%;
+  border: 2px solid black;
+  text-align: center;
+  font-size: 100%;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+.field-startFinish{
+  width: 80%;
+  height: 80%;
+}
+
+/*for the grid design in every part of the board*/
+
+.row_4_4{
+  height: 25%;
+}
+.col_4_4{
+  width: 25%;
+}
+
+.row_4_3{
+  height: 25%;
+}
+.col_4_3{
+  width: 33.333%;
+}
+
+.row_3_4{
+  height: 33.333%;
+}
+.col_3_4{
+  width: 25%;
+}
+
+.row_3_3{
+  height: 33.333%;
+}
+.col_3_3{
+  width: 33.333%;
+}
+
+.boardWrittingBottom, .boardWrittingTop{
+  font-size: 200%;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+.boardWrittingTop{
+  padding-top: 40px;
+}
+
+.boardWrittingBottom{
+  padding-top: 40px;
+}
