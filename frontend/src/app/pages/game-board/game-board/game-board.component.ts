@@ -6,10 +6,10 @@ import { DOCUMENT} from "@angular/common";
   //templateUrl: './game-board.component.html',
   template: `
     <div nz-row>
-      <div nz-col class="side" nzFlex="auto">
+      <div nz-col class="side-left" nzFlex="auto">
 
       </div>
-      <div nz-col class="game" nzFlex="15">
+      <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
           <div nz-row class="row">
             <div nz-col class="board" id="ul">
               <div nz-row class="row_4_4" id="ul_r_1">
@@ -222,7 +222,7 @@ import { DOCUMENT} from "@angular/common";
             </div>
           </div>
       </div>
-      <div nz-col class="side" nzFlex="auto">
+      <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
         <div nz-row id="regeln">Spielregeln</div>
         <div nz-row id="dice" nzJustify="center">
           <div class = "scene">
@@ -359,7 +359,7 @@ export class GameBoardComponent implements OnInit {
       element.classList.add('field-startFinish');
     }
     element.style.backgroundColor = color;
-    element.innerText = content;
+    element.innerHTML = content;
     return element;
   }
 }
