@@ -223,71 +223,24 @@ import { DOCUMENT} from "@angular/common";
           </div>
       </div>
       <div nz-col class="side" nzFlex="auto">
-        <div nz-row></div>
-        <div nz-row></div>
-        <div nz-row id="dice">
-          <div class = 'dice-container'>
-            <div class='dice'>
-              <div class='face' data-id='1'>
-                <div class="point point-middle point-center">
-                </div>
-              </div>
-              <div class='face' data-id='2'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='6'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-middle point-right">
-                </div>
-                <div class="point point-middle point-left">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='5'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-middle point-center">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='3'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-middle point-center">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
-              <div class='face' data-id='4'>
-                <div class="point point-top point-right">
-                </div>
-                <div class="point point-top point-left">
-                </div>
-                <div class="point point-bottom point-right">
-                </div>
-                <div class="point point-bottom point-left">
-                </div>
-              </div>
+        <div nz-row id="regeln">Spielregeln</div>
+        <div nz-row id="dice" nzJustify="center">
+          <div class = "scene">
+            <div id="cube">
+              <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
+              <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
+              <img src="assets/dice/dice-3.png" class="cube__face cube__face--3">
+              <img src="assets/dice/dice-4.png" class="cube__face cube__face--4">
+              <img src="assets/dice/dice-5.png" class="cube__face cube__face--5">
+              <img src="assets/dice/dice-6.png" class="cube__face cube__face--6">
             </div>
           </div>
         </div>
-        <button class="roll-btn">ROLL</button>
+        <div nz-row id="dice-btn" nzJustify="center">
+          <button class ="rollBtn" (click)="tossDice()">Roll the Dice</button>
         </div>
       </div>
+    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
@@ -301,6 +254,28 @@ export class GameBoardComponent implements OnInit {
 
     this.fillGridWithField();
   }
+
+  tossDice(){
+    const cube = document.getElementById('cube');
+    cube.className = "";
+    function randInt() {
+      return Math.floor(Math.random() * 6) +1;
+    }
+
+    const randNum = randInt();
+    cube.classList.add('is-spinning-' + randNum);
+    cube.addEventListener("animationend", () => {
+      cube.classList.remove("is-spinning-" + randNum);
+
+
+      function rollDice() {
+        const showClass = 'show-' + randNum;
+        cube.classList.add( showClass );
+        console.log(randNum)
+      }
+
+      rollDice();
+    }, {once: true});
 
   fillGridWithField(): void {
     //general order for players: top right begin, clockwise through the board (bott right, bott left, top left)
