@@ -255,11 +255,12 @@ export class GameBoardComponent implements OnInit {
     this.fillGridWithField();
   }
 
-  tossDice(){
+  tossDice() {
     const cube = document.getElementById('cube');
     cube.className = "";
+
     function randInt() {
-      return Math.floor(Math.random() * 6) +1;
+      return Math.floor(Math.random() * 6) + 1;
     }
 
     const randNum = randInt();
@@ -270,13 +271,13 @@ export class GameBoardComponent implements OnInit {
 
       function rollDice() {
         const showClass = 'show-' + randNum;
-        cube.classList.add( showClass );
+        cube.classList.add(showClass);
         console.log(randNum)
       }
 
       rollDice();
     }, {once: true});
-
+  }
   fillGridWithField(): void {
     //general order for players: top right begin, clockwise through the board (bott right, bott left, top left)
     let playerColors = ['green','red','black','yellow'];
