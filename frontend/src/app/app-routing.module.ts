@@ -16,6 +16,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
   },
   {
+    path: 'game',
+    loadChildren: () => import('./pages/game-board/game-board.module').then(m => m.GameBoardModule)
+  },
+  {
     path: '**',
     redirectTo: '404'
   }

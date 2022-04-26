@@ -51,6 +51,20 @@ app.post('/*', async (request, response, next) => {
 });
 
 
+app.options('/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
+
+
+app.post('/*', async (request, response, next) => {
+   response.header("Access-Control-Allow-Origin","*");
+   response.header("Access-Control-Allow-Headers","Content-Type");
+   next();
+});
+
+
 
 app.get(`/api`, function (request, response) {
     response.send('This is version 2.3 of maedns RESTful API');
@@ -428,11 +442,13 @@ function validateAccess(request, response, next) {
 }
 
 async function checkUniquenessOfEmail(request, response, next) {
-    try {
-        const result = await pool.query("select * from users where email = ?", [request.body.email]);
-        if (!result[0]) next()
-        else response.status(409).send("Username already used")
-    } catch (err) {
-        response.sendStatus(500)
-    }
+
+        try {
+                const result = await pool.query("select * from users where email = ?", [request.body.email]);
+                if (!result[0]) next()
+                else response.status(409).send("Username already used")
+        } catch (err) {
+                response.sendStatus(500)
+        }
+
 }
