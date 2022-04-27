@@ -178,36 +178,46 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
 Game Logic
  */
 
-app.get('/api/makeMove/:gameID', validateAccess, async (request, response) => {
-        let id = request.params.gameID;
-        let result;
-        try {
-            result = await pool.query("select * from mainGame where gameid = ?", [id]);
-        } catch (err) {
-            console.log(err)
-            return response.sendStatus(500);
-        }
-        const game = result[0];
+app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
+    let id = request.params.gameID;
+    let result;
+    let listOfMoves;
+    let roleAgain;
+    try {
+        result = await pool.query("select * from mainGame where gameid = ?", [id]);
+    } catch (err) {
+        console.log(err)
+        return response.sendStatus(500);
+    }
+    const game = result[0];
 
-        if(game == undefined) return response.status(400).send({msg: 'Game existiert nicht'});
+    if(game == undefined) return response.status(400).send({msg: 'Game existiert nicht'});
 
-        try{
-            const diceResult = roleDice();
+    try{
+        const diceResult = roleDice();
 
-            let playerFields = getPlayerPosition(game);
+        let playerFields = getPlayerPosition(game);
 
-            playerFields = playerFields.split([","]);
-            console.log(playerFields)
+        playerFields = playerFields.split([","]);
 
-            let listOfMoves = calculateMoves(game, diceResult, playerFields);
+        listOfMoves = calculateMoves(game, diceResult, playerFields);
 
-            let roleAgain = checkRoleAgain(playerFields, diceResult);
+        roleAgain = checkRoleAgain(playerFields, diceResult);
 
-            response.status(200).send({move : {dice : diceResult, fields : listOfMoves, roleAgain : roleAgain}})
-        }
-        catch (err){
-            response.sendStatus(500)
-        }
+        response.status(200).send({move : {dice : diceResult, fields : listOfMoves, roleAgain : roleAgain}})
+
+
+
+
+    }
+    catch (err){
+        response.sendStatus(500)
+    }
+    try {
+
+        let stringOfMoves = listOfMoves.toString()
+        let msg = await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ? where gameid = ?", [stringOfMoves, roleAgain, id]);
+    }catch (err){}
 })
 
 app.post('/api/createMainGame', validateAccess, async (request, response) =>{
@@ -277,6 +287,21 @@ app.put('/api/startGame/:gameID', validateAccess, async (request, response) => {
     }
 });
 
+app.put('/api/makeMove', validateAccess, async (request, response) => {
+    let data = request.body;
+    let result;
+    try {
+        result = await pool.query("select * from mainGame where gameid = ?", [data.id]);
+        if(result[0] == undefined){
+            response.status(400).send({msg: "Game does not exist"})
+        }
+        else await makeMove(data, result[0], response)
+    }catch (err){
+        response.sendStatus(500)
+    }
+
+});
+
 async function joinGame(response, joiningGame, player){
     if(joiningGame['Player1'] == null){
         await pool.query("UPDATE mainGame SET Player1 = ? where gameid = ?", [player, joiningGame['gameid']]);
@@ -326,7 +351,9 @@ function calculateMoves(game, diceResult, playerFields) {
     let listOfMoves = [];
     for (const playerFieldsKey of playerFields) {
         let element = playerFieldsKey.split(" ");
+        element[1] = parseInt(element[1]);
         if (diceResult != 6 && element[0][1] == 'S'){
+            listOfMoves.push(null);
             continue;
         }
         else if (diceResult == 6 && element[0][1] == 'S'){
@@ -335,10 +362,12 @@ function calculateMoves(game, diceResult, playerFields) {
         }
         else if (element[0][1] == 'F'){
             element[1] += diceResult
-            if(element[1] > 3) continue
+            if(element[1] > 3){
+                listOfMoves.push(null);
+                continue;
+            }
         }
         else {
-            console.log("here")
             element[1] += diceResult;
             if (element > 9) {
                 element[1] -= 10;
@@ -359,16 +388,28 @@ function calculateMoves(game, diceResult, playerFields) {
 
                 if (game['turn'] == 'Player1' && element[0] == 'A') {
                     if (element[1] <= 3) element[0] = 'AF';
-                    else continue;
+                    else {
+                        listOfMoves.push(null);
+                        continue;
+                    }
                 } else if (game['turn'] == 'Player2' && element[0] == 'B') {
                     if (element[1] <= 3) element[0] = 'BF';
-                    else continue;
+                    else {
+                        listOfMoves.push(null);
+                        continue;
+                    }
                 } else if (game['turn'] == 'Player3' && element[0] == 'C') {
                     if (element[1] <= 3) element[0] = 'CF';
-                    else continue;
+                    else {
+                        listOfMoves.push(null);
+                        continue;
+                    }
                 } else if (game['turn'] == 'Player4' && element[0] == 'D') {
                     if (element[1] <= 3) element[0] = 'DF';
-                    else continue;
+                    else {
+                        listOfMoves.push(null);
+                        continue;
+                    }
                 }
             }
         }
@@ -421,6 +462,23 @@ function checkRoleAgain(playerFields, diceResult){
         }
         return true;
 }
+
+async function makeMove(data, game, response){
+    let moves = game['allowedMoves'].split(",")
+    if(moves.includes(data.move.toString())){
+        let nextplayer;
+        if (game['roleAgain'] == 1) nextplayer = game['turn']
+        else nextplayer = game['turn'].slice(0,-1) + ((parseInt(game['turn'].slice(-1))%4)+1).toString()
+        try {
+            let result = await pool.query("UPDATE mainGame SET Position1 = ? , turn = ? where gameid = ?", [data.playerPositions, nextplayer,game['gameid']]);
+            response.sendStatus(200)
+        }catch (e){
+            response.sendStatus(500)
+        }
+    }
+    else return response.status(400).send('Invalid Move')
+}
+
 
 function validateAccess(request, response, next) {
     const authHeader = request.headers["authorization"]
