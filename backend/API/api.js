@@ -414,6 +414,10 @@ function calculateMoves(game, diceResult, playerFields) {
             }
         }
         element = (element[0]+ " " + element[1])
+        if(playerFields.includes(element)){
+            listOfMoves.push(null);
+            continue;
+        }
         listOfMoves.push(element)
 
     }
