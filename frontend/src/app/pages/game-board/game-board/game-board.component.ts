@@ -9,223 +9,260 @@ import { DOCUMENT} from "@angular/common";
       <div nz-col class="side-left" nzFlex="auto">
 
       </div>
-      <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
-          <div nz-row class="row">
-            <div nz-col class="board" id="ul">
-              <div nz-row class="row_4_4" id="ul_r_1">
-                <div nz-col class="col_4_4" id="ul_r_1_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_1_c_2"></div>
-                <div nz-col class="col_4_4" id="ul_r_1_c_3"></div>
-                <div nz-col class="col_4_4" id="ul_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ul_r_2">
-                <div nz-col class="col_4_4" id="ul_r_2_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_2_c_2"></div>
-                <div nz-col class="col_4_4" id="ul_r_2_c_3"></div>
-                <div nz-col class="col_4_4" id="ul_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ul_r_3">
-                <div nz-col class="col_4_4" id="ul_r_3_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_3_c_2"></div>
-                <div nz-col class="col_4_4" id="ul_r_3_c_3"></div>
-                <div nz-col class="col_4_4" id="ul_r_3_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ul_r_4">
-                <div nz-col class="col_4_4" id="ul_r_4_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_4_c_2"></div>
-                <div nz-col class="col_4_4" id="ul_r_4_c_3"></div>
-                <div nz-col class="col_4_4" id="ul_r_4_c_4"></div>
-              </div>
+      <div nz-col class="game_col" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+        <div class="game">
+        <div nz-row class="row">
+          <div nz-col class="board" id="ul">
+            <div nz-row class="row_4_4" id="ul_r_1">
+              <div nz-col class="col_4_4" id="ul_r_1_c_1"></div>
+              <div nz-col class="col_4_4" id="ul_r_1_c_2"></div>
+              <div nz-col class="col_4_4" id="ul_r_1_c_3"></div>
+              <div nz-col class="col_4_4" id="ul_r_1_c_4"></div>
             </div>
-            <div nz-col class="board" id="um">
-              <div nz-row class="row_4_3" id="um_r_1">
-                <div nz-col class="col_4_3" id="um_r_1_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_1_c_2"></div>
-                <div nz-col class="col_4_3" id="um_r_1_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="um_r_2">
-                <div nz-col class="col_4_3" id="um_r_2_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_2_c_2"></div>
-                <div nz-col class="col_4_3" id="um_r_2_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="um_r_3">
-                <div nz-col class="col_4_3" id="um_r_3_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_3_c_2"></div>
-                <div nz-col class="col_4_3" id="um_r_3_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="um_r_4">
-                <div nz-col class="col_4_3" id="um_r_4_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_4_c_2"></div>
-                <div nz-col class="col_4_3" id="um_r_4_c_3"></div>
-              </div>
+            <div nz-row class="row_4_4" id="ul_r_2">
+              <div nz-col class="col_4_4" id="ul_r_2_c_1"></div>
+              <div nz-col class="col_4_4" id="ul_r_2_c_2"></div>
+              <div nz-col class="col_4_4" id="ul_r_2_c_3"></div>
+              <div nz-col class="col_4_4" id="ul_r_2_c_4"></div>
             </div>
-            <div nz-col class="board" id="ur">
-              <div nz-row class="row_4_4" id="ur_r_1">
-                <div nz-col class="col_4_4" id="ur_r_1_c_1"></div>
-                <div nz-col class="col_4_4" id="ur_r_1_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_1_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ur_r_2">
-                <div nz-col class="col_4_4" id="ur_r_2_c_1"></div>
-                <div nz-col class="col_4_4" id="ur_r_2_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_2_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ur_r_3">
-                <div nz-col class="col_4_4" id="ur_r_3_c_1"></div>
-                <div nz-col class="col_4_4" id="ur_r_3_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_3_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_3_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="ur_r_4">
-                <div nz-col class="col_4_4" id="ur_r_4_c_1"></div>
-                <div nz-col class="col_4_4" id="ur_r_4_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_4_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_4_c_4"></div>
-              </div>
+            <div nz-row class="row_4_4" id="ul_r_3">
+              <div nz-col class="col_4_4" id="ul_r_3_c_1"></div>
+              <div nz-col class="col_4_4" id="ul_r_3_c_2"></div>
+              <div nz-col class="col_4_4" id="ul_r_3_c_3"></div>
+              <div nz-col class="col_4_4" id="ul_r_3_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="ul_r_4">
+              <div nz-col class="col_4_4" id="ul_r_4_c_1"></div>
+              <div nz-col class="col_4_4" id="ul_r_4_c_2"></div>
+              <div nz-col class="col_4_4" id="ul_r_4_c_3"></div>
+              <div nz-col class="col_4_4" id="ul_r_4_c_4"></div>
             </div>
           </div>
-          <div nz-row class="row">
-            <div nz-col class="board" id="ml">
-              <div nz-row class="row_3_4" id="ml_r_1">
-                <div nz-col class="col_3_4" id="ml_r_1_c_1"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_2"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_3"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_3_4" id="ml_r_2">
-                <div nz-col class="col_3_4" id="ml_r_2_c_1"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_2"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_3"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_3_4" id="ml_r_3">
-                <div nz-col class="col_3_4" id="ml_r_3_c_1"></div>
-                <div nz-col class="col_3_4" id="ml_r_3_c_2"></div>
-                <div nz-col class="col_3_4" id="ml_r_3_c_3"></div>
-                <div nz-col class="col_3_4" id="ml_r_3_c_4"></div>
-              </div>
+          <div nz-col class="board" id="um">
+            <div nz-row class="row_4_3" id="um_r_1">
+              <div nz-col class="col_4_3" id="um_r_1_c_1"></div>
+              <div nz-col class="col_4_3" id="um_r_1_c_2"></div>
+              <div nz-col class="col_4_3" id="um_r_1_c_3"></div>
             </div>
-            <div nz-col class="board" id="mm">
-              <div nz-row class="row_3_3" id="mm_r_1">
-                <div nz-col class="col_3_3" id="mm_r_1_c_1"></div>
-                <div nz-col class="col_3_3" id="mm_r_1_c_2"></div>
-                <div nz-col class="col_3_3" id="mm_r_1_c_3"></div>
-              </div>
-              <div nz-row class="row_3_3" id="mm_r_2">
-                <div nz-col class="col_3_3" id="mm_r_2_c_1"></div>
-                <div nz-col class="col_3_3" id="mm_r_2_c_2"></div>
-                <div nz-col class="col_3_3" id="mm_r_2_c_3"></div>
-              </div>
-              <div nz-row class="row_3_3" id="mm_r_3">
-                <div nz-col class="col_3_3" id="mm_r_3_c_1"></div>
-                <div nz-col class="col_3_3" id="mm_r_3_c_2"></div>
-                <div nz-col class="col_3_3" id="mm_r_3_c_3"></div>
-              </div>
+            <div nz-row class="row_4_3" id="um_r_2">
+              <div nz-col class="col_4_3" id="um_r_2_c_1"></div>
+              <div nz-col class="col_4_3" id="um_r_2_c_2"></div>
+              <div nz-col class="col_4_3" id="um_r_2_c_3"></div>
             </div>
-            <div nz-col class="board" id="mr">
-              <div nz-row class="row_3_4" id="mr_r_1">
-                <div nz-col class="col_3_4" id="mr_r_1_c_1"></div>
-                <div nz-col class="col_3_4" id="mr_r_1_c_2"></div>
-                <div nz-col class="col_3_4" id="mr_r_1_c_3"></div>
-                <div nz-col class="col_3_4" id="mr_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_3_4" id="mr_r_2">
-                <div nz-col class="col_3_4" id="mr_r_2_c_1"></div>
-                <div nz-col class="col_3_4" id="mr_r_2_c_2"></div>
-                <div nz-col class="col_3_4" id="mr_r_2_c_3"></div>
-                <div nz-col class="col_3_4" id="mr_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_3_4" id="mr_r_3">
-                <div nz-col class="col_3_4" id="mr_r_3_c_1"></div>
-                <div nz-col class="col_3_4" id="mr_r_3_c_2"></div>
-                <div nz-col class="col_3_4" id="mr_r_3_c_3"></div>
-                <div nz-col class="col_3_4" id="mr_r_3_c_4"></div>
-              </div>
+            <div nz-row class="row_4_3" id="um_r_3">
+              <div nz-col class="col_4_3" id="um_r_3_c_1"></div>
+              <div nz-col class="col_4_3" id="um_r_3_c_2"></div>
+              <div nz-col class="col_4_3" id="um_r_3_c_3"></div>
+            </div>
+            <div nz-row class="row_4_3" id="um_r_4">
+              <div nz-col class="col_4_3" id="um_r_4_c_1"></div>
+              <div nz-col class="col_4_3" id="um_r_4_c_2"></div>
+              <div nz-col class="col_4_3" id="um_r_4_c_3"></div>
             </div>
           </div>
-          <div nz-row class="row">
-            <div nz-col class="board" id="bl">
-              <div nz-row class="row_4_4" id="bl_r_1">
-                <div nz-col class="col_4_4" id="bl_r_1_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_1_c_2"></div>
-                <div nz-col class="col_4_4" id="bl_r_1_c_3"></div>
-                <div nz-col class="col_4_4" id="bl_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="bl_r_2">
-                <div nz-col class="col_4_4" id="bl_r_2_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_2_c_2"></div>
-                <div nz-col class="col_4_4" id="bl_r_2_c_3"></div>
-                <div nz-col class="col_4_4" id="bl_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="bl_r_3">
-                <div nz-col class="col_4_4" id="bl_r_3_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_3_c_2"></div>
-                <div nz-col class="col_4_4" id="bl_r_3_c_3"></div>
-                <div nz-col class="col_4_4" id="bl_r_3_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="bl_r_4">
-                <div nz-col class="col_4_4" id="bl_r_4_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_4_c_2"></div>
-                <div nz-col class="col_4_4" id="bl_r_4_c_3"></div>
-                <div nz-col class="col_4_4" id="bl_r_4_c_4"></div>
-              </div>
+          <div nz-col class="board" id="ur">
+            <div nz-row class="row_4_4" id="ur_r_1">
+              <div nz-col class="col_4_4" id="ur_r_1_c_1"></div>
+              <div nz-col class="col_4_4" id="ur_r_1_c_2"></div>
+              <div nz-col class="col_4_4" id="ur_r_1_c_3"></div>
+              <div nz-col class="col_4_4" id="ur_r_1_c_4"></div>
             </div>
-            <div nz-col class="board" id="bm">
-              <div nz-row class="row_4_3" id="bm_r_1">
-                <div nz-col class="col_4_3" id="bm_r_1_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_1_c_2"></div>
-                <div nz-col class="col_4_3" id="bm_r_1_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="bm_r_2">
-                <div nz-col class="col_4_3" id="bm_r_2_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_2_c_2"></div>
-                <div nz-col class="col_4_3" id="bm_r_2_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="bm_r_3">
-                <div nz-col class="col_4_3" id="bm_r_3_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_3_c_2"></div>
-                <div nz-col class="col_4_3" id="bm_r_3_c_3"></div>
-              </div>
-              <div nz-row class="row_4_3" id="bm_r_4">
-                <div nz-col class="col_4_3" id="bm_r_4_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_4_c_2"></div>
-                <div nz-col class="col_4_3" id="bm_r_4_c_3"></div>
-              </div>
+            <div nz-row class="row_4_4" id="ur_r_2">
+              <div nz-col class="col_4_4" id="ur_r_2_c_1"></div>
+              <div nz-col class="col_4_4" id="ur_r_2_c_2"></div>
+              <div nz-col class="col_4_4" id="ur_r_2_c_3"></div>
+              <div nz-col class="col_4_4" id="ur_r_2_c_4"></div>
             </div>
-            <div nz-col class="board" id="br">
-              <div nz-row class="row_4_4" id="br_r_1">
-                <div nz-col class="col_4_4" id="br_r_1_c_1"></div>
-                <div nz-col class="col_4_4" id="br_r_1_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_1_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_1_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="br_r_2">
-                <div nz-col class="col_4_4" id="br_r_2_c_1"></div>
-                <div nz-col class="col_4_4" id="br_r_2_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_2_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_2_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="br_r_3">
-                <div nz-col class="col_4_4" id="br_r_3_c_1"></div>
-                <div nz-col class="col_4_4" id="br_r_3_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_3_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_3_c_4"></div>
-              </div>
-              <div nz-row class="row_4_4" id="br_r_4">
-                <div nz-col class="col_4_4" id="br_r_4_c_1"></div>
-                <div nz-col class="col_4_4" id="br_r_4_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_4_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_4_c_4"></div>
-              </div>
+            <div nz-row class="row_4_4" id="ur_r_3">
+              <div nz-col class="col_4_4" id="ur_r_3_c_1"></div>
+              <div nz-col class="col_4_4" id="ur_r_3_c_2"></div>
+              <div nz-col class="col_4_4" id="ur_r_3_c_3"></div>
+              <div nz-col class="col_4_4" id="ur_r_3_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="ur_r_4">
+              <div nz-col class="col_4_4" id="ur_r_4_c_1"></div>
+              <div nz-col class="col_4_4" id="ur_r_4_c_2"></div>
+              <div nz-col class="col_4_4" id="ur_r_4_c_3"></div>
+              <div nz-col class="col_4_4" id="ur_r_4_c_4"></div>
             </div>
           </div>
+        </div>
+        <div nz-row class="row">
+          <div nz-col class="board" id="ml">
+            <div nz-row class="row_3_4" id="ml_r_1">
+              <div nz-col class="col_3_4" id="ml_r_1_c_1"></div>
+              <div nz-col class="col_3_4" id="ml_r_1_c_2"></div>
+              <div nz-col class="col_3_4" id="ml_r_1_c_3"></div>
+              <div nz-col class="col_3_4" id="ml_r_1_c_4"></div>
+            </div>
+            <div nz-row class="row_3_4" id="ml_r_2">
+              <div nz-col class="col_3_4" id="ml_r_2_c_1"></div>
+              <div nz-col class="col_3_4" id="ml_r_2_c_2"></div>
+              <div nz-col class="col_3_4" id="ml_r_2_c_3"></div>
+              <div nz-col class="col_3_4" id="ml_r_2_c_4"></div>
+            </div>
+            <div nz-row class="row_3_4" id="ml_r_3">
+              <div nz-col class="col_3_4" id="ml_r_3_c_1"></div>
+              <div nz-col class="col_3_4" id="ml_r_3_c_2"></div>
+              <div nz-col class="col_3_4" id="ml_r_3_c_3"></div>
+              <div nz-col class="col_3_4" id="ml_r_3_c_4"></div>
+            </div>
+          </div>
+          <div nz-col class="board" id="mm">
+            <div nz-row class="row_3_3" id="mm_r_1">
+              <div nz-col class="col_3_3" id="mm_r_1_c_1"></div>
+              <div nz-col class="col_3_3" id="mm_r_1_c_2"></div>
+              <div nz-col class="col_3_3" id="mm_r_1_c_3"></div>
+            </div>
+            <div nz-row class="row_3_3" id="mm_r_2">
+              <div nz-col class="col_3_3" id="mm_r_2_c_1"></div>
+              <div nz-col class="col_3_3" id="mm_r_2_c_2"></div>
+              <div nz-col class="col_3_3" id="mm_r_2_c_3"></div>
+            </div>
+            <div nz-row class="row_3_3" id="mm_r_3">
+              <div nz-col class="col_3_3" id="mm_r_3_c_1"></div>
+              <div nz-col class="col_3_3" id="mm_r_3_c_2"></div>
+              <div nz-col class="col_3_3" id="mm_r_3_c_3"></div>
+            </div>
+          </div>
+          <div nz-col class="board" id="mr">
+            <div nz-row class="row_3_4" id="mr_r_1">
+              <div nz-col class="col_3_4" id="mr_r_1_c_1"></div>
+              <div nz-col class="col_3_4" id="mr_r_1_c_2"></div>
+              <div nz-col class="col_3_4" id="mr_r_1_c_3"></div>
+              <div nz-col class="col_3_4" id="mr_r_1_c_4"></div>
+            </div>
+            <div nz-row class="row_3_4" id="mr_r_2">
+              <div nz-col class="col_3_4" id="mr_r_2_c_1"></div>
+              <div nz-col class="col_3_4" id="mr_r_2_c_2"></div>
+              <div nz-col class="col_3_4" id="mr_r_2_c_3"></div>
+              <div nz-col class="col_3_4" id="mr_r_2_c_4"></div>
+            </div>
+            <div nz-row class="row_3_4" id="mr_r_3">
+              <div nz-col class="col_3_4" id="mr_r_3_c_1"></div>
+              <div nz-col class="col_3_4" id="mr_r_3_c_2"></div>
+              <div nz-col class="col_3_4" id="mr_r_3_c_3"></div>
+              <div nz-col class="col_3_4" id="mr_r_3_c_4"></div>
+            </div>
+          </div>
+        </div>
+        <div nz-row class="row">
+          <div nz-col class="board" id="bl">
+            <div nz-row class="row_4_4" id="bl_r_1">
+              <div nz-col class="col_4_4" id="bl_r_1_c_1"></div>
+              <div nz-col class="col_4_4" id="bl_r_1_c_2"></div>
+              <div nz-col class="col_4_4" id="bl_r_1_c_3"></div>
+              <div nz-col class="col_4_4" id="bl_r_1_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="bl_r_2">
+              <div nz-col class="col_4_4" id="bl_r_2_c_1"></div>
+              <div nz-col class="col_4_4" id="bl_r_2_c_2"></div>
+              <div nz-col class="col_4_4" id="bl_r_2_c_3"></div>
+              <div nz-col class="col_4_4" id="bl_r_2_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="bl_r_3">
+              <div nz-col class="col_4_4" id="bl_r_3_c_1"></div>
+              <div nz-col class="col_4_4" id="bl_r_3_c_2"></div>
+              <div nz-col class="col_4_4" id="bl_r_3_c_3"></div>
+              <div nz-col class="col_4_4" id="bl_r_3_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="bl_r_4">
+              <div nz-col class="col_4_4" id="bl_r_4_c_1"></div>
+              <div nz-col class="col_4_4" id="bl_r_4_c_2"></div>
+              <div nz-col class="col_4_4" id="bl_r_4_c_3"></div>
+              <div nz-col class="col_4_4" id="bl_r_4_c_4"></div>
+            </div>
+          </div>
+          <div nz-col class="board" id="bm">
+            <div nz-row class="row_4_3" id="bm_r_1">
+              <div nz-col class="col_4_3" id="bm_r_1_c_1"></div>
+              <div nz-col class="col_4_3" id="bm_r_1_c_2"></div>
+              <div nz-col class="col_4_3" id="bm_r_1_c_3"></div>
+            </div>
+            <div nz-row class="row_4_3" id="bm_r_2">
+              <div nz-col class="col_4_3" id="bm_r_2_c_1"></div>
+              <div nz-col class="col_4_3" id="bm_r_2_c_2"></div>
+              <div nz-col class="col_4_3" id="bm_r_2_c_3"></div>
+            </div>
+            <div nz-row class="row_4_3" id="bm_r_3">
+              <div nz-col class="col_4_3" id="bm_r_3_c_1"></div>
+              <div nz-col class="col_4_3" id="bm_r_3_c_2"></div>
+              <div nz-col class="col_4_3" id="bm_r_3_c_3"></div>
+            </div>
+            <div nz-row class="row_4_3" id="bm_r_4">
+              <div nz-col class="col_4_3" id="bm_r_4_c_1"></div>
+              <div nz-col class="col_4_3" id="bm_r_4_c_2"></div>
+              <div nz-col class="col_4_3" id="bm_r_4_c_3"></div>
+            </div>
+          </div>
+          <div nz-col class="board" id="br">
+            <div nz-row class="row_4_4" id="br_r_1">
+              <div nz-col class="col_4_4" id="br_r_1_c_1"></div>
+              <div nz-col class="col_4_4" id="br_r_1_c_2"></div>
+              <div nz-col class="col_4_4" id="br_r_1_c_3"></div>
+              <div nz-col class="col_4_4" id="br_r_1_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="br_r_2">
+              <div nz-col class="col_4_4" id="br_r_2_c_1"></div>
+              <div nz-col class="col_4_4" id="br_r_2_c_2"></div>
+              <div nz-col class="col_4_4" id="br_r_2_c_3"></div>
+              <div nz-col class="col_4_4" id="br_r_2_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="br_r_3">
+              <div nz-col class="col_4_4" id="br_r_3_c_1"></div>
+              <div nz-col class="col_4_4" id="br_r_3_c_2"></div>
+              <div nz-col class="col_4_4" id="br_r_3_c_3"></div>
+              <div nz-col class="col_4_4" id="br_r_3_c_4"></div>
+            </div>
+            <div nz-row class="row_4_4" id="br_r_4">
+              <div nz-col class="col_4_4" id="br_r_4_c_1"></div>
+              <div nz-col class="col_4_4" id="br_r_4_c_2"></div>
+              <div nz-col class="col_4_4" id="br_r_4_c_3"></div>
+              <div nz-col class="col_4_4" id="br_r_4_c_4"></div>
+            </div>
+          </div>
+        </div>
       </div>
+        </div>
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
-        <div nz-row id="regeln">Spielregeln</div>
+        <button id="accordion">Regeln</button>
+        <div nz-row id="regeln">
+          <p class="regeln_header">Spielstart</p>
+          <p class="regeln_text">
+            Jeder Spieler erhählt 4 Spielfiguren in seiner eigenen Farbe.
+            Zu Beginn stehen diese im so genannten "Haus" in der jeweils farbig markierten Ecke des Spielfelds.
+            Die Spieler müssen nun nacheinander versuchen eine 6 zu würfeln um damit einen Spielstein aus ihrem Haus auf
+            das Spielfeld zu bringen.
+            Solange ein Spieler keine Figur auf dem Spielfeld besitzt darf dieser pro Runde drei Mal versuchen eine 6 zu
+            würfeln.
+            Sobald eine 6 gewürfelt wurde, muss der Spieler eine Figur aus dem Haus auf das farbig markierte Anfangsfeld
+            setzen.
+            Er erhählt nun einen zweiten Wurf, mit dem er diese Figur weiterrücken muss.
+          </p>
+          <p class="regeln_header">Spielablauf</p>
+          <p class="regeln_text">
+            Hat ein Spieler eine Figur auf dem Feld, dann darf er pro Runde nur noch ein Mal würfeln.
+            Anschließend darf er eine beliebige Figur von sich, welche sich jedoch auf dem Spielfeld befinden muss, um
+            die gewürfelte Augenzahl weiterziehen.
+            Würfelt ein Spieler eine 6 erhält er einen weiteren Wurf. Befindet sich zu dem Zeitpunkt noch mindestens
+            eine Figur in seinem Haus, dann muss diese zuerst auf das Anfangsfeld von ihm gezogen werden.
+            Der zweite Wurf darf dann nur noch mit der Person auf dem Anfangsfeld vollzogen werden.
+            Hat ein Spieler keine Figuren mehr im Haus, so erhält er trotzdem einen weiteren Wurf und darf mit
+            beliebigem ihm gehörenden Figuren ziehen.
+            Kommt ein Spieler auf ein Feld mit einer fremden oder eigenen Figur, dann schlägt er diese.
+            Das bedeutet, dass die Figur zurück in das zugehörige Haus versetzt wird.
+          </p>
+          <p class="regeln_header">Spielende</p>
+          <p class="regeln_text">
+            Ziel des Spiels ist es, alle seine Figuren in das eigene Ziel zu bringen. Das sind die 4 farbig markierten
+            Felder in der Mitte des Spielfelds.
+            Hat eine Figur das äußere Kreuz vollständig umrudet kann es auf die Kreise ihrer Farbe ins Ziel.
+            Dazu muss jedoch die genaue Augenzahl für ein freies Zielfeld erwürfelt werden. Geschieht das nicht, kann
+            entweder mit einer anderen Figur gezogen werden oder der Spielzug wird beendet.
+          </p>
+        </div>
         <div nz-row id="dice" nzJustify="center">
-          <div class = "scene">
+          <div class="scene">
             <div id="cube">
               <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
               <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
@@ -237,7 +274,7 @@ import { DOCUMENT} from "@angular/common";
           </div>
         </div>
         <div nz-row id="dice-btn" nzJustify="center">
-          <button class ="rollBtn" (click)="tossDice()">Roll the Dice</button>
+          <button class="rollBtn" (click)="tossDice()">Roll the Dice</button>
         </div>
       </div>
     </div>
@@ -362,4 +399,5 @@ export class GameBoardComponent implements OnInit {
     element.innerHTML = content;
     return element;
   }
+  
 }
