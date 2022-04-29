@@ -1,6 +1,7 @@
 .game{
   border: 2px solid black;
   min-width: 500px;
+  max-width: 765px;
 }
 
 .board {
