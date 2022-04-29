@@ -275,3 +275,11 @@ label { margin-right: 10px; }
 .boardWrittingBottom{
   padding-top: 40px;
 }
+
+.gameBoardToken{
+  height: 70%;
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 70%;
+  margin: 15%;
+}
