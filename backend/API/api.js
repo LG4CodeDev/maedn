@@ -203,8 +203,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         listOfMoves = calculateMoves(game, diceResult, playerFields);
 
         roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
-
-        if (!roleAgain && listOfMoves === [null,null,null,null]){
+        if (!roleAgain && listOfMoves.toString() === [ null, null, null, null].toString()){
             await pool.query("UPDATE mainGame SET turn = ?, movesOfPerson = ? where gameid = ?", [game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString(),0, id]);
         }
 
@@ -433,7 +432,7 @@ function calculateMoves(game, diceResult, playerFields) {
 
 function checkRoleAgain(playerFields, diceResult, moves){
         if (diceResult == 6) return true;
-        if (moves >= 3) return false;
+        if (moves+1 >= 3) return false;
         for (const playerFieldsKey of playerFields) {
                 let element = playerFieldsKey.split(" ");
                 if(element[0][1] == 'S'){
@@ -532,7 +531,7 @@ function setPostiotins(oldPos, allowedMoves, move){
 
 function checkFinished(positions){
     for (const position of positions) {
-        if(positions[1] != "F") return false
+        if(position[1] != "F") return false
     }
     return true;
 }
