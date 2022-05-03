@@ -392,25 +392,25 @@ function calculateMoves(game, diceResult, playerFields) {
                         break;
                 }
 
-                if (game['turn'] == 'Player1' && element[0] == 'A') {
+                if (game['turn'] == 'Player1' && element[0] == 'AR') {
                     if (element[1] <= 3) element[0] = 'AF';
                     else {
                         listOfMoves.push(null);
                         continue;
                     }
-                } else if (game['turn'] == 'Player2' && element[0] == 'B') {
+                } else if (game['turn'] == 'Player2' && element[0] == 'BR') {
                     if (element[1] <= 3) element[0] = 'BF';
                     else {
                         listOfMoves.push(null);
                         continue;
                     }
-                } else if (game['turn'] == 'Player3' && element[0] == 'C') {
+                } else if (game['turn'] == 'Player3' && element[0] == 'CR') {
                     if (element[1] <= 3) element[0] = 'CF';
                     else {
                         listOfMoves.push(null);
                         continue;
                     }
-                } else if (game['turn'] == 'Player4' && element[0] == 'D') {
+                } else if (game['turn'] == 'Player4' && element[0] == 'DR') {
                     if (element[1] <= 3) element[0] = 'DF';
                     else {
                         listOfMoves.push(null);
