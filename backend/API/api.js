@@ -173,6 +173,15 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     }
 });
 
+app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
+    let id = request.params.id;
+    try {
+        const result = await pool.query("select * from statsMainGame where userid = ?", [id]);
+        response.send(result);
+    } catch (err) {
+        response.sendStatus(500);
+    }
+})
 /*
 Game Logic
  */
@@ -315,6 +324,33 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
     }
 
 });
+
+app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
+    let id = request.params.id;
+    try {
+        let result = await pool.query("select * from mainGame where gameid = ?", [id]);
+        let game = result[0]
+        if(result[0] == undefined){
+            return response.status(400).send({msg: "Game does not exist"})
+        }
+        if(game['status'] != 'Finished') return response.status(400).send({"msg":"Not finished jet"})
+        let players = [game['Player1'], game['Player2'], game['Player3'], game['Player4']]
+        let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
+        for (let i = 0; i <= 3; i++) {
+            if(checkFinished(positions[i])){
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winingRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+            }
+            else{
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winingRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+            }
+
+        }
+        await pool.query("Delete from mainGame where gameid = ?", [id])
+        response.sendStatus(200)
+    } catch (err) {
+        return response.sendStatus(500);
+    }
+})
 
 async function joinGame(response, joiningGame, player){
     if(joiningGame['Player1'] == null){
