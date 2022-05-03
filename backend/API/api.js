@@ -202,7 +202,11 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
         listOfMoves = calculateMoves(game, diceResult, playerFields);
 
-        roleAgain = checkRoleAgain(playerFields, diceResult);
+        roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
+
+        if (!roleAgain && listOfMoves === [null,null,null,null]){
+            await pool.query("UPDATE mainGame SET turn = ?, movesOfPerson = ? where gameid = ?", [game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString(),0, id]);
+        }
 
         response.status(200).send({move : {dice : diceResult, fields : listOfMoves, roleAgain : roleAgain}})
 
@@ -216,7 +220,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     try {
 
         let stringOfMoves = listOfMoves.toString()
-        let msg = await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ? where gameid = ?", [stringOfMoves, roleAgain, id]);
+        let DoneMoves = game['movesOfPerson'] + 1
+        let msg = await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ?, movesOfPerson = ? where gameid = ?", [stringOfMoves, roleAgain,DoneMoves, id]);
     }catch (err){}
 })
 
@@ -297,6 +302,7 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
         }
         else await makeMove(data, result[0], response)
     }catch (err){
+        console.log(err)
         response.sendStatus(500)
     }
 
@@ -369,7 +375,7 @@ function calculateMoves(game, diceResult, playerFields) {
         }
         else {
             element[1] += diceResult;
-            if (element > 9) {
+            if (element[1] > 9) {
                 element[1] -= 10;
                 switch (element[0]) {
                     case "AR":
@@ -425,9 +431,9 @@ function calculateMoves(game, diceResult, playerFields) {
 
 }
 
-function checkRoleAgain(playerFields, diceResult){
+function checkRoleAgain(playerFields, diceResult, moves){
         if (diceResult == 6) return true;
-
+        if (moves >= 3) return false;
         for (const playerFieldsKey of playerFields) {
                 let element = playerFieldsKey.split(" ");
                 if(element[0][1] == 'S'){
@@ -468,21 +474,68 @@ function checkRoleAgain(playerFields, diceResult){
 }
 
 async function makeMove(data, game, response){
+    let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
     let moves = game['allowedMoves'].split(",")
-    if(moves.includes(data.move.toString())){
+    if(moves.includes(data.move.toString())){ //valid move done
+        //check if any game peace got beaten
+        let indexPlayer = 0
+        for (const playerPosition of positions) {
+            let indexField = 0
+            for (let field of playerPosition) {
+                if(field == data.move.toString()){
+                    positions[indexPlayer][indexField] = field[0] + "S " + indexField.toString()
+                }
+                indexField++
+            }
+            indexPlayer++
+        }
+        const indexOfCurrentPlayer = game['turn'].slice(-1) - 1
+        let newPlayerPos = setPostiotins(positions[indexOfCurrentPlayer], moves, data.move.toString())
+        positions[indexOfCurrentPlayer] = newPlayerPos
+
+        let doneMoves = game['movesOfPerson']
         let nextplayer;
         if (game['roleAgain'] == 1) nextplayer = game['turn']
-        else nextplayer = game['turn'].slice(0,-1) + ((parseInt(game['turn'].slice(-1))%4)+1).toString()
+        else {
+            nextplayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
+            doneMoves = 0
+        }
+        const isFinished = Boolean(checkFinished(newPlayerPos));
+
+        let status
+
+        if(isFinished) status = "Finished"
+        else status = "started"
+
         try {
-            let result = await pool.query("UPDATE mainGame SET Position1 = ? , turn = ? where gameid = ?", [data.playerPositions, nextplayer,game['gameid']]);
+            let result = await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ? where gameid = ?"
+                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextplayer, status, doneMoves, game['gameid']]);
             response.sendStatus(200)
         }catch (e){
+            console.log(e)
             response.sendStatus(500)
         }
     }
     else return response.status(400).send('Invalid Move')
 }
 
+function setPostiotins(oldPos, allowedMoves, move){
+    let index = 0
+    for (const e of allowedMoves) {
+        if (move == e){
+            oldPos[index] = move
+            return oldPos
+        }
+    index++
+    }
+}
+
+function checkFinished(positions){
+    for (const position of positions) {
+        if(positions[1] != "F") return false
+    }
+    return true;
+}
 
 function validateAccess(request, response, next) {
     const authHeader = request.headers["authorization"]
