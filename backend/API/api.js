@@ -527,7 +527,18 @@ async function makeMove(data, game, response){
             let indexField = 0
             for (let field of playerPosition) {
                 if(field == data.move.toString()){
-                    positions[indexPlayer][indexField] = field[0] + "S " + indexField.toString()
+                    let playerChar;
+                    switch (indexPlayer){
+                        case 0: playerChar = "A"
+                                break;
+                        case 1: playerChar = "B"
+                                break;
+                        case 2: playerChar = "C"
+                            break;
+                        case 3: playerChar = "D"
+                            break;
+                    }
+                    positions[indexPlayer][indexField] = playerChar + "S " + indexField.toString()
                 }
                 indexField++
             }
