@@ -553,7 +553,7 @@ async function makeMove(data, game, response){
 
         try {
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameid = ?"
-                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextplayer, status, doneMoves, null ,game['gameid']]);
+                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextplayer, status, doneMoves, "null, null, null, null" ,game['gameid']]);
             response.status(200).send({
                 "positions" : positions,
                 "isFinished" : isFinished,
