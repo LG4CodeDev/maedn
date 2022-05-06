@@ -13,14 +13,14 @@ import { DOCUMENT} from "@angular/common";
           <div nz-row class="row">
             <div nz-col class="board" id="ul">
               <div nz-row class="row_4_4" id="ul_r_1">
-                <div nz-col class="col_4_4" id="ul_r_1_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_1_c_2"></div>
+                <div nz-col class="col_4_4" id="AS_0"></div>
+                <div nz-col class="col_4_4" id="AS_1"></div>
                 <div nz-col class="col_4_4" id="ul_r_1_c_3"></div>
                 <div nz-col class="col_4_4" id="ul_r_1_c_4"></div>
               </div>
               <div nz-row class="row_4_4" id="ul_r_2">
-                <div nz-col class="col_4_4" id="ul_r_2_c_1"></div>
-                <div nz-col class="col_4_4" id="ul_r_2_c_2"></div>
+                <div nz-col class="col_4_4" id="AS_2"></div>
+                <div nz-col class="col_4_4" id="AS_3"></div>
                 <div nz-col class="col_4_4" id="ul_r_2_c_3"></div>
                 <div nz-col class="col_4_4" id="ul_r_2_c_4"></div>
               </div>
@@ -39,23 +39,23 @@ import { DOCUMENT} from "@angular/common";
             </div>
             <div nz-col class="board" id="um">
               <div nz-row class="row_4_3" id="um_r_1">
-                <div nz-col class="col_4_3" id="um_r_1_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_1_c_2"></div>
+                <div nz-col class="col_4_3" id="AR_8"></div>
+                <div nz-col class="col_4_3" id="AR_9"></div>
                 <div nz-col class="col_4_3" id="um_r_1_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="um_r_2">
-                <div nz-col class="col_4_3" id="um_r_2_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_2_c_2"></div>
+                <div nz-col class="col_4_3" id="AR_7"></div>
+                <div nz-col class="col_4_3" id="BF_0"></div>
                 <div nz-col class="col_4_3" id="um_r_2_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="um_r_3">
-                <div nz-col class="col_4_3" id="um_r_3_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_3_c_2"></div>
+                <div nz-col class="col_4_3" id="AR_6"></div>
+                <div nz-col class="col_4_3" id="BF_1"></div>
                 <div nz-col class="col_4_3" id="um_r_3_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="um_r_4">
-                <div nz-col class="col_4_3" id="um_r_4_c_1"></div>
-                <div nz-col class="col_4_3" id="um_r_4_c_2"></div>
+                <div nz-col class="col_4_3" id="AR_5"></div>
+                <div nz-col class="col_4_3" id="BF_2"></div>
                 <div nz-col class="col_4_3" id="um_r_4_c_3"></div>
               </div>
             </div>
@@ -63,14 +63,14 @@ import { DOCUMENT} from "@angular/common";
               <div nz-row class="row_4_4" id="ur_r_1">
                 <div nz-col class="col_4_4" id="ur_r_1_c_1"></div>
                 <div nz-col class="col_4_4" id="ur_r_1_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_1_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_1_c_4"></div>
+                <div nz-col class="col_4_4" id="BS_0"></div>
+                <div nz-col class="col_4_4" id="BS_1"></div>
               </div>
               <div nz-row class="row_4_4" id="ur_r_2">
                 <div nz-col class="col_4_4" id="ur_r_2_c_1"></div>
                 <div nz-col class="col_4_4" id="ur_r_2_c_2"></div>
-                <div nz-col class="col_4_4" id="ur_r_2_c_3"></div>
-                <div nz-col class="col_4_4" id="ur_r_2_c_4"></div>
+                <div nz-col class="col_4_4" id="BS_2"></div>
+                <div nz-col class="col_4_4" id="BS_3"></div>
               </div>
               <div nz-row class="row_4_4" id="ur_r_3">
                 <div nz-col class="col_4_4" id="ur_r_3_c_1"></div>
@@ -89,16 +89,16 @@ import { DOCUMENT} from "@angular/common";
           <div nz-row class="row">
             <div nz-col class="board" id="ml">
               <div nz-row class="row_3_4" id="ml_r_1">
-                <div nz-col class="col_3_4" id="ml_r_1_c_1"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_2"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_3"></div>
-                <div nz-col class="col_3_4" id="ml_r_1_c_4"></div>
+                <div nz-col class="col_3_4" id="AR_0"></div>
+                <div nz-col class="col_3_4" id="AR_1"></div>
+                <div nz-col class="col_3_4" id="AR_2"></div>
+                <div nz-col class="col_3_4" id="AR_3"></div>
               </div>
               <div nz-row class="row_3_4" id="ml_r_2">
                 <div nz-col class="col_3_4" id="ml_r_2_c_1"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_2"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_3"></div>
-                <div nz-col class="col_3_4" id="ml_r_2_c_4"></div>
+                <div nz-col class="col_3_4" id="AF_0"></div>
+                <div nz-col class="col_3_4" id="AF_1"></div>
+                <div nz-col class="col_3_4" id="AF_2"></div>
               </div>
               <div nz-row class="row_3_4" id="ml_r_3">
                 <div nz-col class="col_3_4" id="ml_r_3_c_1"></div>
@@ -109,18 +109,18 @@ import { DOCUMENT} from "@angular/common";
             </div>
             <div nz-col class="board" id="mm">
               <div nz-row class="row_3_3" id="mm_r_1">
-                <div nz-col class="col_3_3" id="mm_r_1_c_1"></div>
-                <div nz-col class="col_3_3" id="mm_r_1_c_2"></div>
+                <div nz-col class="col_3_3" id="AR_4"></div>
+                <div nz-col class="col_3_3" id="BF_3"></div>
                 <div nz-col class="col_3_3" id="mm_r_1_c_3"></div>
               </div>
               <div nz-row class="row_3_3" id="mm_r_2">
-                <div nz-col class="col_3_3" id="mm_r_2_c_1"></div>
+                <div nz-col class="col_3_3" id="AF_3"></div>
                 <div nz-col class="col_3_3" id="mm_r_2_c_2"></div>
-                <div nz-col class="col_3_3" id="mm_r_2_c_3"></div>
+                <div nz-col class="col_3_3" id="CF_3"></div>
               </div>
               <div nz-row class="row_3_3" id="mm_r_3">
                 <div nz-col class="col_3_3" id="mm_r_3_c_1"></div>
-                <div nz-col class="col_3_3" id="mm_r_3_c_2"></div>
+                <div nz-col class="col_3_3" id="DF_3"></div>
                 <div nz-col class="col_3_3" id="mm_r_3_c_3"></div>
               </div>
             </div>
@@ -132,9 +132,9 @@ import { DOCUMENT} from "@angular/common";
                 <div nz-col class="col_3_4" id="mr_r_1_c_4"></div>
               </div>
               <div nz-row class="row_3_4" id="mr_r_2">
-                <div nz-col class="col_3_4" id="mr_r_2_c_1"></div>
-                <div nz-col class="col_3_4" id="mr_r_2_c_2"></div>
-                <div nz-col class="col_3_4" id="mr_r_2_c_3"></div>
+                <div nz-col class="col_3_4" id="CF_2"></div>
+                <div nz-col class="col_3_4" id="CF_1"></div>
+                <div nz-col class="col_3_4" id="CF_0"></div>
                 <div nz-col class="col_3_4" id="mr_r_2_c_4"></div>
               </div>
               <div nz-row class="row_3_4" id="mr_r_3">
@@ -160,14 +160,14 @@ import { DOCUMENT} from "@angular/common";
                 <div nz-col class="col_4_4" id="bl_r_2_c_4"></div>
               </div>
               <div nz-row class="row_4_4" id="bl_r_3">
-                <div nz-col class="col_4_4" id="bl_r_3_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_3_c_2"></div>
+                <div nz-col class="col_4_4" id="DS_0"></div>
+                <div nz-col class="col_4_4" id="DS_1"></div>
                 <div nz-col class="col_4_4" id="bl_r_3_c_3"></div>
                 <div nz-col class="col_4_4" id="bl_r_3_c_4"></div>
               </div>
               <div nz-row class="row_4_4" id="bl_r_4">
-                <div nz-col class="col_4_4" id="bl_r_4_c_1"></div>
-                <div nz-col class="col_4_4" id="bl_r_4_c_2"></div>
+                <div nz-col class="col_4_4" id="DS_2"></div>
+                <div nz-col class="col_4_4" id="DS_3"></div>
                 <div nz-col class="col_4_4" id="bl_r_4_c_3"></div>
                 <div nz-col class="col_4_4" id="bl_r_4_c_4"></div>
               </div>
@@ -175,17 +175,17 @@ import { DOCUMENT} from "@angular/common";
             <div nz-col class="board" id="bm">
               <div nz-row class="row_4_3" id="bm_r_1">
                 <div nz-col class="col_4_3" id="bm_r_1_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_1_c_2"></div>
+                <div nz-col class="col_4_3" id="DF_2"></div>
                 <div nz-col class="col_4_3" id="bm_r_1_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="bm_r_2">
                 <div nz-col class="col_4_3" id="bm_r_2_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_2_c_2"></div>
+                <div nz-col class="col_4_3" id="DF_1"></div>
                 <div nz-col class="col_4_3" id="bm_r_2_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="bm_r_3">
                 <div nz-col class="col_4_3" id="bm_r_3_c_1"></div>
-                <div nz-col class="col_4_3" id="bm_r_3_c_2"></div>
+                <div nz-col class="col_4_3" id="DF_0"></div>
                 <div nz-col class="col_4_3" id="bm_r_3_c_3"></div>
               </div>
               <div nz-row class="row_4_3" id="bm_r_4">
@@ -210,14 +210,14 @@ import { DOCUMENT} from "@angular/common";
               <div nz-row class="row_4_4" id="br_r_3">
                 <div nz-col class="col_4_4" id="br_r_3_c_1"></div>
                 <div nz-col class="col_4_4" id="br_r_3_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_3_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_3_c_4"></div>
+                <div nz-col class="col_4_4" id="CS_0"></div>
+                <div nz-col class="col_4_4" id="CS_1"></div>
               </div>
               <div nz-row class="row_4_4" id="br_r_4">
                 <div nz-col class="col_4_4" id="br_r_4_c_1"></div>
                 <div nz-col class="col_4_4" id="br_r_4_c_2"></div>
-                <div nz-col class="col_4_4" id="br_r_4_c_3"></div>
-                <div nz-col class="col_4_4" id="br_r_4_c_4"></div>
+                <div nz-col class="col_4_4" id="CS_2"></div>
+                <div nz-col class="col_4_4" id="CS_3"></div>
               </div>
             </div>
           </div>
@@ -245,17 +245,61 @@ import { DOCUMENT} from "@angular/common";
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent implements OnInit {
+  jsonReturned: any =
+    {
+      move: {
+        dice: 3,
+        fields: [
+          null,
+          "DR 0",
+          null,
+          null
+        ]
+      },
+      roleAgain: false,
+      currentPlayer: "Player3"
+    };
+
   constructor(
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document) { }
+    @Inject(DOCUMENT) private document: Document,
+  ) { }
 
   activeToken: string;
+
+
 
   ngOnInit(): void {
     this.fillGridWithField();
     this.mainGame();
+
+    this.highlightMoves();
+
   }
+
+  highlightMoves(){
+    if(this.jsonReturned['move']['fields'][0] == null && this.jsonReturned['move']['fields'][1] == null &&
+      this.jsonReturned['move']['fields'][2] == null && this.jsonReturned['move']['fields'][3] == null){
+      console.log('no moves available');
+    }
+    else{
+      if(this.jsonReturned['move']['fields'][0] != null){
+
+      }
+      if(this.jsonReturned['move']['fields'][1] != null){
+
+      }
+      if(this.jsonReturned['move']['fields'][2] != null){
+
+      }
+      if(this.jsonReturned['move']['fields'][3] != null){
+
+      }
+    }
+    //TODO: replace Running field ids for B,C,D
+  }
+
 
   tossDice() {
     const cube = document.getElementById('cube');
@@ -347,10 +391,10 @@ export class GameBoardComponent implements OnInit {
   //TODO: auslagern
 
   createInitialTokens(){
-    let tokenGreen = ['field_ur_r_1_c_3', 'field_ur_r_1_c_4', 'field_ur_r_2_c_3', 'field_ur_r_2_c_4'];
-    let tokenRed = ['field_br_r_3_c_3','field_br_r_3_c_4','field_br_r_4_c_3','field_br_r_4_c_4'];
-    let tokenBlack = ['field_bl_r_3_c_1','field_bl_r_3_c_2','field_bl_r_4_c_1','field_bl_r_4_c_2'];
-    let tokenYellow = ['field_ul_r_1_c_1','field_ul_r_1_c_2','field_ul_r_2_c_1','field_ul_r_2_c_2'];
+    let tokenGreen = ['field_BS_0', 'field_BS_1', 'field_BS_2', 'field_BS_3'];
+    let tokenRed = ['field_CS_0','field_CS_1','field_CS_2','field_CS_3'];
+    let tokenBlack = ['field_DS_0','field_DS_1','field_DS_2','field_DS_3'];
+    let tokenYellow = ['field_AS_0','field_AS_1','field_AS_2','field_AS_3'];
     tokenGreen.forEach((currentValue, index, array) => {
       let idOfToken = 'token'+(index+1)+'_'+'Green';
       let tokenToAdd = this.generateSingleToken(idOfToken, 'lightgreen');
@@ -378,7 +422,7 @@ export class GameBoardComponent implements OnInit {
     let walkingFields = ['um_r_2_c_3','um_r_3_c_3','um_r_4_c_3','mm_r_1_c_3','mr_r_1_c_1','mr_r_1_c_2','mr_r_1_c_3','mr_r_1_c_4','mr_r_2_c_4'];
     walkingFields.push('mr_r_3_c_3','mr_r_3_c_2','mr_r_3_c_1','mm_r_3_c_3','bm_r_1_c_3','bm_r_2_c_3','bm_r_3_c_3','bm_r_4_c_3','bm_r_4_c_2');
     walkingFields.push('bm_r_3_c_1','bm_r_2_c_1','bm_r_1_c_1','mm_r_3_c_1','ml_r_3_c_4','ml_r_3_c_3','ml_r_3_c_2','ml_r_3_c_1','ml_r_2_c_1');
-    walkingFields.push('ml_r_1_c_2','ml_r_1_c_3','ml_r_1_c_4','mm_r_1_c_1','um_r_4_c_1','um_r_3_c_1','um_r_2_c_1','um_r_1_c_1','um_r_1_c_2');
+    walkingFields.push('AR_1','AR_2','AR_3','AR_4','AR_5','AR_6','AR_7','AR_8','AR_9');
     walkingFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
       let element = this.generateSingleField(coordinatesForField, 'white', '', true);
@@ -386,7 +430,7 @@ export class GameBoardComponent implements OnInit {
     });
 
     //creating the start fields
-    let startFields = ['um_r_1_c_3','mr_r_3_c_4','bm_r_4_c_1','ml_r_1_c_1'];
+    let startFields = ['um_r_1_c_3','mr_r_3_c_4','bm_r_4_c_1','AR_0'];
     playerColors.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + startFields[index];
       let element = this.generateSingleField(coordinatesForField, currentValue, 'A', true);
@@ -395,10 +439,10 @@ export class GameBoardComponent implements OnInit {
   }
 
   generateHomeFields(playerColors: string[]){
-    let homeFields = ['ur_r_1_c_3','ur_r_1_c_4','ur_r_2_c_3','ur_r_2_c_4']; //green top right
-    homeFields.push('br_r_3_c_3','br_r_3_c_4','br_r_4_c_3','br_r_4_c_4'); //red bottom right
-    homeFields.push('bl_r_3_c_1','bl_r_3_c_2','bl_r_4_c_1','bl_r_4_c_2'); //black bottom left
-    homeFields.push('ul_r_1_c_1','ul_r_1_c_2','ul_r_2_c_1','ul_r_2_c_2'); //yellow top left
+    let homeFields = ['BS_0','BS_1','BS_2','BS_3']; //green top right
+    homeFields.push('CS_0','CS_1','CS_2','CS_3'); //red bottom right
+    homeFields.push('DS_0','DS_1','DS_2','DS_3'); //black bottom left
+    homeFields.push('AS_0','AS_1','AS_2','AS_3'); //yellow top left
 
     homeFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
@@ -408,10 +452,10 @@ export class GameBoardComponent implements OnInit {
   }
 
   generateFinishFields(playerColors: string[]){
-    let finishFields = ['um_r_2_c_2','um_r_3_c_2','um_r_4_c_2','mm_r_1_c_2'];
-    finishFields.push('mr_r_2_c_3','mr_r_2_c_2','mr_r_2_c_1','mm_r_2_c_3');
-    finishFields.push('bm_r_3_c_2','bm_r_2_c_2','bm_r_1_c_2','mm_r_3_c_2');
-    finishFields.push('ml_r_2_c_2','ml_r_2_c_3','ml_r_2_c_4','mm_r_2_c_1');
+    let finishFields = ['BF_0','BF_1','BF_2','BF_3'];
+    finishFields.push('CF_0','CF_1','CF_2','CF_3');
+    finishFields.push('DF_0','DF_1','DF_2','DF_3');
+    finishFields.push('AF_0','AF_1','AF_2','AF_3');
 
     finishFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
