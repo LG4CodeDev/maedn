@@ -1,0 +1,90 @@
+#leaderboard {
+}
+
+pre {
+  overflow-x:hidden;
+  overflow-y:hidden;
+}
+
+#statistics {
+}
+
+#game_selection {
+}
+
+#game_headline {
+  font-family: "Brush Script MT", "serif";
+  font-size: 4vw;
+  margin: 0;
+  text-decoration: underline;
+}
+
+.game_buttons {
+  height: 100px;
+  width: 100%;
+  margin: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #5b6574;
+  border-radius: 0 2em 0em 3.5em;
+}
+.game_buttons:hover {
+  box-shadow: inset 0px 0px 0px black, inset 0px 0px 105px white;
+  transition: 0.1s ease-in-out;
+}
+
+.text p:nth-child(1n) {
+  color: dodgerblue;
+}
+
+/*.text p:nth-child(2n) {*/
+/*  color: blue;*/
+/*}*/
+
+.game_buttons:hover .text p:nth-child(1n) {
+  transform: rotate(8deg);
+  animation: shake 0.5s ease infinite;
+
+}
+.game_buttons:hover .text p:nth-child(2n) {
+  transform: rotate(5deg);
+  animation: shake 0.5s ease-out infinite reverse;
+
+}
+.game_buttons:hover .text p:nth-child(3n) {
+  transform: rotate(-2deg);
+  animation: shake 0.5s 0.1s ease infinite;
+}
+
+.game_buttons:hover .text p:nth-child(4n) {
+  transform: rotate(-5deg);
+  animation: shake 0.5s ease-in infinite reverse;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0) rotate(8deg);
+  }
+  50% {
+    transform: translateX(4px) rotate(-3deg);
+  }
+  100% {
+    transform: translateX(0) rotate(6deg);
+  }
+}
+
+.text {
+  display: flex;
+  width: 95%;
+  font-size: 4vw;
+  line-height: 4vw;
+  text-shadow: 2px 2px black;
+  font-family: 'Anton', sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+.text p{
+  margin: auto 0;
+}

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { LobbyRoutingModule } from './lobby-routing.module';
 import { LobbyComponent } from './lobby/lobby.component';
+import {NzGridModule} from "ng-zorro-antd/grid";
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { LobbyComponent } from './lobby/lobby.component';
   ],
   imports: [
     CommonModule,
-    LobbyRoutingModule
+    LobbyRoutingModule,
+    NzGridModule
   ]
 })
 export class LobbyModule { }
