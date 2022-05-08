@@ -5,18 +5,35 @@
 }
 
 .login-form {
-  max-width: 300px;
+  width: 300px;
+}
+
+.register-form {
+  width: 300px;
+  display: none;
 }
 
 .login-form-margin {
   margin-bottom: 16px;
 }
 
-.login-form-forgot {
-  float: right;
+.register-form-margin {
+  margin-bottom: 16px;
 }
 
 .login-form-button {
   width: 100%;
+}
+
+.register-form-button {
+  width: 100%;
+}
+
+.imagePreview{
+  float: left;
+  width: 80px;
+  aspect-ratio: 1;
+  margin: 5px;
+  border-radius: 25px;
 }
 
