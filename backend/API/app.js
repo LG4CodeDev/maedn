@@ -3,7 +3,7 @@
  */
 
 const express = require('express');
-
+const cors = require('cors')
 const app = express();
 
 //const path = require('path');
@@ -52,11 +52,12 @@ app.options('/*', function (request, response, next) {
     next();
 });
 
-app.post('/*', async (request, response, next) => {
+app.post('/*', function (request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
+
 
 
 app.get(`/api`, function (request, response) {
@@ -195,7 +196,7 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     if (result !== undefined) {
         let answer = result[0]
         //compare hashed password with unhashed password
-        bcrypt.compare(user.password, answer.password).then(
+        bcrypt.compare(user.password, answer['password']).then(
             () => {
                 response.status(200).send({userid: answer.userid})
             },
