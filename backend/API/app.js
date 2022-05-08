@@ -191,17 +191,16 @@ app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (reques
  */
 app.post('/api/loginVerification', validateAccess, async (request, response) => {
     let user = request.body;
+    console.log(user)
     let result;
     try {
-        console.log(user.email)
         result = await pool.query("select * from users where email = ?", [user.email]);
     } catch (err) {
         response.send(500)
         console.log(err);
     }
-    if (result !== undefined) {
+    if (result[0] !== undefined) {
         let answer = result[0]
-        console.log(result)
         //compare hashed password with unhashed password
         try{
             bcrypt.compare(user.password, answer['password']).then(
