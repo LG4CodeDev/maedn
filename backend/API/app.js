@@ -189,9 +189,8 @@ app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (reques
     validates access
     body : {email : 123@123 , password : 123}
  */
-app.post('/api/loginVerification', validateAccess, async (request, response) => {
+app.post('/api/loginVerification', async (request, response) => {
     let user = request.body;
-    console.log(user)
     let result;
     try {
         result = await pool.query("select * from users where email = ?", [user.email]);
@@ -204,13 +203,14 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
         //compare hashed password with unhashed password
         try{
             bcrypt.compare(user.password, answer['password']).then(
+                () => {}, //on success do nothing
                 () => {
-                    response.status(200).send({userid: answer.userid})
-                },
-                () => {
-                    response.sendStatus(401)
+                    return response.sendStatus(401)
                 }
             );
+            let token = bcrypt.hashSync('LoremIpsum12345', 5)
+            await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
+            response.status(200).send({userid: answer.userid, "token" : token})
         }catch (err) {
             response.send(500)
             console.log(err);
@@ -634,7 +634,7 @@ function checkFinished(positions) {
     return true;
 }
 
-function validateAccess(request, response, next) {
+async function validateAccess(request, response, next){
     const authHeader = request.headers["authorization"]
     let token;
     try {
@@ -646,9 +646,11 @@ function validateAccess(request, response, next) {
     if (token == null) {
         return response.status(400).send("Token not present")
     }
-    if (token !== 'testingStuff') {
+    let result = await pool.query("Select * from users where token = ?",[token])
+    if (result[0] === undefined) {
         return response.status(403).send("Token invalid")
     } else {
+        response.locals.user = result[0]
         next()
     }
 }
