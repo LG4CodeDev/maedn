@@ -38,7 +38,12 @@ const pool =
         database: process.env.DB_Name
     })
 
-app.use(express.json(), cors());
+var corsOptions = {
+    origin: 'http://localhost:4200',
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+
+app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
@@ -195,7 +200,7 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     }
     if (result !== undefined) {
         let answer = result[0]
-        console.log(answer)
+        console.log(result)
         //compare hashed password with unhashed password
         try{
             bcrypt.compare(user.password, answer['password']).then(
