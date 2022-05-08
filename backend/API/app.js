@@ -387,7 +387,7 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 })
 
 /*
-Game Logic Functions
+Game Logic needed Functions
  */
 
 
