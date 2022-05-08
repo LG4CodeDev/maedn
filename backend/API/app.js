@@ -101,7 +101,7 @@ app.get('/api/allUsers', validateAccess, async (request, response) => {
 app.get('/api/user/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
-        const result = await pool.query("select * from users where userid = ?", [id]);
+        const result = await pool.query("select * from users natural Join avatar ON avatar = avatarID where userid = ?", [id]);
         response.send(result);
     } catch (err) {
         response.sendStatus(500);
@@ -117,6 +117,7 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
  */
 app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) => {
     let user = request.body
+    console.log(user)
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
     try {
