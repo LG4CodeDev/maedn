@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-lobby',
   template: `
     <div id="lobby" nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
 <!--      LEADERBOARD-->
-      <div id="leaderboard" class="gutter-row" nz-col nzFlex="7"></div>
+      <div id="leaderboard" class="gutter-row" nz-col nzFlex="7">
+
+      </div>
 <!--      END OF LEADERBOARD-->
 
 <!--      GAME SELECTION-->
@@ -48,7 +51,9 @@ import { Component, OnInit } from '@angular/core';
 <!--      END OF GAME SELECTION-->
 
 <!--      STATISTICS-->
-      <div id="statistics" class="gutter-row" nz-col nzFlex="7"></div>
+      <div id="statistics" class="gutter-row" nz-col nzFlex="7">
+
+      </div>
 <!--      END OF STATISTICS-->
     </div>
   `,
@@ -56,12 +61,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LobbyComponent implements OnInit {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.getStats();
   }
 
   sayHello(): void {
     console.log("Hello");
   }
+
+  getStats(): void {
+    this.http.get<any>('http://167.235.24.74:4000/api/getUserStats/2', {
+    observe: "response",
+  },
+  ).subscribe(response => {
+    console.log(response)
+  });
+}
+
+
 }
