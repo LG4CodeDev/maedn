@@ -115,7 +115,7 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) => {
     let user = request.body
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -133,7 +133,7 @@ app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (reque
 });
 
 //creates Avatar of blob and returns ID
-app.post('/api/createAvatar', validateAccess, async (request, response) => {
+app.post('/api/createAvatar', async (request, response) => {
     let avatar = request.body
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
