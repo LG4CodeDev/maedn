@@ -1,0 +1,283 @@
+1233@email.de
+[
+  meta: [
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 32,
+      columnType: 3,
+      flags: 16931,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 80,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 1024,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 256,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 19,
+      columnType: 7,
+      flags: 9377,
+      scale: 0,
+      type: 'TIMESTAMP'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 11,
+      columnType: 3,
+      flags: 16392,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 200,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    }
+  ]
+]
+TypeError: Cannot read properties of undefined (reading 'password')
+    at D:\gitProjects\maedn\backend\API\app.js:207:49
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+1234@email.de
+[
+  {
+    userid: 13,
+    username: 'alex',
+    password: '$2b$10$0JMMV8WlMIgL2nVB6xUQ8ete07YKwpdX5aQnJE6TMJsVce3LKQbpS',
+    email: '1234@email.de',
+    joindate: 2022-04-03T13:25:04.000Z,
+    firstname: null,
+    surname: null,
+    avatar: null,
+    'discord-ID': null
+  },
+  meta: [
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 32,
+      columnType: 3,
+      flags: 16931,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 80,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 1024,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 256,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 19,
+      columnType: 7,
+      flags: 9377,
+      scale: 0,
+      type: 'TIMESTAMP'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 11,
+      columnType: 3,
+      flags: 16392,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 200,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    }
+  ]
+]
+123465@email1.de
+[
+  {
+    userid: 28,
+    username: 'alex21',
+    password: '$2b$10$gps2mrQPaemt1tLkiurR4ewh0Fz0nSpVPCmQugMjkNdQtZ0Sv/0Qq',
+    email: '123465@email1.de',
+    joindate: 2022-04-23T05:45:14.000Z,
+    firstname: null,
+    surname: null,
+    avatar: null,
+    'discord-ID': null
+  },
+  meta: [
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 32,
+      columnType: 3,
+      flags: 16931,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 80,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 1024,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 256,
+      columnType: 253,
+      flags: 1,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 19,
+      columnType: 7,
+      flags: 9377,
+      scale: 0,
+      type: 'TIMESTAMP'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 96,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 11,
+      columnType: 3,
+      flags: 16392,
+      scale: 0,
+      type: 'INT'
+    },
+    ColumnDef {
+      _stringParser: [StringParser],
+      collation: [Collation],
+      columnLength: 200,
+      columnType: 253,
+      flags: 0,
+      scale: 0,
+      type: 'VAR_STRING'
+    }
+  ]
+]
