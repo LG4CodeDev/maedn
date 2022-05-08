@@ -196,7 +196,7 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     if (result !== undefined) {
         let answer = result[0]
         //compare hashed password with unhashed password
-        bcrypt.compare(user.password, answer.password).then(
+        bcrypt.compare(user.password, answer['password']).then(
             () => {
                 response.status(200).send({userid: answer.userid})
             },
