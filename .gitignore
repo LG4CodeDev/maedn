@@ -3,3 +3,5 @@ backend/API/node_modules/.bin/color-support
 backend/Server/config/app.env
 backend/API/log.txt
 backend/API/log.txt
+backend/API/log.txt
+*.txt

@@ -86,29 +86,6 @@ console.log = function () {
 User stuff
  */
 
-//returns a List of All current Users
-app.get('/api/allUsers', validateAccess, async (request, response) => {
-    try {
-        const result = await pool.query("select * from users");
-        response.send(result);
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-})
-
-//returns a Single user
-app.get('/api/user/:id', validateAccess, async (request, response) => {
-    let id = request.params.id;
-    try {
-        const result = await pool.query("select * from users natural Join avatar ON avatar = avatarID where userid = ?", [id]);
-        response.send(result);
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-})
-
 /*
     Creates user
     body:   {
@@ -133,6 +110,7 @@ app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) =>
     }
 });
 
+
 //creates Avatar of blob and returns ID
 app.post('/api/createAvatar', async (request, response) => {
     let avatar = request.body
@@ -155,36 +133,6 @@ app.post('/api/createAvatar', async (request, response) => {
     }
 });
 
-//delete User with id
-app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
-    let id = request.params.id;
-    try {
-        await pool.query("delete from users where userid = ?", [id]);
-        response.sendStatus(200)
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-});
-
-/*
-    update user
-    body:   {
-                username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
-            }
- */
-app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
-    let user = request.body;
-    let hashedPassword = await bcrypt.hash(user.password, saltRounds)
-    try {
-        await pool.query("update users set username = ?, password = ?, email = ?, firstname = ? , surname = ?, avatar = ? where userid = ?",
-            [user.username, hashedPassword, user.email, user.firstname, user.surname, user.avatarID, user.id]);
-        return response.status(200).json({username: user.username})
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-});
 
 /*
     validates access
@@ -222,6 +170,54 @@ app.post('/api/loginVerification', async (request, response) => {
     }
 });
 
+
+
+//returns a Single user
+app.get('/api/user/:id', validateAccess, async (request, response) => {
+    let id = request.params.id;
+    try {
+        const result = await pool.query("select userid, username, image from users natural Join avatar ON avatar = avatarID where userid = ?", [id]);
+        response.send(result);
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+})
+
+//delete User with id
+app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
+    let id = request.params.id;
+    if (id !== response.locals.user['userid']) return response.sendStatus(403)
+    try {
+        await pool.query("delete from users where userid = ?", [id]);
+        response.sendStatus(200)
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+});
+
+/*
+    update user
+    body:   {
+                username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
+            }
+ */
+app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+    let user = request.body;
+    if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
+    let hashedPassword = await bcrypt.hash(user.password, saltRounds)
+    try {
+        await pool.query("update users set username = ?, password = ?, email = ?, firstname = ? , surname = ?, avatar = ? where userid = ?",
+            [user.username, hashedPassword, user.email, user.firstname, user.surname, user.avatarID, user.id]);
+        return response.status(200).json({username: user.username})
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+});
+
+
 //returns Stats of specific player
 app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
@@ -253,6 +249,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game === undefined) return response.status(400).send({msg: 'Game does not exists'});
 
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
+
+    if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
 
     try {
         const diceResult = roleDice();
@@ -289,10 +287,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
 //creates a Game
 app.post('/api/createMainGame', validateAccess, async (request, response) => {
-    let data = request.body
-
     try {
-        let result = await CreateGame(data.player1)
+        let result = await CreateGame(response.locals.user['userid'])
 
         if (result === 400) {
             response.sendStatus(400)
@@ -306,18 +302,17 @@ app.post('/api/createMainGame', validateAccess, async (request, response) => {
 })
 
 app.put('/api/joinGame', validateAccess, async (request, response) => {
-    let data = request.body
     let result;
     try {
         result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
         if (result[0] === undefined) {
-            result = await CreateGame(data.player)
+            result = await CreateGame(response.locals.user['userid'])
 
             if (result === 400) {
                 response.sendStatus(400)
             } else response.status(200).send({gameID: result, players: 1})
         } else {
-            await joinGame(response, result[0], data.player)
+            await joinGame(response, result[0], response.locals.user['userid'])
         }
     } catch (err) {
         response.sendStatus(500);
@@ -328,14 +323,13 @@ app.put('/api/joinGame', validateAccess, async (request, response) => {
 
 app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
-    let data = request.body
     let result;
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [id])
         if (result[0] === undefined) {
             response.status(400).send({msg: "Game does not exist"})
         } else {
-            await joinGame(response, result[0], data.player)
+            await joinGame(response, result[0], response.locals.user['userid'])
         }
 
     } catch (err) {
@@ -360,10 +354,14 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
     let result;
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [data.id]);
-        if (result[0] === undefined) {
+        let game = result[0]
+        if (game === undefined) {
             response.status(400).send({msg: "Game does not exist"})
         }
-        if (result[0]['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
+
+        if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
+
+        if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
         else await makeMove(data, result[0], response)
     } catch (err) {
