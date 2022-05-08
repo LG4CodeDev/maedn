@@ -38,7 +38,7 @@ const pool =
         database: process.env.DB_Name
     })
 
-app.use(express.json());
+app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
