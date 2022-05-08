@@ -1,6 +1,14 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  AbstractFormGroupDirective,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 import {Router} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
 
@@ -63,7 +71,7 @@ import {DOCUMENT} from "@angular/common";
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-control nzErrorTip="Please input your Password!">
+          <nz-form-control nzErrorTip="Passwords must have at least 4 cahracters.">
             <nz-input-group nzPrefixIcon="lock">
               <input type="password" nz-input formControlName="password" placeholder="Password"/>
             </nz-input-group>
@@ -88,7 +96,6 @@ export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
-
   roles: String [] = ["Normal", "Admin"];
 
   // isLoggedIn = false;
@@ -105,17 +112,17 @@ export class LoginPageComponent implements OnInit {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
-    this.registerForm = this.fb.group({
+
+        this.registerForm = this.fb.group({
       avatar: [File],
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required]],
       firstname: ['', [Validators.required]],
       surname: ['', [Validators.required]],
       password: ['', [Validators.required]],
-      retypePassword: ['', [Validators.required]],
+      retypePassword: [''],
     });
   }
-
   onLogin(): void {
     if (this.loginForm.valid) {
       this.http.post<any>('http://167.235.24.74:4000/api/loginVerification', {
@@ -150,7 +157,6 @@ export class LoginPageComponent implements OnInit {
         },
       ).subscribe(response => {
         avatarID = response.body['avatarID'];
-        console.log(this.registerForm.getRawValue()['avatar'])
       });
       this.http.post<any>('http://167.235.24.74:4000/api/createUser', {
           "email": this.registerForm.getRawValue()['email'],
@@ -163,7 +169,11 @@ export class LoginPageComponent implements OnInit {
           observe: "response",
         },
       ).subscribe(response => {
-
+        console.log(response)
+        if (response.status == 201) {
+          // this.isLoggedIn = true;
+          this.router.navigate(['/lobby']);
+        }
       });
     } else {
       Object.values(this.registerForm.controls).forEach(control => {
@@ -199,4 +209,5 @@ export class LoginPageComponent implements OnInit {
     }
     reader.readAsDataURL(file)
   }
+
 }
