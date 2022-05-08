@@ -193,6 +193,7 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     let user = request.body;
     let result;
     try {
+        console.log(user.email)
         result = await pool.query("select * from users where email = ?", [user.email]);
     } catch (err) {
         response.send(500)
