@@ -1,37 +1,47 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login-page',
   //templateUrl: './login-page.component.html',
   template: `
     <div id="outer">
-      <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="onSubmit()">
+      <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="onLogin()">
         <nz-form-item>
           <nz-form-control nzErrorTip="Please input your username!">
             <nz-input-group nzPrefixIcon="user">
-              <input type="text" nz-input formControlName="userName" placeholder="Username" />
+              <input type="text" nz-input formControlName="userName" placeholder="Email"/>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
           <nz-form-control nzErrorTip="Please input your Password!">
             <nz-input-group nzPrefixIcon="lock">
-              <input type="password" nz-input formControlName="password" placeholder="Password" />
+              <input type="password" nz-input formControlName="password" placeholder="Password"/>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
-        <div nz-row class="login-form-margin">
-          <div nz-col [nzSpan]="12">
-            <label nz-checkbox formControlName="remember">
-              <span>Remember me</span>
-            </label>
-          </div>
-          <div nz-col [nzSpan]="12">
-            <a class="login-form-forgot">Forgot password</a>
-          </div>
-        </div>
+        <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
+        Or
+        <a>register now!</a>
+      </form>
+      <form nz-form [formGroup]="validateForm" class="register-form" (ngSubmit)="onRegister()">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please input your username!">
+            <nz-input-group nzPrefixIcon="user">
+              <input type="text" nz-input formControlName="userName" placeholder="Email"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please input your Password!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input type="password" nz-input formControlName="password" placeholder="Password"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
         <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
         Or
         <a>register now!</a>
@@ -43,41 +53,40 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class LoginPageComponent implements OnInit {
   validateForm!: FormGroup;
 
-  form: any = {
-    username: null,
-    password: null
-  };
+
 
   roles: String [] = ["Normal", "Admin"];
 
-  isLoggedIn = false;
-  isLoginFailed = false;
+  // isLoggedIn = false;
+  // isLoginFailed = false;
   errorMessage = "Login Failed";
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
   }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
-      userName: [null, [Validators.required]],
-      password: [null, [Validators.required]],
-      remember: [true]
+      userName: ['', [Validators.required]],
+      password: ['', [Validators.required]]
     });
   }
 
-  onSubmit(): void {
+  onLogin(): void {
     if (this.validateForm.valid) {
-      console.log("Username: ", this.form.username, "| Password: ", this.form.password)
       this.http.post<any>('http://167.235.24.74:4000/api/loginVerification', {
-          "username": this.form.username,
-          "password": this.form.password
+          "email": this.validateForm.getRawValue()['userName'],
+          "password": this.validateForm.getRawValue()['password']
         }, {
           headers: new HttpHeaders({
             'authorization': 'Bearer testingStuff'
-          })
+          }),
+          observe: "response",
+        },
+      ).subscribe(response => {
+        if(response.status == 200){
+          // this.isLoggedIn = true;
+          this.router.navigate(['/game']);
         }
-      ).subscribe(data => {
-        console.log(data);
       })
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
@@ -87,6 +96,10 @@ export class LoginPageComponent implements OnInit {
         }
       });
     }
+  }
+
+  onRegister(): void {
+
   }
 }
 
