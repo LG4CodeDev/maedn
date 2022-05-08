@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
+import {DOCUMENT} from "@angular/common";
 
 @Component({
   selector: 'app-login-page',
-  //templateUrl: './login-page.component.html',
   template: `
     <div id="outer">
-      <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="onLogin()">
+      <form nz-form [formGroup]="loginForm" id="login-form" class="login-form" (ngSubmit)="onLogin()">
         <nz-form-item>
-          <nz-form-control nzErrorTip="Please input your username!">
+          <nz-form-control nzErrorTip="Please input your email!">
             <nz-input-group nzPrefixIcon="user">
-              <input type="text" nz-input formControlName="userName" placeholder="Email"/>
+              <input type="email" nz-input formControlName="email" placeholder="Email"/>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -25,13 +25,40 @@ import {Router} from "@angular/router";
         </nz-form-item>
         <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
         Or
-        <a>register now!</a>
+        <a (click)="showRegister()">register now!</a>
       </form>
-      <form nz-form [formGroup]="validateForm" class="register-form" (ngSubmit)="onRegister()">
+      <form nz-form [formGroup]="registerForm" id="register-form" class="register-form" (ngSubmit)="onRegister()">
         <nz-form-item>
-          <nz-form-control nzErrorTip="Please input your username!">
+          <div *ngIf="imageURL && imageURL !== ''">
+            <img class="imagePreview" [src]="imageURL" [alt]="registerForm.value.name">
+          </div>
+          <input type="file" accept="image/*" (change)="showPreview($event)" />
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please state your email!">
             <nz-input-group nzPrefixIcon="user">
-              <input type="text" nz-input formControlName="userName" placeholder="Email"/>
+              <input type="text" nz-input formControlName="email" placeholder="Email"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please choose your username!">
+            <nz-input-group nzPrefixIcon="user">
+              <input type="text" nz-input formControlName="userName" placeholder="Username"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Firstname">
+            <nz-input-group>
+              <input type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Surname">
+            <nz-input-group>
+              <input type="text" nz-input formControlName="surname" placeholder="Surname"/>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -42,17 +69,24 @@ import {Router} from "@angular/router";
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
-        <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please repeat your Password!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <button nz-button class="register-form-button register-form-margin" [nzType]="'primary'">Register now!</button>
         Or
-        <a>register now!</a>
+        <a (click)="showLogin()">login</a>
       </form>
     </div>
   `,
   styleUrls: ['./login-page.component.css']
 })
 export class LoginPageComponent implements OnInit {
-  validateForm!: FormGroup;
-
+  loginForm!: FormGroup;
+  registerForm!: FormGroup;
 
 
   roles: String [] = ["Normal", "Admin"];
@@ -60,36 +94,44 @@ export class LoginPageComponent implements OnInit {
   // isLoggedIn = false;
   // isLoginFailed = false;
   errorMessage = "Login Failed";
+  imageURL = "assets/avatar.jpeg";
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,
+              @Inject(DOCUMENT) private document: Document) {
   }
 
   ngOnInit(): void {
-    this.validateForm = this.fb.group({
-      userName: ['', [Validators.required]],
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required]],
       password: ['', [Validators.required]]
+    });
+    this.registerForm = this.fb.group({
+      avatar: [File],
+      email: ['', [Validators.required]],
+      userName: ['', [Validators.required]],
+      firstname: ['', [Validators.required]],
+      surname: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      retypePassword: ['', [Validators.required]],
     });
   }
 
   onLogin(): void {
-    if (this.validateForm.valid) {
+    if (this.loginForm.valid) {
       this.http.post<any>('http://167.235.24.74:4000/api/loginVerification', {
-          "email": this.validateForm.getRawValue()['userName'],
-          "password": this.validateForm.getRawValue()['password']
+          "email": this.loginForm.getRawValue()['email'],
+          "password": this.loginForm.getRawValue()['password']
         }, {
-          headers: new HttpHeaders({
-            'authorization': 'Bearer testingStuff'
-          }),
           observe: "response",
         },
       ).subscribe(response => {
-        if(response.status == 200){
+        if (response.status == 200) {
           // this.isLoggedIn = true;
-          this.router.navigate(['/game']);
+          this.router.navigate(['/lobby']);
         }
       })
     } else {
-      Object.values(this.validateForm.controls).forEach(control => {
+      Object.values(this.loginForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
           control.updateValueAndValidity({onlySelf: true});
@@ -99,44 +141,62 @@ export class LoginPageComponent implements OnInit {
   }
 
   onRegister(): void {
+    var avatarID = null;
+    if (this.registerForm.valid) {
+      this.http.post<any>('http://167.235.24.74:4000/api/createAvatar', {
+          "image": this.registerForm.getRawValue()['avatar'],
+        }, {
+          observe: "response",
+        },
+      ).subscribe(response => {
+        avatarID = response.body['avatarID'];
+        console.log(this.registerForm.getRawValue()['avatar'])
+      });
+      this.http.post<any>('http://167.235.24.74:4000/api/createUser', {
+          "email": this.registerForm.getRawValue()['email'],
+          "password": this.registerForm.getRawValue()['password'],
+          "username": this.registerForm.getRawValue()['userName'],
+          "firstname": this.registerForm.getRawValue()['firstname'],
+          "surname": this.registerForm.getRawValue()['surname'],
+          "avatarID": avatarID,
+        }, {
+          observe: "response",
+        },
+      ).subscribe(response => {
 
-  }
-}
-
-/*
-*
-* import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-@Component({
-  selector: 'app-login-ant-example',
-  templateUrl: './login-ant-example.component.html',
-  styleUrls: ['./login-ant-example.component.css']
-})
-export class LoginAntExampleComponent implements OnInit {
-  validateForm!: FormGroup;
-
-  submitForm(): void {
-    if (this.validateForm.valid) {
-      console.log('submit', this.validateForm.value);
+      });
     } else {
-      Object.values(this.validateForm.controls).forEach(control => {
+      Object.values(this.registerForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
+          control.updateValueAndValidity({onlySelf: true});
         }
       });
     }
   }
 
-  constructor(private fb: FormBuilder) {}
+  showLogin() {
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("register-form").style.display = "none";
+  }
 
-  ngOnInit(): void {
-    this.validateForm = this.fb.group({
-      userName: [null, [Validators.required]],
-      password: [null, [Validators.required]],
-      remember: [true]
-    });
+  showRegister() {
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("register-form").style.display = "block";
+  }
+
+
+  showPreview($event: Event) {
+    const file = ($event.target as HTMLInputElement).files[0];
+
+    this.registerForm.get('avatar').updateValueAndValidity()
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageURL = reader.result as string;
+      this.registerForm.patchValue({
+        avatar: reader.result
+      });
+    }
+    reader.readAsDataURL(file)
   }
 }
-*/
