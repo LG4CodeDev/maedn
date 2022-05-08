@@ -38,7 +38,7 @@ const pool =
         database: process.env.DB_Name
     })
 
-app.use(express.json());
+app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
@@ -195,15 +195,22 @@ app.post('/api/loginVerification', validateAccess, async (request, response) => 
     }
     if (result !== undefined) {
         let answer = result[0]
+        console.log(answer)
         //compare hashed password with unhashed password
-        bcrypt.compare(user.password, answer['password']).then(
-            () => {
-                response.status(200).send({userid: answer.userid})
-            },
-            () => {
-                response.sendStatus(401)
-            }
-        );
+        try{
+            bcrypt.compare(user.password, answer['password']).then(
+                () => {
+                    response.status(200).send({userid: answer.userid})
+                },
+                () => {
+                    response.sendStatus(401)
+                }
+            );
+        }catch (err) {
+            response.send(500)
+            console.log(err);
+        }
+
     } else {
         response.sendStatus(403)
     }
