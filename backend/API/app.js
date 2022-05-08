@@ -3,7 +3,7 @@
  */
 
 const express = require('express');
-
+const cors = require('cors')
 const app = express();
 
 //const path = require('path');
@@ -52,11 +52,12 @@ app.options('/*', function (request, response, next) {
     next();
 });
 
-app.post('/*', async (request, response, next) => {
+app.post('/*', function (request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
+
 
 
 app.get(`/api`, function (request, response) {
