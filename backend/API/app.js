@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const axios = require('axios').default;
 
 const dotenv = require('dotenv');
 /*
@@ -261,6 +262,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
     if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
+    if (game['allowedMoves'] !== "null, null, null, null") return response.status(403).send("make Move first")
 
     try {
         const diceResult = roleDice();
@@ -416,15 +418,19 @@ Game Logic needed Functions
 async function joinGame(response, joiningGame, player) {
     if (joiningGame['Player1'] == null) {
         await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 1})
     } else if (joiningGame['Player2'] == null) {
         await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 2})
     } else if (joiningGame['Player3'] == null) {
         await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 3})
     } else if (joiningGame['Player4'] == null) {
         await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 4})
     }
 }
@@ -432,7 +438,19 @@ async function joinGame(response, joiningGame, player) {
 async function CreateGame(player1) {
     const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
-    return result.warningStatus === 0 ? parseInt(result.insertId.toString()) : 400;
+    if (result.warningStatus === 0 ){
+        let gameID = parseInt(result.insertId.toString())
+        axios({
+            method :'post',
+            url : "http://localhost:4200/createGame",
+            data : {
+                "gameID" : gameID,
+                "clientID" : player1
+            }
+        })
+        return gameID
+    }
+    else return 400
 }
 
 function roleDice() {
@@ -599,7 +617,7 @@ async function makeMove(data, game, response) {
 
         let doneMoves = game['movesOfPerson']
         let nextPlayer;
-        if (game['roleAgain'] === 1) nextPlayer = game['turn']
+        if (game['roleAgain']) nextPlayer = game['turn']
         else {
             nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             doneMoves = 0
@@ -618,6 +636,18 @@ async function makeMove(data, game, response) {
                 "positions": positions,
                 "isFinished": isFinished,
                 "nextPlayer": nextPlayer
+            })
+            axios({
+                method :'post',
+                url : "http://localhost:4200/sendGame",
+                data : {
+                    "gameID" : game['gameID'],
+                    "msg" : {
+                        "positions": positions,
+                        "isFinished": isFinished,
+                        "nextPlayer": nextPlayer
+                    }
+                }
             })
         } catch (e) {
             response.sendStatus(500)

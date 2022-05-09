@@ -83,9 +83,10 @@ async function sendGame(request, response) {
 async function createGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
+    const client = clients.filter(client => client.id === clientID.toString())[0]
     let newGame = {
         id: gameID,
-        clients : [clients.filter(client => client.id === clientID)[0]]
+        clients : [client]
     }
     games.push(newGame)
     return  response.json(gameID)
@@ -95,7 +96,7 @@ async function joinGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let game = games.filter(games => games.id === gameID)[0]
-    let client = clients.filter(clients => clients.id === clientID)[0]
+    let client = clients.filter(clients => clients.id === clientID.toString())[0]
     game.clients.push(client)
     return  response.json(gameID)
 }
