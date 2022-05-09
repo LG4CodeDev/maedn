@@ -177,7 +177,7 @@ app.post('/api/loginVerification', async (request, response) => {
 app.get('/api/user/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
-        const result = await pool.query("select userid, username, image from users natural Join avatar ON avatar = avatarID where userid = ?", [id]);
+        const result = await pool.query("select userid, username, image from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
         response.send(result);
     } catch (err) {
         response.sendStatus(500);
