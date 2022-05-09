@@ -232,6 +232,7 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
 })
 
 
+//returns leaderboard
 app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
     try {
         let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
@@ -241,6 +242,8 @@ app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>
         console.log(err)
     }
 })
+
+
 /*
 Game Logic
  */
