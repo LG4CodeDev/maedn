@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const axios = require('axios').default;
 
 const dotenv = require('dotenv');
 /*
@@ -38,7 +39,7 @@ const pool =
         database: process.env.DB_Name
     })
 
-var corsOptions = {
+let corsOptions = {
     origin: 'http://localhost:4200',
     optionsSuccessStatus: 200 // For legacy browser support
 }
@@ -66,7 +67,7 @@ app.post('/*', function (request, response, next) {
 
 
 app.get(`/api`, function (request, response) {
-    response.send('This is version 3.0 of maedns REST API');
+    response.send('This is version 3.2 of maedns REST API');
 });
 
 /*
@@ -176,7 +177,7 @@ app.post('/api/loginVerification', async (request, response) => {
 app.get('/api/user/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
-        const result = await pool.query("select userid, username, image from users natural Join avatar ON avatar = avatarID where userid = ?", [id]);
+        const result = await pool.query("select userid, username, image from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
         response.send(result);
     } catch (err) {
         response.sendStatus(500);
@@ -230,6 +231,19 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
     }
 })
 
+
+//returns leaderboard
+app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
+    try {
+        let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
+        response.status(200).send({"1.": result[0],"2.": result[1],"3.": result[2],"4.": result[3],"5.": result[4] })
+    }catch (err) {
+        response.sendStatus(500)
+        console.log(err)
+    }
+})
+
+
 /*
 Game Logic
  */
@@ -251,6 +265,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
     if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
+    if (game['allowedMoves'] !== "null, null, null, null") return response.status(403).send("make Move first")
 
     try {
         const diceResult = roleDice();
@@ -391,6 +406,8 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
+        const url = "http://localhost:4200/deleteGame/" + id
+        axios({method :'delete', url : url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
@@ -406,15 +423,19 @@ Game Logic needed Functions
 async function joinGame(response, joiningGame, player) {
     if (joiningGame['Player1'] == null) {
         await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 1})
     } else if (joiningGame['Player2'] == null) {
         await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 2})
     } else if (joiningGame['Player3'] == null) {
         await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 3})
     } else if (joiningGame['Player4'] == null) {
         await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
+        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 4})
     }
 }
@@ -422,7 +443,19 @@ async function joinGame(response, joiningGame, player) {
 async function CreateGame(player1) {
     const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
-    return result.warningStatus === 0 ? parseInt(result.insertId.toString()) : 400;
+    if (result.warningStatus === 0 ){
+        let gameID = parseInt(result.insertId.toString())
+        axios({
+            method :'post',
+            url : "http://localhost:4200/createGame",
+            data : {
+                "gameID" : gameID,
+                "clientID" : player1
+            }
+        })
+        return gameID
+    }
+    else return 400
 }
 
 function roleDice() {
@@ -589,7 +622,7 @@ async function makeMove(data, game, response) {
 
         let doneMoves = game['movesOfPerson']
         let nextPlayer;
-        if (game['roleAgain'] === 1) nextPlayer = game['turn']
+        if (game['roleAgain']) nextPlayer = game['turn']
         else {
             nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             doneMoves = 0
@@ -608,6 +641,18 @@ async function makeMove(data, game, response) {
                 "positions": positions,
                 "isFinished": isFinished,
                 "nextPlayer": nextPlayer
+            })
+            axios({
+                method :'post',
+                url : "http://localhost:4200/sendGame",
+                data : {
+                    "gameID" : game['gameID'],
+                    "msg" : {
+                        "positions": positions,
+                        "isFinished": isFinished,
+                        "nextPlayer": nextPlayer
+                    }
+                }
             })
         } catch (e) {
             response.sendStatus(500)
