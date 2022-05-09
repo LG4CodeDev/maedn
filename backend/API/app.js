@@ -38,7 +38,7 @@ const pool =
         database: process.env.DB_Name
     })
 
-var corsOptions = {
+let corsOptions = {
     origin: 'http://localhost:4200',
     optionsSuccessStatus: 200 // For legacy browser support
 }
@@ -66,7 +66,7 @@ app.post('/*', function (request, response, next) {
 
 
 app.get(`/api`, function (request, response) {
-    response.send('This is version 3.0 of maedns REST API');
+    response.send('This is version 3.2 of maedns REST API');
 });
 
 /*
@@ -230,6 +230,16 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
     }
 })
 
+
+app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
+    try {
+        let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
+        response.status(200).send({"1.": result[0],"2.": result[1],"3.": result[2],"4.": result[3],"5.": result[4] })
+    }catch (err) {
+        response.sendStatus(500)
+        console.log(err)
+    }
+})
 /*
 Game Logic
  */
