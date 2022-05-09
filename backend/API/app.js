@@ -403,6 +403,8 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
+        const url = "http://localhost:4200/deleteGame/" + id
+        axios({method :'delete', url : url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
