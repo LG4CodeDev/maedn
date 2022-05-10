@@ -358,7 +358,6 @@ import { DOCUMENT} from "@angular/common";
           </div>
         </div>
       </div>
-        </div>
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
         <button id="accordion">Regeln</button>
         <div nz-row id="regeln">
@@ -412,7 +411,6 @@ import { DOCUMENT} from "@angular/common";
           <button class="rollBtn" (click)="tossDice()">Roll the Dice</button>
         </div>
       </div>
-    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
@@ -673,5 +671,5 @@ export class GameBoardComponent implements OnInit {
     boardWritting.classList.add('boardWrittingBottom');
     this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
   }
-  
+
 }
