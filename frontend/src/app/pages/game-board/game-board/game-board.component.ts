@@ -9,81 +9,216 @@ import { DOCUMENT} from "@angular/common";
       <div nz-col class="side-left" nzFlex="auto">
 
       </div>
-      <div nz-col class="game_col" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
-        <div class="game">
-        <div nz-row class="row">
-          <div nz-col class="board" id="ul">
-            <div nz-row class="row_4_4" id="ul_r_1">
-              <div nz-col class="col_4_4" id="ul_r_1_c_1"></div>
-              <div nz-col class="col_4_4" id="ul_r_1_c_2"></div>
-              <div nz-col class="col_4_4" id="ul_r_1_c_3"></div>
-              <div nz-col class="col_4_4" id="ul_r_1_c_4"></div>
+      <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+          <div nz-row class="row">
+            <div nz-col class="board" id="ul">
+              <div nz-row class="row_4_4" id="ul_r_1">
+                <div nz-col class="col_4_4" id="AS_0"></div>
+                <div nz-col class="col_4_4" id="AS_1"></div>
+                <div nz-col class="col_4_4" id="ul_r_1_c_3"></div>
+                <div nz-col class="col_4_4" id="ul_r_1_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ul_r_2">
+                <div nz-col class="col_4_4" id="AS_2"></div>
+                <div nz-col class="col_4_4" id="AS_3"></div>
+                <div nz-col class="col_4_4" id="ul_r_2_c_3"></div>
+                <div nz-col class="col_4_4" id="ul_r_2_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ul_r_3">
+                <div nz-col class="col_4_4" id="ul_r_3_c_1"></div>
+                <div nz-col class="col_4_4" id="ul_r_3_c_2"></div>
+                <div nz-col class="col_4_4" id="ul_r_3_c_3"></div>
+                <div nz-col class="col_4_4" id="ul_r_3_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ul_r_4">
+                <div nz-col class="col_4_4" id="ul_r_4_c_1"></div>
+                <div nz-col class="col_4_4" id="ul_r_4_c_2"></div>
+                <div nz-col class="col_4_4" id="ul_r_4_c_3"></div>
+                <div nz-col class="col_4_4" id="ul_r_4_c_4"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_4" id="ul_r_2">
-              <div nz-col class="col_4_4" id="ul_r_2_c_1"></div>
-              <div nz-col class="col_4_4" id="ul_r_2_c_2"></div>
-              <div nz-col class="col_4_4" id="ul_r_2_c_3"></div>
-              <div nz-col class="col_4_4" id="ul_r_2_c_4"></div>
+            <div nz-col class="board" id="um">
+              <div nz-row class="row_4_3" id="um_r_1">
+                <div nz-col class="col_4_3" id="AR_8"></div>
+                <div nz-col class="col_4_3" id="AR_9"></div>
+                <div nz-col class="col_4_3" id="BR_0"></div>
+              </div>
+              <div nz-row class="row_4_3" id="um_r_2">
+                <div nz-col class="col_4_3" id="AR_7"></div>
+                <div nz-col class="col_4_3" id="BF_0"></div>
+                <div nz-col class="col_4_3" id="BR_1"></div>
+              </div>
+              <div nz-row class="row_4_3" id="um_r_3">
+                <div nz-col class="col_4_3" id="AR_6"></div>
+                <div nz-col class="col_4_3" id="BF_1"></div>
+                <div nz-col class="col_4_3" id="BR_2"></div>
+              </div>
+              <div nz-row class="row_4_3" id="um_r_4">
+                <div nz-col class="col_4_3" id="AR_5"></div>
+                <div nz-col class="col_4_3" id="BF_2"></div>
+                <div nz-col class="col_4_3" id="BR_3"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_4" id="ul_r_3">
-              <div nz-col class="col_4_4" id="ul_r_3_c_1"></div>
-              <div nz-col class="col_4_4" id="ul_r_3_c_2"></div>
-              <div nz-col class="col_4_4" id="ul_r_3_c_3"></div>
-              <div nz-col class="col_4_4" id="ul_r_3_c_4"></div>
-            </div>
-            <div nz-row class="row_4_4" id="ul_r_4">
-              <div nz-col class="col_4_4" id="ul_r_4_c_1"></div>
-              <div nz-col class="col_4_4" id="ul_r_4_c_2"></div>
-              <div nz-col class="col_4_4" id="ul_r_4_c_3"></div>
-              <div nz-col class="col_4_4" id="ul_r_4_c_4"></div>
+            <div nz-col class="board" id="ur">
+              <div nz-row class="row_4_4" id="ur_r_1">
+                <div nz-col class="col_4_4" id="ur_r_1_c_1"></div>
+                <div nz-col class="col_4_4" id="ur_r_1_c_2"></div>
+                <div nz-col class="col_4_4" id="BS_0"></div>
+                <div nz-col class="col_4_4" id="BS_1"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ur_r_2">
+                <div nz-col class="col_4_4" id="ur_r_2_c_1"></div>
+                <div nz-col class="col_4_4" id="ur_r_2_c_2"></div>
+                <div nz-col class="col_4_4" id="BS_2"></div>
+                <div nz-col class="col_4_4" id="BS_3"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ur_r_3">
+                <div nz-col class="col_4_4" id="ur_r_3_c_1"></div>
+                <div nz-col class="col_4_4" id="ur_r_3_c_2"></div>
+                <div nz-col class="col_4_4" id="ur_r_3_c_3"></div>
+                <div nz-col class="col_4_4" id="ur_r_3_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="ur_r_4">
+                <div nz-col class="col_4_4" id="ur_r_4_c_1"></div>
+                <div nz-col class="col_4_4" id="ur_r_4_c_2"></div>
+                <div nz-col class="col_4_4" id="ur_r_4_c_3"></div>
+                <div nz-col class="col_4_4" id="ur_r_4_c_4"></div>
+              </div>
             </div>
           </div>
-          <div nz-col class="board" id="um">
-            <div nz-row class="row_4_3" id="um_r_1">
-              <div nz-col class="col_4_3" id="um_r_1_c_1"></div>
-              <div nz-col class="col_4_3" id="um_r_1_c_2"></div>
-              <div nz-col class="col_4_3" id="um_r_1_c_3"></div>
+          <div nz-row class="row">
+            <div nz-col class="board" id="ml">
+              <div nz-row class="row_3_4" id="ml_r_1">
+                <div nz-col class="col_3_4" id="AR_0"></div>
+                <div nz-col class="col_3_4" id="AR_1"></div>
+                <div nz-col class="col_3_4" id="AR_2"></div>
+                <div nz-col class="col_3_4" id="AR_3"></div>
+              </div>
+              <div nz-row class="row_3_4" id="ml_r_2">
+                <div nz-col class="col_3_4" id="DR_9"></div>
+                <div nz-col class="col_3_4" id="AF_0"></div>
+                <div nz-col class="col_3_4" id="AF_1"></div>
+                <div nz-col class="col_3_4" id="AF_2"></div>
+              </div>
+              <div nz-row class="row_3_4" id="ml_r_3">
+                <div nz-col class="col_3_4" id="DR_8"></div>
+                <div nz-col class="col_3_4" id="DR_7"></div>
+                <div nz-col class="col_3_4" id="DR_6"></div>
+                <div nz-col class="col_3_4" id="DR_5"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_3" id="um_r_2">
-              <div nz-col class="col_4_3" id="um_r_2_c_1"></div>
-              <div nz-col class="col_4_3" id="um_r_2_c_2"></div>
-              <div nz-col class="col_4_3" id="um_r_2_c_3"></div>
+            <div nz-col class="board" id="mm">
+              <div nz-row class="row_3_3" id="mm_r_1">
+                <div nz-col class="col_3_3" id="AR_4"></div>
+                <div nz-col class="col_3_3" id="BF_3"></div>
+                <div nz-col class="col_3_3" id="BR_4"></div>
+              </div>
+              <div nz-row class="row_3_3" id="mm_r_2">
+                <div nz-col class="col_3_3" id="AF_3"></div>
+                <div nz-col class="col_3_3" id="mm_r_2_c_2"></div>
+                <div nz-col class="col_3_3" id="CF_3"></div>
+              </div>
+              <div nz-row class="row_3_3" id="mm_r_3">
+                <div nz-col class="col_3_3" id="DR_4"></div>
+                <div nz-col class="col_3_3" id="DF_3"></div>
+                <div nz-col class="col_3_3" id="CR_4"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_3" id="um_r_3">
-              <div nz-col class="col_4_3" id="um_r_3_c_1"></div>
-              <div nz-col class="col_4_3" id="um_r_3_c_2"></div>
-              <div nz-col class="col_4_3" id="um_r_3_c_3"></div>
-            </div>
-            <div nz-row class="row_4_3" id="um_r_4">
-              <div nz-col class="col_4_3" id="um_r_4_c_1"></div>
-              <div nz-col class="col_4_3" id="um_r_4_c_2"></div>
-              <div nz-col class="col_4_3" id="um_r_4_c_3"></div>
+            <div nz-col class="board" id="mr">
+              <div nz-row class="row_3_4" id="mr_r_1">
+                <div nz-col class="col_3_4" id="BR_5"></div>
+                <div nz-col class="col_3_4" id="BR_6"></div>
+                <div nz-col class="col_3_4" id="BR_7"></div>
+                <div nz-col class="col_3_4" id="BR_8"></div>
+              </div>
+              <div nz-row class="row_3_4" id="mr_r_2">
+                <div nz-col class="col_3_4" id="CF_2"></div>
+                <div nz-col class="col_3_4" id="CF_1"></div>
+                <div nz-col class="col_3_4" id="CF_0"></div>
+                <div nz-col class="col_3_4" id="BR_9"></div>
+              </div>
+              <div nz-row class="row_3_4" id="mr_r_3">
+                <div nz-col class="col_3_4" id="CR_3"></div>
+                <div nz-col class="col_3_4" id="CR_2"></div>
+                <div nz-col class="col_3_4" id="CR_1"></div>
+                <div nz-col class="col_3_4" id="CR_0"></div>
+              </div>
             </div>
           </div>
-          <div nz-col class="board" id="ur">
-            <div nz-row class="row_4_4" id="ur_r_1">
-              <div nz-col class="col_4_4" id="ur_r_1_c_1"></div>
-              <div nz-col class="col_4_4" id="ur_r_1_c_2"></div>
-              <div nz-col class="col_4_4" id="ur_r_1_c_3"></div>
-              <div nz-col class="col_4_4" id="ur_r_1_c_4"></div>
+          <div nz-row class="row">
+            <div nz-col class="board" id="bl">
+              <div nz-row class="row_4_4" id="bl_r_1">
+                <div nz-col class="col_4_4" id="bl_r_1_c_1"></div>
+                <div nz-col class="col_4_4" id="bl_r_1_c_2"></div>
+                <div nz-col class="col_4_4" id="bl_r_1_c_3"></div>
+                <div nz-col class="col_4_4" id="bl_r_1_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="bl_r_2">
+                <div nz-col class="col_4_4" id="bl_r_2_c_1"></div>
+                <div nz-col class="col_4_4" id="bl_r_2_c_2"></div>
+                <div nz-col class="col_4_4" id="bl_r_2_c_3"></div>
+                <div nz-col class="col_4_4" id="bl_r_2_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="bl_r_3">
+                <div nz-col class="col_4_4" id="DS_0"></div>
+                <div nz-col class="col_4_4" id="DS_1"></div>
+                <div nz-col class="col_4_4" id="bl_r_3_c_3"></div>
+                <div nz-col class="col_4_4" id="bl_r_3_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="bl_r_4">
+                <div nz-col class="col_4_4" id="DS_2"></div>
+                <div nz-col class="col_4_4" id="DS_3"></div>
+                <div nz-col class="col_4_4" id="bl_r_4_c_3"></div>
+                <div nz-col class="col_4_4" id="bl_r_4_c_4"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_4" id="ur_r_2">
-              <div nz-col class="col_4_4" id="ur_r_2_c_1"></div>
-              <div nz-col class="col_4_4" id="ur_r_2_c_2"></div>
-              <div nz-col class="col_4_4" id="ur_r_2_c_3"></div>
-              <div nz-col class="col_4_4" id="ur_r_2_c_4"></div>
+            <div nz-col class="board" id="bm">
+              <div nz-row class="row_4_3" id="bm_r_1">
+                <div nz-col class="col_4_3" id="DR_3"></div>
+                <div nz-col class="col_4_3" id="DF_2"></div>
+                <div nz-col class="col_4_3" id="CR_5"></div>
+              </div>
+              <div nz-row class="row_4_3" id="bm_r_2">
+                <div nz-col class="col_4_3" id="DR_2"></div>
+                <div nz-col class="col_4_3" id="DF_1"></div>
+                <div nz-col class="col_4_3" id="CR_6"></div>
+              </div>
+              <div nz-row class="row_4_3" id="bm_r_3">
+                <div nz-col class="col_4_3" id="DR_1"></div>
+                <div nz-col class="col_4_3" id="DF_0"></div>
+                <div nz-col class="col_4_3" id="CR_7"></div>
+              </div>
+              <div nz-row class="row_4_3" id="bm_r_4">
+                <div nz-col class="col_4_3" id="DR_0"></div>
+                <div nz-col class="col_4_3" id="CR_9"></div>
+                <div nz-col class="col_4_3" id="CR_8"></div>
+              </div>
             </div>
-            <div nz-row class="row_4_4" id="ur_r_3">
-              <div nz-col class="col_4_4" id="ur_r_3_c_1"></div>
-              <div nz-col class="col_4_4" id="ur_r_3_c_2"></div>
-              <div nz-col class="col_4_4" id="ur_r_3_c_3"></div>
-              <div nz-col class="col_4_4" id="ur_r_3_c_4"></div>
-            </div>
-            <div nz-row class="row_4_4" id="ur_r_4">
-              <div nz-col class="col_4_4" id="ur_r_4_c_1"></div>
-              <div nz-col class="col_4_4" id="ur_r_4_c_2"></div>
-              <div nz-col class="col_4_4" id="ur_r_4_c_3"></div>
-              <div nz-col class="col_4_4" id="ur_r_4_c_4"></div>
+            <div nz-col class="board" id="br">
+              <div nz-row class="row_4_4" id="br_r_1">
+                <div nz-col class="col_4_4" id="br_r_1_c_1"></div>
+                <div nz-col class="col_4_4" id="br_r_1_c_2"></div>
+                <div nz-col class="col_4_4" id="br_r_1_c_3"></div>
+                <div nz-col class="col_4_4" id="br_r_1_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="br_r_2">
+                <div nz-col class="col_4_4" id="br_r_2_c_1"></div>
+                <div nz-col class="col_4_4" id="br_r_2_c_2"></div>
+                <div nz-col class="col_4_4" id="br_r_2_c_3"></div>
+                <div nz-col class="col_4_4" id="br_r_2_c_4"></div>
+              </div>
+              <div nz-row class="row_4_4" id="br_r_3">
+                <div nz-col class="col_4_4" id="br_r_3_c_1"></div>
+                <div nz-col class="col_4_4" id="br_r_3_c_2"></div>
+                <div nz-col class="col_4_4" id="CS_0"></div>
+                <div nz-col class="col_4_4" id="CS_1"></div>
+              </div>
+              <div nz-row class="row_4_4" id="br_r_4">
+                <div nz-col class="col_4_4" id="br_r_4_c_1"></div>
+                <div nz-col class="col_4_4" id="br_r_4_c_2"></div>
+                <div nz-col class="col_4_4" id="CS_2"></div>
+                <div nz-col class="col_4_4" id="CS_3"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -282,15 +417,73 @@ import { DOCUMENT} from "@angular/common";
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent implements OnInit {
+  jsonReturned: any =
+    {
+      move: {
+        dice: 3,
+        fields: [
+          "AR_1",
+          "DF_0",
+          "BF_2",
+          "CF_3"
+        ]
+      },
+      roleAgain: false,
+      currentPlayer: "Player3"
+    };
+
   constructor(
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document) { }
+    @Inject(DOCUMENT) private document: Document,
+  ) { }
+
+  activeToken: string;
+
+
 
   ngOnInit(): void {
-
     this.fillGridWithField();
+    this.mainGame();
+
+    this.highlightMoves(this.jsonReturned);
+
   }
+
+  highlightMoves(json: any){
+    let id;
+    if (json['move']['fields'][0] == null && json['move']['fields'][1] == null &&
+      json['move']['fields'][2] == null && json['move']['fields'][3] == null) {
+      console.log('no moves available');
+    }
+    else {
+      if (json['move']['fields'][0] != null) {
+        id = 'field_'+json['move']['fields'][0];
+        let fieldToHighlight = document.getElementById(id);
+        fieldToHighlight.classList.add('highlightField');
+        console.log(fieldToHighlight)
+      }
+      if (json['move']['fields'][1] != null) {
+        id = 'field_'+json['move']['fields'][1];
+        let fieldToHighlight = document.getElementById(id);
+        fieldToHighlight.classList.add('highlightField');
+        console.log(fieldToHighlight)
+      }
+      if (json['move']['fields'][2] != null) {
+        id = 'field_'+json['move']['fields'][2];
+        let fieldToHighlight = document.getElementById(id);
+        fieldToHighlight.classList.add('highlightField');
+        console.log(fieldToHighlight)
+      }
+      if (json['move']['fields'][3] != null) {
+        id = 'field_'+json['move']['fields'][3];
+        let fieldToHighlight = document.getElementById(id);
+        fieldToHighlight.classList.add('highlightField');
+        console.log(fieldToHighlight)
+      }
+    }
+  }
+
 
   tossDice() {
     const cube = document.getElementById('cube');
@@ -315,15 +508,105 @@ export class GameBoardComponent implements OnInit {
       rollDice();
     }, {once: true});
   }
+
+  mainGame(): void{
+
+  }
+
   fillGridWithField(): void {
     //general order for players: top right begin, clockwise through the board (bott right, bott left, top left)
-    let playerColors = ['green','red','black','yellow'];
+    let playerColors = ['green','red','black','gold'];
 
+
+    this.genertateWalkingFields(playerColors);
+
+    this.generateHomeFields(playerColors);
+
+    this.generateFinishFields(playerColors);
+
+    this.createBoardWritting();
+
+    this.createInitialTokens();
+  }
+
+  generateSingleField(coordinates: string, color: string, content: string, isBig: Boolean): any{
+    let element = this.renderer.createElement("div");
+    element.setAttribute("id", coordinates);
+    if (isBig){
+      element.classList.add("field-gameboard");
+    }
+    else{
+      element.classList.add('field-startFinish');
+    }
+    element.style.backgroundColor = color;
+    element.innerHTML = content;
+    element.addEventListener('click', () => {
+      if(element.childElementCount == 0){
+        console.log(coordinates);
+        if(this.activeToken != null){
+          this.moveTokenToField(this.activeToken, coordinates);
+          this.activeToken = null;
+        }
+      }
+    }); //TODO onclick implement
+    return element;
+  }
+
+  generateSingleToken(id: string, color: string): any{
+    let token = this.renderer.createElement("div");
+    token.setAttribute("id", id);
+    token.style.backgroundColor = color;
+    token.addEventListener('click', () => {
+      console.log(id);
+      this.activeToken = id;
+    }); //TODO onclick implement
+    token.classList.add("gameBoardToken");
+    return token;
+  }
+
+  moveTokenToField(token: string, field: string): void{
+    let tokenElement = document.getElementById(token);
+    let fieldElement = document.getElementById(field);
+    fieldElement.appendChild(tokenElement);
+    //tokenElement.parentNode.removeChild(tokenElement);
+  }
+
+  //following are only methods for creating game board,
+  //TODO: auslagern
+
+  createInitialTokens(){
+    let tokenGreen = ['field_BS_0', 'field_BS_1', 'field_BS_2', 'field_BS_3'];
+    let tokenRed = ['field_CS_0','field_CS_1','field_CS_2','field_CS_3'];
+    let tokenBlack = ['field_DS_0','field_DS_1','field_DS_2','field_DS_3'];
+    let tokenYellow = ['field_AS_0','field_AS_1','field_AS_2','field_AS_3'];
+    tokenGreen.forEach((currentValue, index, array) => {
+      let idOfToken = 'token'+(index+1)+'_'+'Green';
+      let tokenToAdd = this.generateSingleToken(idOfToken, 'lightgreen');
+      this.renderer.appendChild(document.getElementById(currentValue), tokenToAdd);
+    });
+    tokenRed.forEach((currentValue, index, array) => {
+      let idOfToken = 'token'+(index+1)+'_'+'Red';
+      let tokenToAdd = this.generateSingleToken(idOfToken, 'lightcoral');
+      this.renderer.appendChild(document.getElementById(currentValue), tokenToAdd);
+    });
+    tokenBlack.forEach((currentValue, index, array) => {
+      let idOfToken = 'token'+(index+1)+'_'+'Black';
+      let tokenToAdd = this.generateSingleToken(idOfToken, 'darkgrey');
+      this.renderer.appendChild(document.getElementById(currentValue), tokenToAdd);
+    });
+    tokenYellow.forEach((currentValue, index, array) => {
+      let idOfToken = 'token'+(index+1)+'_'+'Yellow';
+      let tokenToAdd = this.generateSingleToken(idOfToken, 'yellow');
+      this.renderer.appendChild(document.getElementById(currentValue), tokenToAdd);
+    });
+  }
+
+  genertateWalkingFields(playerColors: string[]){
     //create all normal walking fields
-    let walkingFields = ['um_r_2_c_3','um_r_3_c_3','um_r_4_c_3','mm_r_1_c_3','mr_r_1_c_1','mr_r_1_c_2','mr_r_1_c_3','mr_r_1_c_4','mr_r_2_c_4'];
-    walkingFields.push('mr_r_3_c_3','mr_r_3_c_2','mr_r_3_c_1','mm_r_3_c_3','bm_r_1_c_3','bm_r_2_c_3','bm_r_3_c_3','bm_r_4_c_3','bm_r_4_c_2');
-    walkingFields.push('bm_r_3_c_1','bm_r_2_c_1','bm_r_1_c_1','mm_r_3_c_1','ml_r_3_c_4','ml_r_3_c_3','ml_r_3_c_2','ml_r_3_c_1','ml_r_2_c_1');
-    walkingFields.push('ml_r_1_c_2','ml_r_1_c_3','ml_r_1_c_4','mm_r_1_c_1','um_r_4_c_1','um_r_3_c_1','um_r_2_c_1','um_r_1_c_1','um_r_1_c_2');
+    let walkingFields = ['BR_1','BR_2','BR_3','BR_4','BR_5','BR_6','BR_7','BR_8','BR_9'];
+    walkingFields.push('CR_1','CR_2','CR_3','CR_4','CR_5','CR_6','CR_7','CR_8','CR_9');
+    walkingFields.push('DR_1','DR_2','DR_3','DR_4','DR_5','DR_6','DR_7','DR_8','DR_9');
+    walkingFields.push('AR_1','AR_2','AR_3','AR_4','AR_5','AR_6','AR_7','AR_8','AR_9');
     walkingFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
       let element = this.generateSingleField(coordinatesForField, 'white', '', true);
@@ -331,36 +614,42 @@ export class GameBoardComponent implements OnInit {
     });
 
     //creating the start fields
-    let startFields = ['um_r_1_c_3','mr_r_3_c_4','bm_r_4_c_1','ml_r_1_c_1'];
+    let startFields = ['BR_0','CR_0','DR_0','AR_0'];
     playerColors.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + startFields[index];
-      let element = this.generateSingleField(coordinatesForField, currentValue, 'A', true);
+      let element = this.generateSingleField(coordinatesForField, currentValue, '', true);
       this.renderer.appendChild(document.getElementById(startFields[index]), element);
     });
+  }
 
-    let homeFields = ['ur_r_1_c_3','ur_r_1_c_4','ur_r_2_c_3','ur_r_2_c_4']; //green top right
-    homeFields.push('br_r_3_c_3','br_r_3_c_4','br_r_4_c_3','br_r_4_c_4'); //red bottom right
-    homeFields.push('bl_r_3_c_1','bl_r_3_c_2','bl_r_4_c_1','bl_r_4_c_2'); //black bottom left
-    homeFields.push('ul_r_1_c_1','ul_r_1_c_2','ul_r_2_c_1','ul_r_2_c_2'); //yellow top left
+  generateHomeFields(playerColors: string[]){
+    let homeFields = ['BS_0','BS_1','BS_2','BS_3']; //green top right
+    homeFields.push('CS_0','CS_1','CS_2','CS_3'); //red bottom right
+    homeFields.push('DS_0','DS_1','DS_2','DS_3'); //black bottom left
+    homeFields.push('AS_0','AS_1','AS_2','AS_3'); //yellow top left
 
     homeFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
       let element = this.generateSingleField(coordinatesForField, playerColors[Math.trunc(index/4)], '', false);
       this.renderer.appendChild(document.getElementById(currentValue), element);
     });
+  }
 
-    let finishFields = ['um_r_2_c_2','um_r_3_c_2','um_r_4_c_2','mm_r_1_c_2'];
-    finishFields.push('mr_r_2_c_3','mr_r_2_c_2','mr_r_2_c_1','mm_r_2_c_3');
-    finishFields.push('bm_r_3_c_2','bm_r_2_c_2','bm_r_1_c_2','mm_r_3_c_2');
-    finishFields.push('ml_r_2_c_2','ml_r_2_c_3','ml_r_2_c_4','mm_r_2_c_1');
+  generateFinishFields(playerColors: string[]){
+    let finishFields = ['BF_0','BF_1','BF_2','BF_3'];
+    finishFields.push('CF_0','CF_1','CF_2','CF_3');
+    finishFields.push('DF_0','DF_1','DF_2','DF_3');
+    finishFields.push('AF_0','AF_1','AF_2','AF_3');
 
     finishFields.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + currentValue;
       let element = this.generateSingleField(coordinatesForField, playerColors[Math.trunc(index/4)], '', false);
       this.renderer.appendChild(document.getElementById(currentValue), element);
     });
+  }
 
-    var boardWritting =  this.renderer.createElement("div");
+  createBoardWritting(){
+    let boardWritting = this.renderer.createElement("div");
     boardWritting.setAttribute("id", 'boardWritting_top_left');
     boardWritting.innerText = 'Mensch';
     boardWritting.classList.add('boardWrittingTop');
@@ -383,21 +672,6 @@ export class GameBoardComponent implements OnInit {
     boardWritting.innerText = 'nicht';
     boardWritting.classList.add('boardWrittingBottom');
     this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
-
-  }
-
-  generateSingleField(coordinates: string, color: string, content: string, isBig: Boolean): any{
-    var element = this.renderer.createElement("div");
-    element.setAttribute("id", coordinates);
-    if (isBig){
-      element.classList.add("field-gameboard");
-    }
-    else{
-      element.classList.add('field-startFinish');
-    }
-    element.style.backgroundColor = color;
-    element.innerHTML = content;
-    return element;
   }
   
 }
