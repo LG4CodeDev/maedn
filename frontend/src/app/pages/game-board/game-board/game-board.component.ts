@@ -1,4 +1,5 @@
 import {Component, ElementRef, Inject, OnInit, Renderer2} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { DOCUMENT} from "@angular/common";
 
 @Component({
@@ -408,108 +409,154 @@ import { DOCUMENT} from "@angular/common";
           </div>
         </div>
         <div nz-row id="dice-btn" nzJustify="center">
-          <button class="rollBtn" (click)="tossDice()">Roll the Dice</button>
+          <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
         </div>
       </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent implements OnInit {
-  jsonReturned: any =
-    {
-      move: {
-        dice: 3,
-        fields: [
-          "AR_1",
-          "DF_0",
-          "BF_2",
-          "CF_3"
-        ]
-      },
-      roleAgain: false,
-      currentPlayer: "Player3"
-    };
-
   constructor(
+    private http: HttpClient,
     private elementRef: ElementRef,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
   ) { }
 
   activeToken: string;
+  apiToken: string;
+  jsonReturned: any;
 
 
 
   ngOnInit(): void {
+    console.log('init kommt jeztt')
+    if (!!window.EventSource) {
+      var source = new EventSource('https://spielehub.server-welt.com/startStream/48');
+
+      source.addEventListener('message', function(e) {
+        console.log('sse tut');
+        console.log(e)
+      }, false)
+      this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
+          "gameID":29,
+          "cliendID":48
+        },
+        {
+          observe: "response",
+          headers: {
+            "authorization": this.apiToken,
+          },
+        },
+      )
+    }
+
+
     this.fillGridWithField();
-    this.mainGame();
+    this.apiToken = "Bearer $2b$05$vahqrDdsDAPFT7L35R4zgehdiYOFS2rNmczDpTs4IBctZNU9WPDBa";
+  }
 
-    this.highlightMoves(this.jsonReturned);
+  getGameData(){
+    this.http.get<any>('https://spielehub.server-welt.com/api/getMoves/29',{
+        observe: "response",
+        headers: {
+          "authorization": this.apiToken,
+        },
+      },
+    ).subscribe(response => {
+      if (response.status == 200) {
+        console.log(response['body']);
+        this.jsonReturned = response['body'];
+        this.tossDice(response['body']['move']['dice'])
+      }
+    });
+  }
 
+  sendGameData(fieldID: string, json: any){
+    console.log(json['move']['fields'][0]);
+    console.log(fieldID);
+    if(json['move']['fields'][0] == fieldID || json['move']['fields'][1] == fieldID ||
+      json['move']['fields'][2] == fieldID || json['move']['fields'][3] == fieldID){
+      this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
+        {
+          "move":fieldID,
+          "id":29
+        },
+        {
+          observe: "response",
+          headers: {
+            "authorization": this.apiToken,
+          },
+        }
+      ).subscribe(response => {
+        if (response.status == 200) {
+          console.log('game data successfully send!');
+          console.log(response);
+          this.unhiglightMoves(this.jsonReturned);
+        }
+      });
+    }
+    else{
+      console.log('incorrect field, choose another');
+    }
+  }
+
+  tossDice(randNum: number) {
+    const cube = document.getElementById('cube');
+    cube.className = "";
+
+    cube.classList.add('is-spinning-' + randNum);
+    cube.addEventListener("animationend", () => {
+      cube.classList.remove("is-spinning-" + randNum);
+      const showClass = 'show-' + randNum;
+      cube.classList.add(showClass);
+      console.log(randNum)
+      this.highlightMoves(this.jsonReturned);
+
+    }, {once: true});
   }
 
   highlightMoves(json: any){
-    let id;
     if (json['move']['fields'][0] == null && json['move']['fields'][1] == null &&
       json['move']['fields'][2] == null && json['move']['fields'][3] == null) {
       console.log('no moves available');
     }
     else {
       if (json['move']['fields'][0] != null) {
-        id = 'field_'+json['move']['fields'][0];
+        let id = 'field_'+json['move']['fields'][0];
         let fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        console.log(fieldToHighlight)
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][0], json));
       }
       if (json['move']['fields'][1] != null) {
-        id = 'field_'+json['move']['fields'][1];
+        let id = 'field_'+json['move']['fields'][1];
         let fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        console.log(fieldToHighlight)
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][1], json));
       }
       if (json['move']['fields'][2] != null) {
-        id = 'field_'+json['move']['fields'][2];
+        let id = 'field_'+json['move']['fields'][2];
         let fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        console.log(fieldToHighlight)
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][2], json));
       }
       if (json['move']['fields'][3] != null) {
-        id = 'field_'+json['move']['fields'][3];
+        let id = 'field_'+json['move']['fields'][3];
         let fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        console.log(fieldToHighlight)
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][3], json));
       }
     }
   }
 
-
-  tossDice() {
-    const cube = document.getElementById('cube');
-    cube.className = "";
-
-    function randInt() {
-      return Math.floor(Math.random() * 6) + 1;
+  unhiglightMoves(json: any){
+    let allHighlightet = document.getElementsByClassName('highlightField');
+    for (let i = 0; i < allHighlightet.length; i++) {
+      allHighlightet[i].classList.remove('highlightField');
+      allHighlightet[i].removeEventListener('click',() => this.sendGameData(json['move']['fields'][3], json))
     }
-
-    const randNum = randInt();
-    cube.classList.add('is-spinning-' + randNum);
-    cube.addEventListener("animationend", () => {
-      cube.classList.remove("is-spinning-" + randNum);
-
-
-      function rollDice() {
-        const showClass = 'show-' + randNum;
-        cube.classList.add(showClass);
-        console.log(randNum)
-      }
-
-      rollDice();
-    }, {once: true});
   }
 
-  mainGame(): void{
-
-  }
 
   fillGridWithField(): void {
     //general order for players: top right begin, clockwise through the board (bott right, bott left, top left)
@@ -538,15 +585,7 @@ export class GameBoardComponent implements OnInit {
     }
     element.style.backgroundColor = color;
     element.innerHTML = content;
-    element.addEventListener('click', () => {
-      if(element.childElementCount == 0){
-        console.log(coordinates);
-        if(this.activeToken != null){
-          this.moveTokenToField(this.activeToken, coordinates);
-          this.activeToken = null;
-        }
-      }
-    }); //TODO onclick implement
+
     return element;
   }
 

@@ -125,7 +125,7 @@ export class LoginPageComponent implements OnInit {
   }
   onLogin(): void {
     if (this.loginForm.valid) {
-      this.http.post<any>('http://167.235.24.74:4000/api/loginVerification', {
+      this.http.post<any>('https://spielehub.server-welt.com/api/loginVerification', {
           "email": this.loginForm.getRawValue()['email'],
           "password": this.loginForm.getRawValue()['password']
         }, {
@@ -150,7 +150,7 @@ export class LoginPageComponent implements OnInit {
   onRegister(): void {
     var avatarID = null;
     if (this.registerForm.valid) {
-      this.http.post<any>('http://167.235.24.74:4000/api/createAvatar', {
+      this.http.post<any>('https://spielehub.server-welt.com/api/createAvatar', {
           "image": this.registerForm.getRawValue()['avatar'],
         }, {
           observe: "response",
@@ -158,7 +158,7 @@ export class LoginPageComponent implements OnInit {
       ).subscribe(response => {
         avatarID = response.body['avatarID'];
       });
-      this.http.post<any>('http://167.235.24.74:4000/api/createUser', {
+      this.http.post<any>('https://spielehub.server-welt.com/api/createUser', {
           "email": this.registerForm.getRawValue()['email'],
           "password": this.registerForm.getRawValue()['password'],
           "username": this.registerForm.getRawValue()['userName'],
