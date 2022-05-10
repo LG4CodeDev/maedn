@@ -104,6 +104,6 @@ app.delete('/deleteGame/:id', deleteGame)
 
 
 app.use(express.static(process.env.FRONTEND_DIST_PATH));
-app.use('/home',(req, res) => {
+app.use('/*',(req, res) => {
     res.sendFile('frontend/index.html', { root: __dirname })
 });
