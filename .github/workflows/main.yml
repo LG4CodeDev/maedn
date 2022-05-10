@@ -35,4 +35,10 @@ jobs:
           # sftp args
           args: '-o ConnectTimeout=5'
           
-     
+      - name: Deploy Angular
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: cd /home/gitclone/frontend && ng build
+          host: 167.235.24.74
+          username: root
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
