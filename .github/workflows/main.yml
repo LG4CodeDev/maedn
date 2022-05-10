@@ -35,7 +35,4 @@ jobs:
           # sftp args
           args: '-o ConnectTimeout=5'
           
-      - name: Deploy Angular
-        run: |
-            cd /home/gitclone/frontend
-            ng build
+     
