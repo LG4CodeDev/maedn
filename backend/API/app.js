@@ -475,7 +475,7 @@ function getPlayerPosition(game) {
 function calculateMoves(game, diceResult, playerFields) {
     let listOfMoves = [];
     for (const playerFieldsKey of playerFields) {
-        let element = playerFieldsKey.split(" ");
+        let element = playerFieldsKey.split("_");
         element[1] = parseInt(element[1]);
         if (diceResult !== 6 && element[0][1] === 'S') {
             listOfMoves.push(null);
@@ -535,7 +535,7 @@ function calculateMoves(game, diceResult, playerFields) {
                 }
             }
         }
-        element = (element[0] + " " + element[1])
+        element = (element[0] + "_" + element[1])
         if (playerFields.includes(element)) {
             listOfMoves.push(null);
             continue;
@@ -551,7 +551,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
     if (diceResult === 6) return true;
     if (moves + 1 >= 3) return false;
     for (const playerFieldsKey of playerFields) {
-        let element = playerFieldsKey.split(" ");
+        let element = playerFieldsKey.split("_");
         if (element[0][1] === 'S') {
         } else {
             try {
@@ -559,15 +559,15 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                     if (element[1] === 3) continue;
                     if (element[1] === 2) {
                         playerFields.find(element => {
-                            if (element.includes('F 3')) {
+                            if (element.includes('F_3')) {
                             } else return false;
                         });
                     }
                     if (element[1] === 1) {
                         playerFields.find(element => {
-                            if (element.includes('F 3')) {
+                            if (element.includes('F_3')) {
                                 playerFields.find(element => {
-                                    if (element.includes('F 2')) {
+                                    if (element.includes('F_2')) {
                                     } else return false
                                 });
                             } else return false
