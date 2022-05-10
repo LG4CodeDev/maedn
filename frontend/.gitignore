@@ -1,18 +1,12 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
 /tmp
 /out-tsc
 # Only exists if Bazel was run
 /bazel-out
 
-#envFiles
-/API/config
-
 # dependencies
-/API/node_modules
-/Server/node_modules
 /node_modules
 
 # profiling files
@@ -26,7 +20,6 @@ chrome-profiler-events*.json
 *.launch
 .settings/
 *.sublime-workspace
-/Server/frontend
 
 # IDE - VSCode
 .vscode/*
