@@ -10,7 +10,12 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+let corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+
+app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
