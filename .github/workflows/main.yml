@@ -36,6 +36,9 @@ jobs:
           args: '-o ConnectTimeout=5'
           
       - name: Deploy Angular
-        run: |
-            cd /home/gitclone/frontend
-            ng build
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: cd /home/gitclone/frontend && ng build
+          host: 167.235.24.74
+          username: root
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
