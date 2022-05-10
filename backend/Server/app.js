@@ -19,6 +19,12 @@ app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+app.options('/*', async (request, response, next) =>{
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
+
 app.get('/status', (request, response) => response.json({clients: clients.length}));
 
 const PORT = 4000;
