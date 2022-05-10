@@ -265,7 +265,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
     if (game[game['turn']] !== response.locals.user['userid']) return response.status(403).send("others players turn")
-    if (game['allowedMoves'] !== "null, null, null, null") return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves']})
+    if (game['allowedMoves'] !== "null, null, null, null" || game['allowedMoves'] !== ",,," ) return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves']})
 
     try {
         const diceResult = roleDice();
