@@ -95,7 +95,6 @@ User stuff
  */
 app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) => {
     let user = request.body
-    console.log(user)
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
     try {
@@ -256,6 +255,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [id]);
     } catch (err) {
+        console.log(err)
         return response.sendStatus(500);
     }
     const game = result[0];
@@ -264,8 +264,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
-    if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
-    if (game['allowedMoves'] !== "null, null, null, null") return response.status(403).send("make Move first")
+    if (game[game['turn']] !== response.locals.user['userid']) return response.status(403).send("others players turn")
+    if (game['allowedMoves'] !== "null, null, null, null") return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves']})
 
     try {
         const diceResult = roleDice();
@@ -278,13 +278,6 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
         roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
 
-
-        response.status(200).send({
-            move: {dice: diceResult, fields: listOfMoves},
-            roleAgain: roleAgain,
-            currentPlayer: game['turn']
-        })
-
         let stringOfMoves = listOfMoves.toString()
         if (!roleAgain && listOfMoves.toString() === [null, null, null, null].toString()) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
@@ -294,6 +287,13 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             let DoneMoves = game['movesOfPerson'] + 1
             await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, DoneMoves, id]);
         }
+
+        response.status(200).send({
+            move: {dice: diceResult, fields: listOfMoves},
+            roleAgain: roleAgain,
+            currentPlayer: game['turn']
+        })
+
     } catch (err) {
         response.sendStatus(500)
         console.log(err);
@@ -423,21 +423,18 @@ Game Logic needed Functions
 async function joinGame(response, joiningGame, player) {
     if (joiningGame['Player1'] == null) {
         await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 1})
     } else if (joiningGame['Player2'] == null) {
         await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 2})
     } else if (joiningGame['Player3'] == null) {
         await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 3})
     } else if (joiningGame['Player4'] == null) {
         await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        axios({method :'post', url : "http://localhost:4200/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
         response.status(200).send({gameID: joiningGame['gameID'], players: 4})
     }
+    axios({method :'post', url : "https://spielehub.server-welt.com/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
 }
 
 async function CreateGame(player1) {
@@ -447,7 +444,7 @@ async function CreateGame(player1) {
         let gameID = parseInt(result.insertId.toString())
         axios({
             method :'post',
-            url : "http://localhost:4200/createGame",
+            url : "https://spielehub.server-welt.com/createGame",
             data : {
                 "gameID" : gameID,
                 "clientID" : player1
@@ -578,6 +575,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                     }
                 } else return false;
             } catch (err) {
+                console.log(err)
                 return false;
             }
         }
@@ -644,7 +642,7 @@ async function makeMove(data, game, response) {
             })
             axios({
                 method :'post',
-                url : "http://localhost:4200/sendGame",
+                url : "https://spielehub.server-welt.com/sendGame",
                 data : {
                     "gameID" : game['gameID'],
                     "msg" : {
