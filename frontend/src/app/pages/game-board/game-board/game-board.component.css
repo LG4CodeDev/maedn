@@ -285,10 +285,28 @@ label { margin-right: 10px; }
 }
 
 .highlightField{
-  background-color: deeppink;
+  border-radius: 40% !important;
+  box-shadow: inset 0px 0px 5px deepskyblue;
+  outline: 4px solid deepskyblue;
+  animation: breathing 1s infinite alternate ease;
+}
 
+@keyframes breathing {
+  0%{
+    outline: 2px solid deepskyblue;
+  }
+  33%{
+    outline: 3px solid deepskyblue;
+  }
+  66%{
+    outline: 4px solid deepskyblue;
+  }
+
+  100%{
+    outline: 5px solid deepskyblue;
+  }
 }
 
 .hightlightField:hover{
-  border: 4px solid black;
+  box-shadow: inset 0px 0px 30px blueviolet !important;
 }
