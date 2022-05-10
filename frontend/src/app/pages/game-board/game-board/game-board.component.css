@@ -1,5 +1,6 @@
 .game{
   border: 2px solid black;
+  min-width: 500px;
 }
 
 .board {
@@ -7,9 +8,13 @@
   background-color: antiquewhite;
 }
 
-.side {
+.side-left {
   border: 4px solid indigo;
-  width: 20%;
+}
+
+.side-right {
+  border: 4px solid indigo;
+  min-width: 300px;
 }
 
 .row {
@@ -214,7 +219,7 @@ label { margin-right: 10px; }
   background-color: white;
   height: 90%;
   width: 90%;
-  margin: 5px;
+  margin: 5%;
   border-radius: 90%;
   border: 2px solid black;
   text-align: center;
@@ -223,6 +228,7 @@ label { margin-right: 10px; }
 }
 
 .field-startFinish{
+  margin: 10%;
   width: 80%;
   height: 80%;
 }
@@ -268,4 +274,39 @@ label { margin-right: 10px; }
 
 .boardWrittingBottom{
   padding-top: 40px;
+}
+
+.gameBoardToken{
+  height: 70%;
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 70%;
+  margin: 15%;
+}
+
+.highlightField{
+  border-radius: 40% !important;
+  box-shadow: inset 0px 0px 5px deepskyblue;
+  outline: 4px solid deepskyblue;
+  animation: breathing 1s infinite alternate ease;
+}
+
+@keyframes breathing {
+  0%{
+    outline: 2px solid deepskyblue;
+  }
+  33%{
+    outline: 3px solid deepskyblue;
+  }
+  66%{
+    outline: 4px solid deepskyblue;
+  }
+
+  100%{
+    outline: 5px solid deepskyblue;
+  }
+}
+
+.hightlightField:hover{
+  box-shadow: inset 0px 0px 30px blueviolet !important;
 }
