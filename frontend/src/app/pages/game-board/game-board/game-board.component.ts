@@ -445,7 +445,7 @@ export class GameBoardComponent implements OnInit {
     let startFields = ['BR_0','CR_0','DR_0','AR_0'];
     playerColors.forEach((currentValue, index, array) => {
       let coordinatesForField = 'field_' + startFields[index];
-      let element = this.generateSingleField(coordinatesForField, currentValue, 'A', true);
+      let element = this.generateSingleField(coordinatesForField, currentValue, '', true);
       this.renderer.appendChild(document.getElementById(startFields[index]), element);
     });
   }
