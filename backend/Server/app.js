@@ -22,9 +22,7 @@ let clients = [];
 let games = [];
 let facts = [];
 
-app.listen(PORT, () => {
-    console.log(`Facts Events service listening at http://localhost:${PORT}`)
-})
+app.listen(PORT)
 
 function eventsHandler(request, response) {
     const headers = {
@@ -106,6 +104,6 @@ app.delete('/deleteGame/:id', deleteGame)
 
 
 app.use(express.static(process.env.FRONTEND_DIST_PATH));
-app.use((req, res) => {
-    res.sendFile(path.join(process.env.FRONTEND_DIST_PATH, 'index.html'))
+app.use('/*',(req, res) => {
+    res.sendFile('frontend/index.html', { root: __dirname })
 });
