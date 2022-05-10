@@ -40,7 +40,7 @@ const pool =
     })
 
 let corsOptions = {
-    origin: 'http://localhost:4200',
+    origin: '*',
     optionsSuccessStatus: 200 // For legacy browser support
 }
 
