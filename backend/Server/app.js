@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/status', (request, response) => response.json({clients: clients.length}));
 
-const PORT = 4200;
+const PORT = 4000;
 
 let clients = [];
 let games = [];
@@ -27,14 +27,10 @@ app.listen(PORT, () => {
 })
 
 
-//app.use(express.static(process.env.FRONTEND_DIST_PATH));
-/*app.use((req, res) => {
+app.use(express.static(process.env.FRONTEND_DIST_PATH));
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, process.env.FRONTEND_DIST_PATH, 'index.html'))
-});*/
-
-/*app.listen(process.env.NODE_PORT, () => {
-    console.log(`App listening at http://localhost:${process.env.NODE_PORT}`)
-});*/
+});
 
 
 function eventsHandler(request, response) {
