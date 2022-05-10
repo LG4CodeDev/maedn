@@ -26,13 +26,6 @@ app.listen(PORT, () => {
     console.log(`Facts Events service listening at http://localhost:${PORT}`)
 })
 
-
-app.use(express.static(process.env.FRONTEND_DIST_PATH));
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, process.env.FRONTEND_DIST_PATH, 'index.html'))
-});
-
-
 function eventsHandler(request, response) {
     const headers = {
         'Content-Type': 'text/event-stream',
@@ -110,3 +103,9 @@ app.post('/joinGame', joinGame);
 app.post('/sendGame', sendGame);
 
 app.delete('/deleteGame/:id', deleteGame)
+
+
+app.use(express.static(process.env.FRONTEND_DIST_PATH));
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, process.env.FRONTEND_DIST_PATH, 'index.html'))
+});
