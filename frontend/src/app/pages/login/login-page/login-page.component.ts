@@ -151,7 +151,6 @@ export class LoginPageComponent implements OnInit {
       });
     }
   }
-
   onRegister(): void {
     var avatarID = null;
     if (this.registerForm.valid) {
@@ -214,5 +213,4 @@ export class LoginPageComponent implements OnInit {
     }
     reader.readAsDataURL(file)
   }
-
 }
