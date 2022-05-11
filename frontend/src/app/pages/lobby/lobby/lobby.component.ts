@@ -37,7 +37,7 @@ import {HttpClient} from "@angular/common/http";
           </div>
           <div nz-row nzJustify="center">
             <button id="join_game_id" class="game_buttons" (click)="sayHello()">
-              Join per ID
+              Join Game with ID
               <span></span>
               <span></span>
               <span></span>

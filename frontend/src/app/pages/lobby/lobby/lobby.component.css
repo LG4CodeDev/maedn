@@ -1,5 +1,15 @@
+#lobby {
+  min-width: 800px;
+}
+
 #leaderboard {
-  background-color: #5b6574;
+  background-color: #4990F9;
+  border-radius: 25px;
+  margin: 10px;
+  box-shadow: -15px 15px 15px rgba(0,0,0,.4);
+  aspect-ratio: 0.7;
+  max-width: 500px;
+  min-width: 300px;
 }
 
 pre {
@@ -8,7 +18,13 @@ pre {
 }
 
 #statistics {
-  background-color: #5b6574;
+  background-color: #4990F9;
+  border-radius: 25px;
+  margin: 10px;
+  box-shadow: 15px 15px 15px rgba(0,0,0,.4);
+  aspect-ratio: 0.7;
+  max-width: 500px;
+  min-width: 300px;
 }
 
 #game_selection {
@@ -19,11 +35,13 @@ pre {
   font-size: 4vw;
   margin: 0;
   text-decoration: underline;
+  color: white;
 }
 
 .game_buttons {
   height: 100px;
   width: 100%;
+  min-width: 50px;
   margin: 15px;
   background: linear-gradient(to left top, #ff4d00 50%, #ff7400 50%);
   border-style: none;
@@ -59,10 +77,10 @@ pre {
 
 @keyframes span1{
   0%{
-    left:-200px
+    left:-100%;
   }
   100%{
-    left:200px;
+    left:100%;
   }
 }
 .game_buttons span:nth-child(2){
@@ -78,10 +96,10 @@ pre {
 }
 @keyframes span2{
   0%{
-    top:-70px;
+    top:-100px;
   }
   100%{
-    top:70px;
+    top:100px;
   }
 }
 .game_buttons span:nth-child(3){
@@ -97,10 +115,10 @@ pre {
 }
 @keyframes span3{
   0%{
-    right:-200px;
+    right:-100%;
   }
   100%{
-    right: 200px;
+    right: 100%;
   }
 }
 
@@ -117,10 +135,10 @@ pre {
 }
 @keyframes span4{
   0%{
-    bottom: -70px;
+    bottom: -100px;
   }
   100%{
-    bottom:70px;
+    bottom:100px;
   }
 }
 
