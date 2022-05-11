@@ -3,7 +3,7 @@
  */
 
 const express = require('express');
-
+const cors = require('cors')
 const app = express();
 
 //const path = require('path');
@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const axios = require('axios').default;
 
 const dotenv = require('dotenv');
 /*
@@ -38,7 +39,12 @@ const pool =
         database: process.env.DB_Name
     })
 
-app.use(express.json());
+let corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+
+app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
@@ -46,21 +52,22 @@ Generals
  */
 
 //cross origin allow
-app.options('/*', function (request, response, next) {
+app.options('/*', async (request, response, next) =>{
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
 
-app.post('/*', async (request, response, next) => {
+app.post('/*', function (request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
+
 
 
 app.get(`/api`, function (request, response) {
-    response.send('This is version 3.0 of maedns REST API');
+    response.send('This is version 3.2 of maedns REST API');
 });
 
 /*
@@ -80,36 +87,13 @@ console.log = function () {
 User stuff
  */
 
-//returns a List of All current Users
-app.get('/api/allUsers', validateAccess, async (request, response) => {
-    try {
-        const result = await pool.query("select * from users");
-        response.send(result);
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-})
-
-//returns a Single user
-app.get('/api/user/:id', validateAccess, async (request, response) => {
-    let id = request.params.id;
-    try {
-        const result = await pool.query("select * from users where userid = ?", [id]);
-        response.send(result);
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-})
-
 /*
     Creates user
     body:   {
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) => {
     let user = request.body
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -126,8 +110,9 @@ app.post('/api/createUser', validateAccess, checkUniquenessOfEmail, async (reque
     }
 });
 
+
 //creates Avatar of blob and returns ID
-app.post('/api/createAvatar', validateAccess, async (request, response) => {
+app.post('/api/createAvatar', async (request, response) => {
     let avatar = request.body
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
@@ -148,9 +133,61 @@ app.post('/api/createAvatar', validateAccess, async (request, response) => {
     }
 });
 
+
+/*
+    validates access
+    body : {email : 123@123 , password : 123}
+ */
+app.post('/api/loginVerification', async (request, response) => {
+    let user = request.body;
+    let result;
+    try {
+        result = await pool.query("select * from users where email = ?", [user.email]);
+    } catch (err) {
+        response.send(500)
+        console.log(err);
+    }
+    if (result[0] !== undefined) {
+        let answer = result[0]
+        //compare hashed password with unhashed password
+        try{
+            bcrypt.compare(user.password, answer['password']).then(
+                () => {}, //on success do nothing
+                () => {
+                    return response.sendStatus(401)
+                }
+            );
+            let token = bcrypt.hashSync('LoremIpsum12345', 5)
+            await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
+            response.status(200).send({userid: answer.userid, "token" : token})
+        }catch (err) {
+            response.send(500)
+            console.log(err);
+        }
+
+    } else {
+        response.sendStatus(403)
+    }
+});
+
+
+
+//returns a Single user
+app.get('/api/user/:id', validateAccess, async (request, response) => {
+    let id = request.params.id;
+    try {
+        const result = await pool.query("select userid, username, image from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
+        response.send(result);
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+})
+
 //delete User with id
 app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
+    if (id !== response.locals.user['userid']) return response.sendStatus(403)
     try {
         await pool.query("delete from users where userid = ?", [id]);
         response.sendStatus(200)
@@ -168,6 +205,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
  */
 app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
     let user = request.body;
+    if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
     try {
         await pool.query("update users set username = ?, password = ?, email = ?, firstname = ? , surname = ?, avatar = ? where userid = ?",
@@ -179,34 +217,6 @@ app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (reques
     }
 });
 
-/*
-    validates access
-    body : {email : 123@123 , password : 123}
- */
-app.post('/api/loginVerification', validateAccess, async (request, response) => {
-    let user = request.body;
-    let result;
-    try {
-        result = await pool.query("select * from users where email = ?", [user.email]);
-    } catch (err) {
-        response.send(500)
-        console.log(err);
-    }
-    if (result !== undefined) {
-        let answer = result[0]
-        //compare hashed password with unhashed password
-        bcrypt.compare(user.password, answer.password).then(
-            () => {
-                response.status(200).send({userid: answer.userid})
-            },
-            () => {
-                response.sendStatus(401)
-            }
-        );
-    } else {
-        response.sendStatus(403)
-    }
-});
 
 //returns Stats of specific player
 app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
@@ -220,6 +230,19 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
     }
 })
 
+
+//returns leaderboard
+app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
+    try {
+        let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
+        response.status(200).send({"1.": result[0],"2.": result[1],"3.": result[2],"4.": result[3],"5.": result[4] })
+    }catch (err) {
+        response.sendStatus(500)
+        console.log(err)
+    }
+})
+
+
 /*
 Game Logic
  */
@@ -232,6 +255,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [id]);
     } catch (err) {
+        console.log(err)
         return response.sendStatus(500);
     }
     const game = result[0];
@@ -239,6 +263,9 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game === undefined) return response.status(400).send({msg: 'Game does not exists'});
 
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
+
+    if (game[game['turn']] !== response.locals.user['userid']) return response.status(403).send("others players turn")
+    if (game['allowedMoves'] !== "null, null, null, null" && game['allowedMoves'] !== ",,," ) return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves']})
 
     try {
         const diceResult = roleDice();
@@ -251,13 +278,6 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
         roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
 
-
-        response.status(200).send({
-            move: {dice: diceResult, fields: listOfMoves},
-            roleAgain: roleAgain,
-            currentPlayer: game['turn']
-        })
-
         let stringOfMoves = listOfMoves.toString()
         if (!roleAgain && listOfMoves.toString() === [null, null, null, null].toString()) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
@@ -267,6 +287,13 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             let DoneMoves = game['movesOfPerson'] + 1
             await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, DoneMoves, id]);
         }
+
+        response.status(200).send({
+            move: {dice: diceResult, fields: listOfMoves},
+            roleAgain: roleAgain,
+            currentPlayer: game['turn']
+        })
+
     } catch (err) {
         response.sendStatus(500)
         console.log(err);
@@ -275,10 +302,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
 
 //creates a Game
 app.post('/api/createMainGame', validateAccess, async (request, response) => {
-    let data = request.body
-
     try {
-        let result = await CreateGame(data.player1)
+        let result = await CreateGame(response.locals.user['userid'])
 
         if (result === 400) {
             response.sendStatus(400)
@@ -292,18 +317,17 @@ app.post('/api/createMainGame', validateAccess, async (request, response) => {
 })
 
 app.put('/api/joinGame', validateAccess, async (request, response) => {
-    let data = request.body
     let result;
     try {
         result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
         if (result[0] === undefined) {
-            result = await CreateGame(data.player)
+            result = await CreateGame(response.locals.user['userid'])
 
             if (result === 400) {
                 response.sendStatus(400)
             } else response.status(200).send({gameID: result, players: 1})
         } else {
-            await joinGame(response, result[0], data.player)
+            await joinGame(response, result[0], response.locals.user['userid'])
         }
     } catch (err) {
         response.sendStatus(500);
@@ -314,14 +338,13 @@ app.put('/api/joinGame', validateAccess, async (request, response) => {
 
 app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
-    let data = request.body
     let result;
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [id])
         if (result[0] === undefined) {
             response.status(400).send({msg: "Game does not exist"})
         } else {
-            await joinGame(response, result[0], data.player)
+            await joinGame(response, result[0], response.locals.user['userid'])
         }
 
     } catch (err) {
@@ -346,10 +369,14 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
     let result;
     try {
         result = await pool.query("select * from mainGame where gameID = ?", [data.id]);
-        if (result[0] === undefined) {
+        let game = result[0]
+        if (game === undefined) {
             response.status(400).send({msg: "Game does not exist"})
         }
-        if (result[0]['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
+
+        if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
+
+        if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
         else await makeMove(data, result[0], response)
     } catch (err) {
@@ -379,6 +406,8 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
+        const url = "http://localhost:4200/deleteGame/" + id
+        axios({method :'delete', url : url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
@@ -405,12 +434,25 @@ async function joinGame(response, joiningGame, player) {
         await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
         response.status(200).send({gameID: joiningGame['gameID'], players: 4})
     }
+    axios({method :'post', url : "https://spielehub.server-welt.com/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
 }
 
 async function CreateGame(player1) {
     const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
-    return result.warningStatus === 0 ? parseInt(result.insertId.toString()) : 400;
+    if (result.warningStatus === 0 ){
+        let gameID = parseInt(result.insertId.toString())
+        axios({
+            method :'post',
+            url : "https://spielehub.server-welt.com/createGame",
+            data : {
+                "gameID" : gameID,
+                "clientID" : player1
+            }
+        })
+        return gameID
+    }
+    else return 400
 }
 
 function roleDice() {
@@ -433,7 +475,7 @@ function getPlayerPosition(game) {
 function calculateMoves(game, diceResult, playerFields) {
     let listOfMoves = [];
     for (const playerFieldsKey of playerFields) {
-        let element = playerFieldsKey.split(" ");
+        let element = playerFieldsKey.split("_");
         element[1] = parseInt(element[1]);
         if (diceResult !== 6 && element[0][1] === 'S') {
             listOfMoves.push(null);
@@ -493,7 +535,7 @@ function calculateMoves(game, diceResult, playerFields) {
                 }
             }
         }
-        element = (element[0] + " " + element[1])
+        element = (element[0] + "_" + element[1])
         if (playerFields.includes(element)) {
             listOfMoves.push(null);
             continue;
@@ -509,7 +551,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
     if (diceResult === 6) return true;
     if (moves + 1 >= 3) return false;
     for (const playerFieldsKey of playerFields) {
-        let element = playerFieldsKey.split(" ");
+        let element = playerFieldsKey.split("_");
         if (element[0][1] === 'S') {
         } else {
             try {
@@ -517,15 +559,15 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                     if (element[1] === 3) continue;
                     if (element[1] === 2) {
                         playerFields.find(element => {
-                            if (element.includes('F 3')) {
+                            if (element.includes('F_3')) {
                             } else return false;
                         });
                     }
                     if (element[1] === 1) {
                         playerFields.find(element => {
-                            if (element.includes('F 3')) {
+                            if (element.includes('F_3')) {
                                 playerFields.find(element => {
-                                    if (element.includes('F 2')) {
+                                    if (element.includes('F_2')) {
                                     } else return false
                                 });
                             } else return false
@@ -533,6 +575,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                     }
                 } else return false;
             } catch (err) {
+                console.log(err)
                 return false;
             }
         }
@@ -577,7 +620,7 @@ async function makeMove(data, game, response) {
 
         let doneMoves = game['movesOfPerson']
         let nextPlayer;
-        if (game['roleAgain'] === 1) nextPlayer = game['turn']
+        if (game['roleAgain']) nextPlayer = game['turn']
         else {
             nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             doneMoves = 0
@@ -596,6 +639,18 @@ async function makeMove(data, game, response) {
                 "positions": positions,
                 "isFinished": isFinished,
                 "nextPlayer": nextPlayer
+            })
+            axios({
+                method :'post',
+                url : "https://spielehub.server-welt.com/sendGame",
+                data : {
+                    "gameID" : game['gameID'],
+                    "msg" : {
+                        "positions": positions,
+                        "isFinished": isFinished,
+                        "nextPlayer": nextPlayer
+                    }
+                }
             })
         } catch (e) {
             response.sendStatus(500)
@@ -621,7 +676,7 @@ function checkFinished(positions) {
     return true;
 }
 
-function validateAccess(request, response, next) {
+async function validateAccess(request, response, next){
     const authHeader = request.headers["authorization"]
     let token;
     try {
@@ -633,9 +688,11 @@ function validateAccess(request, response, next) {
     if (token == null) {
         return response.status(400).send("Token not present")
     }
-    if (token !== 'testingStuff') {
+    let result = await pool.query("Select * from users where token = ?",[token])
+    if (result[0] === undefined) {
         return response.status(403).send("Token invalid")
     } else {
+        response.locals.user = result[0]
         next()
     }
 }
