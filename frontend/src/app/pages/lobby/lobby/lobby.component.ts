@@ -19,31 +19,29 @@ import {HttpClient} from "@angular/common/http";
           </div>
           <div nz-row nzJustify="center">
             <button id="create_game" class="game_buttons" (click)="sayHello()">
-              <div class="text">
-                <p>C</p><p>R</p><p>E</p><p>A</p><p>T</p><p>E</p>
-                <pre> </pre><p></p>
-                <p>G</p><p>A</p><p>M</p><p>E</p>
-              </div>
+              Create Game
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </button>
           </div>
           <div nz-row nzJustify="center">
             <button id="join_game" class="game_buttons" (click)="sayHello()">
-              <div class="text">
-                <p>J</p><p>O</p><p>I</p><p>N</p>
-                <pre> </pre><p></p>
-                <p>G</p><p>A</p><p>M</p><p>E</p>
-              </div>
+              Join Game
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </button>
           </div>
           <div nz-row nzJustify="center">
             <button id="join_game_id" class="game_buttons" (click)="sayHello()">
-              <div class="text">
-                <p>J</p><p>O</p><p>I</p><p>N</p>
-                <pre> </pre><p></p>
-                <p>P</p><p>E</p><p>R</p>
-                <pre> </pre><p></p>
-                <p>I</p><p>D</p>
-              </div>
+              Join per ID
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </button>
           </div>
         </div>
@@ -72,7 +70,7 @@ export class LobbyComponent implements OnInit {
   }
 
   getStats(): void {
-    this.http.get<any>('http://167.235.24.74:4000/api/getUserStats/2', {
+    this.http.get<any>('http://167.235.24.74:4000/api/getUserStats/' + JSON.parse(localStorage.getItem('currentUser')).userid, {
     observe: "response",
   },
   ).subscribe(response => {

@@ -25,68 +25,110 @@ pre {
   height: 100px;
   width: 100%;
   margin: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #5b6574;
-  border-radius: 0 2em 0em 3.5em;
-}
-.game_buttons:hover {
-  box-shadow: inset 0px 0px 0px black, inset 0px 0px 105px white;
-  transition: 0.1s ease-in-out;
-}
-
-.text p:nth-child(1n) {
-  color: dodgerblue;
-}
-
-/*.text p:nth-child(2n) {*/
-/*  color: blue;*/
-/*}*/
-
-.game_buttons:hover .text p:nth-child(1n) {
-  transform: rotate(8deg);
-  animation: shake 0.5s ease infinite;
-
-}
-.game_buttons:hover .text p:nth-child(2n) {
-  transform: rotate(5deg);
-  animation: shake 0.5s ease-out infinite reverse;
-
-}
-.game_buttons:hover .text p:nth-child(3n) {
-  transform: rotate(-2deg);
-  animation: shake 0.5s 0.1s ease infinite;
+  background: linear-gradient(to left top, #ff4d00 50%, #ff7400 50%);
+  border-style: none;
+  color:#fff;
+  font-size: 23px;
+  letter-spacing: 3px;
+  font-family: 'Lato';
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0px;
+  overflow: hidden;
+  transition: all .5s;
+  box-shadow: 0px 1px 2px rgba(0,0,0,.2);
 }
 
-.game_buttons:hover .text p:nth-child(4n) {
-  transform: rotate(-5deg);
-  animation: shake 0.5s ease-in infinite reverse;
+.game_buttons span{
+  position: absolute;
+  display: block;
+}
+.game_buttons span:nth-child(1){
+  height: 3px;
+  width:200px;
+  top:0px;
+  left:-200px;
+  background: linear-gradient(to right, rgba(0,0,0,0), #f6e58d);
+  border-top-right-radius: 1px;
+  border-bottom-right-radius: 1px;
+  animation: span1 2s linear infinite;
+  animation-delay: 1s;
 }
 
-@keyframes shake {
-  0% {
-    transform: translateX(0) rotate(8deg);
+@keyframes span1{
+  0%{
+    left:-200px
   }
-  50% {
-    transform: translateX(4px) rotate(-3deg);
-  }
-  100% {
-    transform: translateX(0) rotate(6deg);
+  100%{
+    left:200px;
   }
 }
-
-.text {
-  display: flex;
-  width: 95%;
-  font-size: 4vw;
-  line-height: 4vw;
-  text-shadow: 2px 2px black;
-  font-family: 'Anton', sans-serif;
-  align-items: center;
-  justify-content: center;
+.game_buttons span:nth-child(2){
+  height: 70px;
+  width: 3px;
+  top:-70px;
+  right:0px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0), #f6e58d);
+  border-bottom-left-radius: 1px;
+  border-bottom-right-radius: 1px;
+  animation: span2 2s linear infinite;
+  animation-delay: 2s;
+}
+@keyframes span2{
+  0%{
+    top:-70px;
+  }
+  100%{
+    top:70px;
+  }
+}
+.game_buttons span:nth-child(3){
+  height:3px;
+  width:200px;
+  right:-200px;
+  bottom: 0px;
+  background: linear-gradient(to left, rgba(0,0,0,0), #f6e58d);
+  border-top-left-radius: 1px;
+  border-bottom-left-radius: 1px;
+  animation: span3 2s linear infinite;
+  animation-delay: 3s;
+}
+@keyframes span3{
+  0%{
+    right:-200px;
+  }
+  100%{
+    right: 200px;
+  }
 }
 
-.text p{
-  margin: auto 0;
+.game_buttons span:nth-child(4){
+  height:70px;
+  width:3px;
+  bottom:-70px;
+  left:0px;
+  background: linear-gradient(to top, rgba(0,0,0,0), #f6e58d);
+  border-top-right-radius: 1px;
+  border-top-left-radius: 1px;
+  animation: span4 2s linear infinite;
+  animation-delay: 4s;
+}
+@keyframes span4{
+  0%{
+    bottom: -70px;
+  }
+  100%{
+    bottom:70px;
+  }
+}
+
+.game_buttons:hover{
+  transition: all .5s;
+  transform: rotate(-3deg) scale(1.1);
+  box-shadow: 0px 3px 5px rgba(0,0,0,.4);
+}
+.game_buttons:hover span{
+  animation-play-state: paused;
 }

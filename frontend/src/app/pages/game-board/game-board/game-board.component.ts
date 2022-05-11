@@ -251,7 +251,6 @@ export class GameBoardComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document) { }
 
   ngOnInit(): void {
-
     this.fillGridWithField();
   }
 
