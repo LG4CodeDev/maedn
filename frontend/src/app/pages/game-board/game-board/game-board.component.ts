@@ -438,8 +438,6 @@ export class GameBoardComponent implements OnInit {
 
   activeToken: string;
 
-
-
   ngOnInit(): void {
     this.fillGridWithField();
     this.mainGame();
