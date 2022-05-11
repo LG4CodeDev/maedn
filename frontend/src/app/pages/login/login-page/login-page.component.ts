@@ -98,8 +98,6 @@ export class LoginPageComponent implements OnInit {
 
   roles: String [] = ["Normal", "Admin"];
 
-  // isLoggedIn = false;
-  // isLoginFailed = false;
   errorMessage = "Login Failed";
   imageURL = "assets/avatar.jpeg";
 
@@ -108,6 +106,12 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(localStorage.getItem('currentUser') != null){
+      var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if(currentUser.token != null && currentUser.token != '' && currentUser.userid != null && currentUser.userid != ''){
+        this.router.navigate(['/lobby']);
+      }
+    }
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -132,9 +136,10 @@ export class LoginPageComponent implements OnInit {
           observe: "response",
         },
       ).subscribe(response => {
+        console.log(response);
         if (response.status == 200) {
-          // this.isLoggedIn = true;
           this.router.navigate(['/lobby']);
+          localStorage.setItem('currentUser', JSON.stringify({ token: response.body['token'], userid: response.body['userid'] }));
         }
       })
     } else {
