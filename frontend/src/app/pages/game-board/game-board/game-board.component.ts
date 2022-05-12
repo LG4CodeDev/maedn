@@ -456,6 +456,11 @@ export class GameBoardComponent implements OnInit {
     }
 
     this.fillGridWithField();
+    this.getPlayerPositions();
+  }
+
+  getPlayerPositions(){
+    console.log('here shal be the call for /getMainGame/:id ')
   }
 
   getGameData(){
