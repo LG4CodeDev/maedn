@@ -7,6 +7,7 @@ dotenv.config({ path: './config/app.env'});
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const e = require("express");
 
 const app = express();
 
@@ -73,18 +74,23 @@ async function sendGame(request, response) {
     const newFact = request.body.msg;
     let game = games.filter(games => games.id === gameID)[0]
     game = game.clients
-    game.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+    let clientStreams = [];
+    for(const client of game){
+        clientStreams.push(clients.filter(clients => clients.id === e.toString())[0])
+    }
 
-    return  response.json(newFact)
+    clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+
+    return  response.sendStatus(200)
 }
 
 async function createGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
-    const client = clients.filter(client => client.id === clientID.toString())[0]
+    //const client = clients.filter(client => client.id === clientID.toString())[0]
     let newGame = {
         id: gameID,
-        clients : [client]
+        clients : [clientID]
     }
     games.push(newGame)
     return  response.json(gameID)
@@ -94,8 +100,8 @@ async function joinGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let game = games.filter(games => games.id === gameID)[0]
-    let client = clients.filter(clients => clients.id === clientID.toString())[0]
-    game.clients.push(client)
+    //let client = clients.filter(clients => clients.id === clientID.toString())[0]
+    game.clients.push(clientID)
     return  response.json(gameID)
 }
 
