@@ -177,7 +177,7 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
         const result = await pool.query("select userid, username, image from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
-        response.send(result);
+        response.send(result[0]);
     } catch (err) {
         response.sendStatus(500);
         console.log(err);
@@ -223,7 +223,7 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
         const result = await pool.query("select * from statsMainGame where userid = ?", [id]);
-        response.send(result);
+        response.send(result[0]);
     } catch (err) {
         response.sendStatus(500);
         console.log(err);
@@ -583,63 +583,78 @@ function checkRoleAgain(playerFields, diceResult, moves) {
     return true;
 }
 
+function kickFigures(positions, data){
+    let indexPlayer = 0
+    for (const playerPosition of positions) {
+        let indexField = 0
+        for (let field of playerPosition) {
+            if (field === data.move.toString()) {
+                let playerChar;
+                switch (indexPlayer) {
+                    case 0:
+                        playerChar = "A"
+                        break;
+                    case 1:
+                        playerChar = "B"
+                        break;
+                    case 2:
+                        playerChar = "C"
+                        break;
+                    case 3:
+                        playerChar = "D"
+                        break;
+                }
+                positions[indexPlayer][indexField] = playerChar + "S " + indexField.toString()
+            }
+            indexField++
+        }
+        indexPlayer++
+    }
+    return positions
+}
+
 async function makeMove(data, game, response) {
     let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
     let moves = game['allowedMoves'].split(",")
     if (moves.includes(data.move.toString())) { //valid move done
-        //check if any game peace got beaten
-        let indexPlayer = 0
-        for (const playerPosition of positions) {
-            let indexField = 0
-            for (let field of playerPosition) {
-                if (field === data.move.toString()) {
-                    let playerChar;
-                    switch (indexPlayer) {
-                        case 0:
-                            playerChar = "A"
-                            break;
-                        case 1:
-                            playerChar = "B"
-                            break;
-                        case 2:
-                            playerChar = "C"
-                            break;
-                        case 3:
-                            playerChar = "D"
-                            break;
-                    }
-                    positions[indexPlayer][indexField] = playerChar + "S " + indexField.toString()
-                }
-                indexField++
-            }
-            indexPlayer++
-        }
+        //check if any game peace got beaten and kick those
+        positions = kickFigures(positions, data)
+
+
         const indexOfCurrentPlayer = game['turn'].slice(-1) - 1
+
+        //make the Move
         let newPlayerPos = setPositions(positions[indexOfCurrentPlayer], moves, data.move.toString())
         positions[indexOfCurrentPlayer] = newPlayerPos
 
-        let doneMoves = game['movesOfPerson']
+        let CountOfDoneMovesOfPlayer = game['movesOfPerson']
         let nextPlayer;
+
+        //if Player is allowed to role again don´t change anything else set new player and Moves of player = 0
         if (game['roleAgain']) nextPlayer = game['turn']
         else {
             nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
-            doneMoves = 0
+            CountOfDoneMovesOfPlayer = 0
         }
-        const isFinished = Boolean(checkFinished(newPlayerPos));
 
         let status
-
+        const isFinished = Boolean(checkFinished(newPlayerPos));
         if (isFinished) status = "Finished"
         else status = "started"
 
         try {
+            //Update Game in Database
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameID = ?"
-                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, doneMoves, "null, null, null, null", game['gameID']]);
+                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, "null, null, null, null", game['gameID']]);
+
+            //Send response to client
             response.status(200).send({
                 "positions": positions,
                 "isFinished": isFinished,
                 "nextPlayer": nextPlayer
             })
+
+            // Send game updates over SSE to all players of game
             axios({
                 method :'post',
                 url : "https://spielehub.server-welt.com/sendGame",
@@ -652,18 +667,20 @@ async function makeMove(data, game, response) {
                     }
                 }
             })
-        } catch (e) {
+        } catch (err) {
+            console.log(err)
             response.sendStatus(500)
         }
-    } else return response.status(400).send('Invalid Move')
+    }
+    else return response.status(400).send('Invalid Move')
 }
 
-function setPositions(oldPos, allowedMoves, move) {
+function setPositions(oldPositionOfPlayer, allowedMoves, DoneMove) {
     let index = 0
-    for (const e of allowedMoves) {
-        if (move === e) {
-            oldPos[index] = move
-            return oldPos
+    for (const move of allowedMoves) {
+        if (DoneMove === move) {
+            oldPositionOfPlayer[index] = DoneMove
+            return oldPositionOfPlayer
         }
         index++
     }
@@ -684,11 +701,16 @@ async function validateAccess(request, response, next){
     } catch (err) {
         token = null;
     }
-
     if (token == null) {
-        return response.status(400).send("Token not present")
+        return response.status(401).send("Token not present, missing Authorization or wrong format")
     }
-    let result = await pool.query("Select * from users where token = ?",[token])
+    let result;
+    try{
+        result = await pool.query("Select * from users where token = ?",[token])
+    }catch (err) {
+        console.log(err)
+        return response.status(500)
+    }
     if (result[0] === undefined) {
         return response.status(403).send("Token invalid")
     } else {
@@ -705,5 +727,4 @@ async function checkUniquenessOfEmail(request, response, next) {
     } catch (err) {
         response.sendStatus(500)
     }
-
 }
