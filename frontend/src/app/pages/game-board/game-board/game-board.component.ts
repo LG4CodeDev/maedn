@@ -1,6 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { DOCUMENT} from "@angular/common";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-board',
@@ -8,7 +9,18 @@ import { DOCUMENT} from "@angular/common";
   template: `
     <div nz-row>
       <div nz-col class="side-left" nzFlex="auto">
+        <div class="whosTurnIsIt">
+          Es ist dran:
+          <div id="whosTurnIsIt">
 
+          </div>
+        </div>
+        <div class="whosTurnIsIt">
+          Du bist Farbe:
+          <div id="whoAmI">
+
+          </div>
+        </div>
       </div>
       <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
           <div nz-row class="row">
@@ -420,6 +432,7 @@ export class GameBoardComponent implements OnInit {
     private http: HttpClient,
     private elementRef: ElementRef,
     private renderer: Renderer2,
+    private router: Router,
     @Inject(DOCUMENT) private document: Document,
   ) { }
 
@@ -432,7 +445,13 @@ export class GameBoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.gameID = 29;
-    this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
+    try{
+      this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
+    }
+    catch (e) {
+      this.router.navigate(['/login']);
+    }
+
     this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
     this.highlightetFields = [];
     if (!!window.EventSource) {
@@ -460,7 +479,50 @@ export class GameBoardComponent implements OnInit {
   }
 
   getPlayerPositions(){
-    console.log('here shal be the call for /getMainGame/:id ')
+    this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
+        observe: "response",
+        headers: {
+          "authorization": this.apiToken,
+        },
+      },
+    ).subscribe(response => {
+        console.log(response)
+        this.setPlayerPosition(response['body']);
+        let nextPlayer = 'Player4';
+        switch (nextPlayer) {
+          case "Player1":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
+            break;
+          case "Player2":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Grün';
+            break;
+          case "Player3":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Rot';
+            break;
+          case "Player4":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Schwarz';
+            break;
+          default:
+            document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
+        }
+        document.getElementById('whoAmI').innerHTML = '';
+        if(response['body']['Player1'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Gelb';
+        }
+        if(response['body']['Player2'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Grün';
+        }
+        if(response['body']['Player3'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Rot';
+        }
+        if(response['body']['Player4'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Schwarz';
+        }
+      },
+      response => {
+        console.log(response)
+      }
+    )
   }
 
   getGameData(){
@@ -527,6 +589,7 @@ export class GameBoardComponent implements OnInit {
         for (let i = 1; i < 5; i++) {
           let tokenID = 'token' +i.toString() + '_' + currentValue;
           let fieldID = 'field_'+gameBoard['positions'][index][i-1];
+          //console.log('moving ' + tokenID + ' to field ' + fieldID);
           this.moveTokenToField(tokenID, fieldID);
         }
       });
@@ -556,25 +619,25 @@ export class GameBoardComponent implements OnInit {
       }
     else {
       let fieldToHighlight;
-      if (json[0] != '') {
+      if (json[0] != '' && json[0] != null) {
         let id = 'field_' + json[0];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json[1] != '') {
+      if (json[1] != '' && json[1] != null) {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json[2] != '') {
+      if (json[2] != '' && json[2] != null) {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json[3] != '') {
+      if (json[3] != '' && json[3] != null) {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
@@ -585,6 +648,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   unhiglightMoves(json: any){
+    console.log(this.highlightetFields);
     this.highlightetFields.forEach((currentValue: HTMLElement, index: any, array: any) => {
       currentValue.classList.remove('highlightField');
     });
@@ -639,7 +703,6 @@ export class GameBoardComponent implements OnInit {
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
     fieldElement.appendChild(tokenElement);
-    //tokenElement.parentNode.removeChild(tokenElement);
   }
 
   //following are only methods for creating game board,
