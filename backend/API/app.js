@@ -265,7 +265,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
     if (game[game['turn']] !== response.locals.user['userid']) return response.status(403).send("others players turn")
-    if (game['allowedMoves'] !== "null, null, null, null" && game['allowedMoves'] !== ",,," ) return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves']})
+    if (game['allowedMoves'] !== "null, null, null, null" && game['allowedMoves'] !== ",,," ) return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves'].split(",")})
 
     try {
         const diceResult = roleDice();
@@ -305,9 +305,9 @@ app.post('/api/createMainGame', validateAccess, async (request, response) => {
     try {
         let result = await CreateGame(response.locals.user['userid'])
 
-        if (result === 400) {
-            response.sendStatus(400)
-        } else response.status(200).send({gameID: result})
+        if (result === 400)response.sendStatus(400)
+        else if (result === 500) response.sendStatus(500)
+        else response.status(200).send({gameID: result, players: 1})
 
     } catch (err) {
         response.sendStatus(500);
@@ -323,9 +323,9 @@ app.put('/api/joinGame', validateAccess, async (request, response) => {
         if (result[0] === undefined) {
             result = await CreateGame(response.locals.user['userid'])
 
-            if (result === 400) {
-                response.sendStatus(400)
-            } else response.status(200).send({gameID: result, players: 1})
+        if (result === 400)response.sendStatus(400)
+        else if (result === 500) response.sendStatus(500)
+        else response.status(200).send({gameID: result, players: 1})
         } else {
             await joinGame(response, result[0], response.locals.user['userid'])
         }
@@ -421,38 +421,59 @@ Game Logic needed Functions
 
 
 async function joinGame(response, joiningGame, player) {
-    if (joiningGame['Player1'] == null) {
-        await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        response.status(200).send({gameID: joiningGame['gameID'], players: 1})
-    } else if (joiningGame['Player2'] == null) {
-        await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        response.status(200).send({gameID: joiningGame['gameID'], players: 2})
-    } else if (joiningGame['Player3'] == null) {
-        await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        response.status(200).send({gameID: joiningGame['gameID'], players: 3})
-    } else if (joiningGame['Player4'] == null) {
-        await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
-        response.status(200).send({gameID: joiningGame['gameID'], players: 4})
+    try {
+        if (joiningGame['Player1'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 1})
+        }
+        else if (joiningGame['Player2'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 2})
+        }
+        else if (joiningGame['Player3'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 3})
+        }
+        else if (joiningGame['Player4'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 4})
+        }
+        axios({
+            method: 'post',
+            url: "https://spielehub.server-welt.com/joinGame",
+            data: {"gameID": joiningGame['gameID'], "clientID": player}
+        })
+    }catch (err){
+        console.log(err)
+        response.sendStatus(500)
     }
-    axios({method :'post', url : "https://spielehub.server-welt.com/joinGame", data : {"gameID" : joiningGame['gameID'], "clientID" : player}})
 }
 
 async function CreateGame(player1) {
-    const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
+    try {
+        const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
-    if (result.warningStatus === 0 ){
-        let gameID = parseInt(result.insertId.toString())
-        axios({
-            method :'post',
-            url : "https://spielehub.server-welt.com/createGame",
-            data : {
-                "gameID" : gameID,
-                "clientID" : player1
-            }
-        })
-        return gameID
+        if (result.warningStatus === 0) {
+            let gameID = parseInt(result.insertId.toString())
+            axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/createGame",
+                data: {
+                    "gameID": gameID,
+                    "clientID": player1
+                }
+            })
+            return gameID
+        }
+        else return 400
+    }catch (err){
+        console.log(err)
+        return 500
     }
-    else return 400
 }
 
 function roleDice() {
@@ -472,112 +493,147 @@ function getPlayerPosition(game) {
     }
 }
 
+function getRightAreaOfFigure(currentField, game){
+    let newArea;
+    //move player to the new Area
+    switch (currentField[0]) {
+        case "AR":
+            newArea = 'BR';
+            break;
+        case "BR":
+            newArea = 'CR';
+            break;
+        case "CR":
+            newArea = 'DR';
+            break;
+        case "DR":
+            newArea = 'AR';
+            break;
+    }
+    //if the figure is in again in his first quarter of the game(did one round)
+    //he should move to the finish
+    if (game['turn'] === 'Player1' && newArea === 'AR') {
+        //if his dice role is little enough he can move to finish
+        if (currentField[1] <= 3) newArea = 'AF';
+        //else the move is not valid
+        else return null
+
+    }
+    else if (game['turn'] === 'Player2' && newArea === 'BR')
+    {
+        if (currentField[1] <= 3) newArea = 'BF';
+        else return null
+    }
+    else if (game['turn'] === 'Player3' && newArea === 'CR')
+    {
+        if (currentField[1] <= 3) newArea = 'CF';
+        else return null
+    }
+    else if (game['turn'] === 'Player4' && newArea[0] === 'DR')
+    {
+        if (currentField[1] <= 3) newArea = 'DF';
+        else return null
+    }
+
+    return newArea
+}
+
 function calculateMoves(game, diceResult, playerFields) {
     let listOfMoves = [];
     for (const playerFieldsKey of playerFields) {
         let element = playerFieldsKey.split("_");
         element[1] = parseInt(element[1]);
-        if (diceResult !== 6 && element[0][1] === 'S') {
+
+        //if figure is in start and player did not role 6 no move available for that figure
+        if (diceResult !== 6 && element[0][1] === 'S')
+        {
             listOfMoves.push(null);
             continue;
-        } else if (diceResult === 6 && element[0][1] === 'S') {
+        }
+        //if figure is in start and player did role 6, the figure can move to his first field
+        else if (diceResult === 6 && element[0][1] === 'S')
+        {
             element[0] = element[0][0] + 'R'
             element[1] = 0
-        } else if (element[0][1] === 'F') {
+        }
+        //if figure is in finish, check if he can step further in the finish for better position
+        else if (element[0][1] === 'F')
+        {
             element[1] += diceResult
-            if (element[1] > 3) {
+            if (element[1] > 3)
+            {
                 listOfMoves.push(null);
                 continue;
             }
-        } else {
+        }
+        //if player is on field check possible moves
+        else
+        {
+            //add dice result to current field
             element[1] += diceResult;
+            // if player gets in a new quader of the game check which one
             if (element[1] > 9) {
                 element[1] -= 10;
-                switch (element[0]) {
-                    case "AR":
-                        element[0] = 'BR';
-                        break;
-                    case "BR":
-                        element[0] = 'CR';
-                        break;
-                    case "CR":
-                        element[0] = 'DR';
-                        break;
-                    case "DR":
-                        element[0] = 'AR';
-                        break;
-                }
-
-                if (game['turn'] === 'Player1' && element[0] === 'AR') {
-                    if (element[1] <= 3) element[0] = 'AF';
-                    else {
-                        listOfMoves.push(null);
-                        continue;
-                    }
-                } else if (game['turn'] === 'Player2' && element[0] === 'BR') {
-                    if (element[1] <= 3) element[0] = 'BF';
-                    else {
-                        listOfMoves.push(null);
-                        continue;
-                    }
-                } else if (game['turn'] === 'Player3' && element[0] === 'CR') {
-                    if (element[1] <= 3) element[0] = 'CF';
-                    else {
-                        listOfMoves.push(null);
-                        continue;
-                    }
-                } else if (game['turn'] === 'Player4' && element[0] === 'DR') {
-                    if (element[1] <= 3) element[0] = 'DF';
-                    else {
-                        listOfMoves.push(null);
-                        continue;
-                    }
+                let tmp = getRightAreaOfFigure(element, game)
+                if (tmp !== null) element[0] = tmp
+                else{
+                    listOfMoves.push(null)
+                    continue
                 }
             }
         }
+
+        //rejoin split and modified fields
         element = (element[0] + "_" + element[1])
+        //check if filed is already occupied by another figure of the player
+        //if so move is not available
         if (playerFields.includes(element)) {
             listOfMoves.push(null);
             continue;
         }
+        //if move was not declined in process add to list
         listOfMoves.push(element)
-
     }
     return listOfMoves;
-
 }
 
 function checkRoleAgain(playerFields, diceResult, moves) {
+    //If player rolled 6 he always is allowed to role again
     if (diceResult === 6) return true;
+    //If player has already 3 roles and no 6 he cant role again
     if (moves + 1 >= 3) return false;
+    //If no figure of a player is on the field and figures are either in Start or right place at finish he can role a 2nd or 3rd time
     for (const playerFieldsKey of playerFields) {
         let element = playerFieldsKey.split("_");
-        if (element[0][1] === 'S') {
-        } else {
-            try {
-                if (element[0][1] === 'F') {
-                    if (element[1] === 3) continue;
-                    if (element[1] === 2) {
-                        playerFields.find(element => {
-                            if (element.includes('F_3')) {
-                            } else return false;
-                        });
-                    }
-                    if (element[1] === 1) {
-                        playerFields.find(element => {
-                            if (element.includes('F_3')) {
-                                playerFields.find(element => {
-                                    if (element.includes('F_2')) {
-                                    } else return false
-                                });
-                            } else return false
-                        });
-                    }
-                } else return false;
-            } catch (err) {
-                console.log(err)
-                return false;
+        //If figure is in start he potentially can role again
+        if (element[0][1] === 'S') {}
+        //else check if figure is at the end/right place of finish
+        else
+        {
+            if (element[0][1] === 'F')
+            {
+                if (element[1] === 3) continue;
+                //if figure stand in 3. Finish field check if 4. also is used by a figure
+                if (element[1] === 2)
+                {
+                    playerFields.find(element => {
+                        if (element.includes('F_3')){}
+                        else return false});
+                }
+                //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
+                if (element[1] === 1)
+                {
+                    playerFields.find(element => {
+                        if (element.includes('F_3'))
+                        {
+                            playerFields.find(element =>
+                            {
+                                if (element.includes('F_2')) {
+                                } else return false});
+                        }else return false});
+                }
             }
+            else return false;
         }
     }
     return true;
