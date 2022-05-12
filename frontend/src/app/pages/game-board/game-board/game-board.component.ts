@@ -428,12 +428,13 @@ export class GameBoardComponent implements OnInit {
   jsonReturned: any;
   gameID: number;
   userID: number;
-
-
+  highlightetFields: any;
 
   ngOnInit(): void {
     this.gameID = 29;
-    this.userID = 48;
+    this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
+    this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
+    this.highlightetFields = [];
     if (!!window.EventSource) {
 
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
@@ -454,9 +455,7 @@ export class GameBoardComponent implements OnInit {
       )
     }
 
-
     this.fillGridWithField();
-    this.apiToken = "Bearer $2b$05$vahqrDdsDAPFT7L35R4zgehdiYOFS2rNmczDpTs4IBctZNU9WPDBa";
   }
 
   getGameData(){
@@ -467,12 +466,22 @@ export class GameBoardComponent implements OnInit {
         },
       },
     ).subscribe(response => {
+      console.log(response.status)
       if (response.status == 200) {
         console.log(response['body']);
         this.jsonReturned = response['body'];
         this.tossDice(response['body']['move']['dice'])
       }
-    });
+    },
+    response => {
+      if(response.status == 403){
+        if(response['error']['msg'] == 'make Move first'){
+          console.log(response['error']['moves']);
+          //this.highlightMoves(response['error']['moves'].split(','));
+        }
+      }
+    }
+    );
   }
 
   sendGameData(fieldID: string, json: any){
@@ -496,11 +505,27 @@ export class GameBoardComponent implements OnInit {
           console.log('game data successfully send!');
           console.log(response);
           this.unhiglightMoves(this.jsonReturned);
+          this.setPlayerPosition(response['body']);
         }
       });
     }
     else{
       console.log('incorrect field, choose another');
+    }
+  }
+
+  setPlayerPosition(gameBoard: any){
+    if(gameBoard['positions'][0] != null && gameBoard['positions'][1] != null
+    && gameBoard['positions'][2] != null && gameBoard['positions'][3] != null){
+      let colors = ['Yellow', 'Green', 'Red', 'Black'];
+      colors.forEach((currentValue, index, array) => {
+        for (let i = 1; i < 5; i++) {
+          let tokenID = 'token' +i.toString() + '_' + currentValue;
+          let fieldID = 'field_'+gameBoard['positions'][index][i-1];
+          this.moveTokenToField(tokenID, fieldID);
+        }
+      });
+      //this.moveTokenToField()
     }
   }
 
@@ -514,50 +539,52 @@ export class GameBoardComponent implements OnInit {
       const showClass = 'show-' + randNum;
       cube.classList.add(showClass);
       console.log(randNum)
-      this.highlightMoves(this.jsonReturned);
+      this.highlightMoves(this.jsonReturned['move']['fields']);
 
     }, {once: true});
   }
 
   highlightMoves(json: any){
-    if (json['move']['fields'][0] == null && json['move']['fields'][1] == null &&
-      json['move']['fields'][2] == null && json['move']['fields'][3] == null) {
-      console.log('no moves available');
-    }
+    if (json[0] == null && json[1] == null &&
+      json[2] == null && json[3] == null) {
+        console.log('no moves available');
+      }
     else {
-      if (json['move']['fields'][0] != null) {
-        let id = 'field_'+json['move']['fields'][0];
-        let fieldToHighlight = document.getElementById(id);
+      let fieldToHighlight;
+      if (json[0] != null) {
+        let id = 'field_' + json[0];
+        console.log(id)
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][0], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json['move']['fields'][1] != null) {
-        let id = 'field_'+json['move']['fields'][1];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[1] != null) {
+        let id = 'field_' + json[1];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][1], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json['move']['fields'][2] != null) {
-        let id = 'field_'+json['move']['fields'][2];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[2] != null) {
+        let id = 'field_' + json[2];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][2], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json['move']['fields'][3] != null) {
-        let id = 'field_'+json['move']['fields'][3];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[3] != null) {
+        let id = 'field_' + json[3];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][3], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[3], json));
       }
+      this.highlightetFields.push(fieldToHighlight);
     }
   }
 
   unhiglightMoves(json: any){
-    let allHighlightet = document.getElementsByClassName('highlightField');
-    for (let i = 0; i < allHighlightet.length; i++) {
-      allHighlightet[i].classList.remove('highlightField');
-      allHighlightet[i].removeEventListener('click',() => this.sendGameData(json['move']['fields'][3], json))
-    }
+    this.highlightetFields.forEach((currentValue: HTMLElement, index: any, array: any) => {
+      currentValue.classList.remove('highlightField');
+    });
+    this.highlightetFields = [];
   }
 
 
