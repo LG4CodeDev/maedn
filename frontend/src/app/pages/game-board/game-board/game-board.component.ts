@@ -1,6 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { DOCUMENT} from "@angular/common";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-board',
@@ -8,7 +9,18 @@ import { DOCUMENT} from "@angular/common";
   template: `
     <div nz-row>
       <div nz-col class="side-left" nzFlex="auto">
+        <div class="whosTurnIsIt">
+          Es ist dran:
+          <div id="whosTurnIsIt">
 
+          </div>
+        </div>
+        <div class="whosTurnIsIt">
+          Du bist Farbe:
+          <div id="whoAmI">
+
+          </div>
+        </div>
       </div>
       <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
           <div nz-row class="row">
@@ -420,6 +432,7 @@ export class GameBoardComponent implements OnInit {
     private http: HttpClient,
     private elementRef: ElementRef,
     private renderer: Renderer2,
+    private router: Router,
     @Inject(DOCUMENT) private document: Document,
   ) { }
 
@@ -428,12 +441,19 @@ export class GameBoardComponent implements OnInit {
   jsonReturned: any;
   gameID: number;
   userID: number;
-
-
+  highlightetFields: any;
 
   ngOnInit(): void {
     this.gameID = 29;
-    this.userID = 48;
+    try{
+      this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
+    }
+    catch (e) {
+      this.router.navigate(['/login']);
+    }
+
+    this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
+    this.highlightetFields = [];
     if (!!window.EventSource) {
 
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
@@ -454,9 +474,55 @@ export class GameBoardComponent implements OnInit {
       )
     }
 
-
     this.fillGridWithField();
-    this.apiToken = "Bearer $2b$05$vahqrDdsDAPFT7L35R4zgehdiYOFS2rNmczDpTs4IBctZNU9WPDBa";
+    this.getPlayerPositions();
+  }
+
+  getPlayerPositions(){
+    this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
+        observe: "response",
+        headers: {
+          "authorization": this.apiToken,
+        },
+      },
+    ).subscribe(response => {
+        console.log(response)
+        this.setPlayerPosition(response['body']);
+        let nextPlayer = 'Player4';
+        switch (nextPlayer) {
+          case "Player1":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
+            break;
+          case "Player2":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Grün';
+            break;
+          case "Player3":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Rot';
+            break;
+          case "Player4":
+            document.getElementById('whosTurnIsIt').innerHTML = 'Schwarz';
+            break;
+          default:
+            document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
+        }
+        document.getElementById('whoAmI').innerHTML = '';
+        if(response['body']['Player1'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Gelb';
+        }
+        if(response['body']['Player2'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Grün';
+        }
+        if(response['body']['Player3'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Rot';
+        }
+        if(response['body']['Player4'] == this.userID){
+          document.getElementById('whoAmI').innerHTML += 'Schwarz';
+        }
+      },
+      response => {
+        console.log(response)
+      }
+    )
   }
 
   getGameData(){
@@ -467,19 +533,29 @@ export class GameBoardComponent implements OnInit {
         },
       },
     ).subscribe(response => {
+      console.log(response.status)
       if (response.status == 200) {
         console.log(response['body']);
         this.jsonReturned = response['body'];
         this.tossDice(response['body']['move']['dice'])
       }
-    });
+    },
+    response => {
+      if(response.status == 403){
+        if(response['error']['msg'] == 'make Move first'){
+          console.log(response);
+          this.highlightMoves(response['error']['moves']);
+        }
+      }
+    }
+    );
   }
 
   sendGameData(fieldID: string, json: any){
-    console.log(json['move']['fields'][0]);
+    console.log(json[0]);
     console.log(fieldID);
-    if(json['move']['fields'][0] == fieldID || json['move']['fields'][1] == fieldID ||
-      json['move']['fields'][2] == fieldID || json['move']['fields'][3] == fieldID){
+    if(json[0] == fieldID || json[1] == fieldID ||
+      json[2] == fieldID || json[3] == fieldID){
       this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
         {
           "move":fieldID,
@@ -496,11 +572,28 @@ export class GameBoardComponent implements OnInit {
           console.log('game data successfully send!');
           console.log(response);
           this.unhiglightMoves(this.jsonReturned);
+          this.setPlayerPosition(response['body']);
         }
       });
     }
     else{
       console.log('incorrect field, choose another');
+    }
+  }
+
+  setPlayerPosition(gameBoard: any){
+    if(gameBoard['positions'][0] != null && gameBoard['positions'][1] != null
+    && gameBoard['positions'][2] != null && gameBoard['positions'][3] != null){
+      let colors = ['Yellow', 'Green', 'Red', 'Black'];
+      colors.forEach((currentValue, index, array) => {
+        for (let i = 1; i < 5; i++) {
+          let tokenID = 'token' +i.toString() + '_' + currentValue;
+          let fieldID = 'field_'+gameBoard['positions'][index][i-1];
+          //console.log('moving ' + tokenID + ' to field ' + fieldID);
+          this.moveTokenToField(tokenID, fieldID);
+        }
+      });
+      //this.moveTokenToField()
     }
   }
 
@@ -514,50 +607,52 @@ export class GameBoardComponent implements OnInit {
       const showClass = 'show-' + randNum;
       cube.classList.add(showClass);
       console.log(randNum)
-      this.highlightMoves(this.jsonReturned);
+      this.highlightMoves(this.jsonReturned['move']['fields']);
 
     }, {once: true});
   }
 
   highlightMoves(json: any){
-    if (json['move']['fields'][0] == null && json['move']['fields'][1] == null &&
-      json['move']['fields'][2] == null && json['move']['fields'][3] == null) {
-      console.log('no moves available');
-    }
+    if (json[0] == null && json[1] == null &&
+      json[2] == null && json[3] == null) {
+        console.log('no moves available');
+      }
     else {
-      if (json['move']['fields'][0] != null) {
-        let id = 'field_'+json['move']['fields'][0];
-        let fieldToHighlight = document.getElementById(id);
+      let fieldToHighlight;
+      if (json[0] != '' && json[0] != null) {
+        let id = 'field_' + json[0];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][0], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json['move']['fields'][1] != null) {
-        let id = 'field_'+json['move']['fields'][1];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[1] != '' && json[1] != null) {
+        let id = 'field_' + json[1];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][1], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json['move']['fields'][2] != null) {
-        let id = 'field_'+json['move']['fields'][2];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[2] != '' && json[2] != null) {
+        let id = 'field_' + json[2];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][2], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json['move']['fields'][3] != null) {
-        let id = 'field_'+json['move']['fields'][3];
-        let fieldToHighlight = document.getElementById(id);
+      if (json[3] != '' && json[3] != null) {
+        let id = 'field_' + json[3];
+        fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json['move']['fields'][3], json));
+        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[3], json));
       }
+      this.highlightetFields.push(fieldToHighlight);
     }
   }
 
   unhiglightMoves(json: any){
-    let allHighlightet = document.getElementsByClassName('highlightField');
-    for (let i = 0; i < allHighlightet.length; i++) {
-      allHighlightet[i].classList.remove('highlightField');
-      allHighlightet[i].removeEventListener('click',() => this.sendGameData(json['move']['fields'][3], json))
-    }
+    console.log(this.highlightetFields);
+    this.highlightetFields.forEach((currentValue: HTMLElement, index: any, array: any) => {
+      currentValue.classList.remove('highlightField');
+    });
+    this.highlightetFields = [];
   }
 
 
@@ -608,7 +703,6 @@ export class GameBoardComponent implements OnInit {
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
     fieldElement.appendChild(tokenElement);
-    //tokenElement.parentNode.removeChild(tokenElement);
   }
 
   //following are only methods for creating game board,

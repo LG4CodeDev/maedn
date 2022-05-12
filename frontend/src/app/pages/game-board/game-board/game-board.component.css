@@ -348,3 +348,10 @@ label { margin-right: 10px; }
 .hightlightField:hover{
   box-shadow: inset 0px 0px 30px blueviolet !important;
 }
+
+.whosTurnIsIt{
+  padding: 18px;
+  width: 90%;
+  text-align: left;
+  background-color: #dddddd;
+}
