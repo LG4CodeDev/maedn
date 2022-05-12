@@ -17,3 +17,20 @@
 .right {
   float: right;
 }
+
+#logoutBtn {
+  background-color: darkred;
+  border-radius: 25px;
+  border: 1px black;
+  box-shadow: 5px 5px 5px #8b0000;
+  width: 150px;
+  height: 35px;
+  font-size: 20px;
+}
+
+#logout {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
