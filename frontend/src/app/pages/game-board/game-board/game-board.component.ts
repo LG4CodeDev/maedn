@@ -426,21 +426,24 @@ export class GameBoardComponent implements OnInit {
   activeToken: string;
   apiToken: string;
   jsonReturned: any;
+  gameID: number;
+  userID: number;
 
 
 
   ngOnInit(): void {
-    console.log('init kommt jeztt')
+    this.gameID = 29;
+    this.userID = 48;
     if (!!window.EventSource) {
-      var source = new EventSource('https://spielehub.server-welt.com/startStream/48');
 
+      var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         console.log('sse tut');
         console.log(e)
       }, false)
       this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
-          "gameID":29,
-          "cliendID":48
+          "gameID":this.gameID,
+          "cliendID":this.userID
         },
         {
           observe: "response",
@@ -457,7 +460,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   getGameData(){
-    this.http.get<any>('https://spielehub.server-welt.com/api/getMoves/29',{
+    this.http.get<any>('https://spielehub.server-welt.com/api/getMoves/'+this.gameID.toString(),{
         observe: "response",
         headers: {
           "authorization": this.apiToken,
@@ -480,7 +483,7 @@ export class GameBoardComponent implements OnInit {
       this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
         {
           "move":fieldID,
-          "id":29
+          "id":this.gameID
         },
         {
           observe: "response",
