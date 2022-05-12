@@ -476,8 +476,8 @@ export class GameBoardComponent implements OnInit {
     response => {
       if(response.status == 403){
         if(response['error']['msg'] == 'make Move first'){
-          console.log(response['error']['moves']);
-          //this.highlightMoves(response['error']['moves'].split(','));
+          console.log(response);
+          this.highlightMoves(response['error']['moves']);
         }
       }
     }
@@ -485,10 +485,10 @@ export class GameBoardComponent implements OnInit {
   }
 
   sendGameData(fieldID: string, json: any){
-    console.log(json['move']['fields'][0]);
+    console.log(json[0]);
     console.log(fieldID);
-    if(json['move']['fields'][0] == fieldID || json['move']['fields'][1] == fieldID ||
-      json['move']['fields'][2] == fieldID || json['move']['fields'][3] == fieldID){
+    if(json[0] == fieldID || json[1] == fieldID ||
+      json[2] == fieldID || json[3] == fieldID){
       this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
         {
           "move":fieldID,
@@ -551,26 +551,25 @@ export class GameBoardComponent implements OnInit {
       }
     else {
       let fieldToHighlight;
-      if (json[0] != null) {
+      if (json[0] != '') {
         let id = 'field_' + json[0];
-        console.log(id)
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json[1] != null) {
+      if (json[1] != '') {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json[2] != null) {
+      if (json[2] != '') {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json[3] != null) {
+      if (json[3] != '') {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
