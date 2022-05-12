@@ -10,6 +10,7 @@
   aspect-ratio: 0.7;
   max-width: 500px;
   min-width: 300px;
+  padding: 10px;
 }
 
 pre {
@@ -25,6 +26,13 @@ pre {
   aspect-ratio: 0.7;
   max-width: 500px;
   min-width: 300px;
+  padding: 10px;
+}
+
+#username {
+  font-size: 2.5vw;
+  margin: 0;
+  text-decoration: underline;
 }
 
 #game_selection {
@@ -43,7 +51,7 @@ pre {
   width: 100%;
   min-width: 50px;
   margin: 15px;
-  background: linear-gradient(to left top, #ff4d00 50%, #ff7400 50%);
+  background: linear-gradient(to left top, #c76706 0%, #f0a150 100%);
   border-style: none;
   color:#fff;
   font-size: 23px;
@@ -147,6 +155,23 @@ pre {
   transform: rotate(-3deg) scale(1.1);
   box-shadow: 0px 3px 5px rgba(0,0,0,.4);
 }
-.game_buttons:hover span{
-  animation-play-state: paused;
+
+#profilePicture {
+  float: left;
+  width: 80px;
+  aspect-ratio: 1;
+  margin: 5px 15px 5px 0px;
+  border-radius: 25px;
+}
+
+.userStatItem {
+  width: inherit;
+}
+
+.userStatItem p{
+  font-size: 2vw;
+}
+
+#userStats {
+  width: inherit;
 }
