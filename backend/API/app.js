@@ -300,6 +300,18 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     }
 });
 
+app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) => {
+    let id = request.params.gameID;
+    try {
+        const result = await pool.query("select * from mainGame where gameID = ?", [id]);
+        response.send(result[0])
+    } catch (err) {
+        console.log(err)
+        return response.sendStatus(500);
+    }
+
+})
+
 //creates a Game
 app.post('/api/createMainGame', validateAccess, async (request, response) => {
     try {
