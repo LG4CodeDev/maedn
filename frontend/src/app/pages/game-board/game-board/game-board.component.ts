@@ -488,41 +488,45 @@ export class GameBoardComponent implements OnInit {
     ).subscribe(response => {
         console.log(response)
         this.setPlayerPosition(response['body']);
-        let nextPlayer = 'Player4';
-        switch (nextPlayer) {
-          case "Player1":
-            document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
-            break;
-          case "Player2":
-            document.getElementById('whosTurnIsIt').innerHTML = 'Grün';
-            break;
-          case "Player3":
-            document.getElementById('whosTurnIsIt').innerHTML = 'Rot';
-            break;
-          case "Player4":
-            document.getElementById('whosTurnIsIt').innerHTML = 'Schwarz';
-            break;
-          default:
-            document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
-        }
-        document.getElementById('whoAmI').innerHTML = '';
-        if(response['body']['Player1'] == this.userID){
-          document.getElementById('whoAmI').innerHTML += 'Gelb';
-        }
-        if(response['body']['Player2'] == this.userID){
-          document.getElementById('whoAmI').innerHTML += 'Grün';
-        }
-        if(response['body']['Player3'] == this.userID){
-          document.getElementById('whoAmI').innerHTML += 'Rot';
-        }
-        if(response['body']['Player4'] == this.userID){
-          document.getElementById('whoAmI').innerHTML += 'Schwarz';
-        }
+        this.updateGameInfo(response);
       },
       response => {
         console.log(response)
       }
     )
+  }
+
+  updateGameInfo(response: any){
+    let nextPlayer = 'Player4';
+    switch (nextPlayer) {
+      case "Player1":
+        document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
+        break;
+      case "Player2":
+        document.getElementById('whosTurnIsIt').innerHTML = 'Grün';
+        break;
+      case "Player3":
+        document.getElementById('whosTurnIsIt').innerHTML = 'Rot';
+        break;
+      case "Player4":
+        document.getElementById('whosTurnIsIt').innerHTML = 'Schwarz';
+        break;
+      default:
+        document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
+    }
+    document.getElementById('whoAmI').innerHTML = '';
+    if(response['body']['Player1'] == this.userID){
+      document.getElementById('whoAmI').innerHTML += 'Gelb';
+    }
+    if(response['body']['Player2'] == this.userID){
+      document.getElementById('whoAmI').innerHTML += 'Grün';
+    }
+    if(response['body']['Player3'] == this.userID){
+      document.getElementById('whoAmI').innerHTML += 'Rot';
+    }
+    if(response['body']['Player4'] == this.userID){
+      document.getElementById('whoAmI').innerHTML += 'Schwarz';
+    }
   }
 
   getGameData(){
@@ -573,6 +577,7 @@ export class GameBoardComponent implements OnInit {
           console.log(response);
           this.unhiglightMoves(this.jsonReturned);
           this.setPlayerPosition(response['body']);
+          this.updateGameInfo(response);
         }
       });
     }
