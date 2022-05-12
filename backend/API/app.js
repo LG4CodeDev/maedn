@@ -305,7 +305,7 @@ app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) =>
     try {
         const result = await pool.query("select * from mainGame where gameID = ?", [id]);
         let positions = [result[0]['Position1'].split(","),result[0]['Position2'].split(","),result[0]['Position3'].split(","),result[0]['Position4'].split(",")]
-        response.status.send({"positions": positions,
+        response.status(200).send({"positions": positions,
             "Player1" : result[0]['Player1'],
             "Player2" : result[0]['Player2'],
             "Player3" : result[0]['Player3'],
