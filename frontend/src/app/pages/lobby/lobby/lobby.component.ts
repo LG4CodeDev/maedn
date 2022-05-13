@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {repeat} from "rxjs/operators";
@@ -76,7 +76,8 @@ import {repeat} from "rxjs/operators";
 })
 export class LobbyComponent implements OnInit {
 
-  constructor(private http: HttpClient, private router: Router,) {
+  constructor(private http: HttpClient, private router: Router,
+              private renderer: Renderer2,) {
   }
 
   ngOnInit(): void {
@@ -118,6 +119,7 @@ export class LobbyComponent implements OnInit {
       },
     ).subscribe(response => {
       if (response.status == 200) {
+        localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
         this.router.navigate(['/game']);
       }
     });
@@ -162,7 +164,7 @@ export class LobbyComponent implements OnInit {
   }
 
   getLeaderboard(): void{
-    this.http.get<any>('https://spielehub.server-welt.com/api/leaderboard', {
+    this.http.get<any>('https://spielehub.server-welt.com/api/mainGame/leaderboard', {
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
@@ -170,6 +172,18 @@ export class LobbyComponent implements OnInit {
       },
     ).subscribe(response => {
       console.log(response);
+      this.buildLeaderboard(response.body);
     });
+  }
+
+  buildLeaderboard(body: any): void {
+    var lb = document.getElementById('leaderboard');
+    var itemWrapper = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
+    var item = this.renderer.createElement('div');
   }
 }

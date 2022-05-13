@@ -21,6 +21,12 @@ import { Router } from '@angular/router';
 
           </div>
         </div>
+        <div class="whosTurnIsIt">
+          GameID:
+          <div id="whatsMyGameID">
+
+          </div>
+        </div>
       </div>
       <div nz-col class="game" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
           <div nz-row class="row">
@@ -444,11 +450,12 @@ export class GameBoardComponent implements OnInit {
   highlightetFields: any;
 
   ngOnInit(): void {
-    this.gameID = 29;
     try{
       this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
+      this.gameID = JSON.parse(localStorage.getItem('currentGame')).gameID;
     }
     catch (e) {
+      //todo: error handling, real login check
       this.router.navigate(['/login']);
     }
 
@@ -488,7 +495,7 @@ export class GameBoardComponent implements OnInit {
     ).subscribe(response => {
         console.log(response)
         this.setPlayerPosition(response['body']);
-        this.updateGameInfo(response);
+        this.updateGameInfo(response, this.gameID);
       },
       response => {
         console.log(response)
@@ -496,7 +503,7 @@ export class GameBoardComponent implements OnInit {
     )
   }
 
-  updateGameInfo(response: any){
+  updateGameInfo(response: any, gameID: number){
     let nextPlayer = 'Player4';
     switch (nextPlayer) {
       case "Player1":
@@ -527,6 +534,7 @@ export class GameBoardComponent implements OnInit {
     if(response['body']['Player4'] == this.userID){
       document.getElementById('whoAmI').innerHTML += 'Schwarz';
     }
+    document.getElementById('whatsMyGameID').innerHTML = gameID.toString();
   }
 
   getGameData(){
@@ -577,7 +585,7 @@ export class GameBoardComponent implements OnInit {
           console.log(response);
           this.unhiglightMoves(this.jsonReturned);
           this.setPlayerPosition(response['body']);
-          this.updateGameInfo(response);
+          this.updateGameInfo(response, this.gameID);
         }
       });
     }
