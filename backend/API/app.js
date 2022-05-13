@@ -477,6 +477,7 @@ async function joinGame(response, joiningGame, player) {
         {
             await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 4})
+            await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [joiningGame['gameID']]);
         }
         await axios({
             method: 'post',
