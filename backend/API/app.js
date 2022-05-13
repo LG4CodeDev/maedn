@@ -426,7 +426,7 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
         await pool.query("Delete from mainGame where gameID = ?", [id])
         const url = "http://localhost:4200/deleteGame/" + id
         console.log("here428")
-        axios({method :'delete', url : url})
+        await axios({method :'delete', url : url})
         console.log("not here")
         response.sendStatus(200);
     } catch (err) {
@@ -463,7 +463,7 @@ async function joinGame(response, joiningGame, player) {
             response.status(200).send({gameID: joiningGame['gameID'], players: 4})
         }
         console.log("here463")
-        axios({
+        await axios({
             method: 'post',
             url: "https://spielehub.server-welt.com/joinGame",
             data: {"gameID": joiningGame['gameID'], "clientID": player}
@@ -482,7 +482,7 @@ async function CreateGame(player1) {
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
             console.log("here480")
-            axios({
+            await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/createGame",
                 data: {
@@ -736,7 +736,7 @@ async function makeMove(data, game, response) {
 
             // Send game updates over SSE to all players of game
             console.log("here 732")
-            axios({
+            await axios({
                 method :'post',
                 url : "https://spielehub.server-welt.com/sendGame",
                 data : {
