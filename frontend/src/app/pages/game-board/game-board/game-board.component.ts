@@ -376,9 +376,9 @@ import { Router } from '@angular/router';
             </div>
           </div>
         </div>
-      </div>
+
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
-        <button id="accordion">Regeln</button>
+        <button id="accordion" (click)="toggleRules()">Regeln</button>
         <div nz-row id="regeln">
           <p class="regeln_header">Spielstart</p>
           <p class="regeln_text">
@@ -430,6 +430,7 @@ import { Router } from '@angular/router';
           <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
         </div>
       </div>
+    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
@@ -602,7 +603,7 @@ export class GameBoardComponent implements OnInit {
         for (let i = 1; i < 5; i++) {
           let tokenID = 'token' +i.toString() + '_' + currentValue;
           let fieldID = 'field_'+gameBoard['positions'][index][i-1];
-          //console.log('moving ' + tokenID + ' to field ' + fieldID);
+          console.log('moving ' + tokenID + ' to field ' + fieldID);
           this.moveTokenToField(tokenID, fieldID);
         }
       });
@@ -715,6 +716,7 @@ export class GameBoardComponent implements OnInit {
   moveTokenToField(token: string, field: string): void{
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
+    console.log('moving token ' + token + ' to field ' + field);
     fieldElement.appendChild(tokenElement);
   }
 
@@ -821,4 +823,15 @@ export class GameBoardComponent implements OnInit {
     this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
   }
 
+  toggleRules(): void {
+    let accordion = document.getElementById('accordion');
+    let regeln = document.getElementById('regeln');
+    accordion.classList.toggle("active");
+
+    if (regeln.style.display === "block") {
+      regeln.style.display = "none";
+    } else {
+      regeln.style.display = "block";
+    }
+  }
 }
