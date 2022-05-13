@@ -319,7 +319,7 @@ app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) =>
 })
 
 //creates a Game
-app.post('/api/createMainGame', validateAccess, async (request, response) => {
+app.post('/api/createMainGame', validateAccess,checkIfPlayerAlreadyInGame, async (request, response) => {
     try {
         let result = await CreateGame(response.locals.user['userid'])
 
@@ -334,7 +334,7 @@ app.post('/api/createMainGame', validateAccess, async (request, response) => {
 
 })
 
-app.put('/api/joinGame', validateAccess, async (request, response) => {
+app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,async (request, response) => {
     let result;
     try {
         result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
@@ -354,7 +354,7 @@ app.put('/api/joinGame', validateAccess, async (request, response) => {
 
 });
 
-app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
+app.put('/api/joinGame/:gameID', validateAccess,checkIfPlayerAlreadyInGame, async (request, response) => {
     let id = request.params.gameID;
     let result;
     try {
@@ -437,6 +437,24 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 Game Logic needed Functions
  */
 
+
+async function checkIfPlayerAlreadyInGame(response, request, next) {
+    let playerID = request.locals.user['userid']
+    try {
+        let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND STATUS != finished", [playerID,playerID,playerID,playerID])
+        let game = result[0]
+        if(game !== undefined){
+            if(game['Player1'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player1"})
+            else if(game['Player2'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player2"})
+            else if(game['Player3'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player3"})
+            else return response.status(200).send({gameID: game['gameID'], players: "Player4"})
+        }
+        else next()
+    }catch (err){
+        console.log(err)
+        return response.sendStatus(500)
+    }
+}
 
 async function joinGame(response, joiningGame, player) {
     try {
