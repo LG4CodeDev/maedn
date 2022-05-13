@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   //templateUrl: './game-board.component.html',
   template: `
     <div nz-row>
-      <div nz-col class="side-left" nzFlex="auto" nzXs="6">
+      <div nz-col class="side-left" nzFlex="auto">
         <div class="whosTurnIsIt">
           Es ist dran:
           <div id="whosTurnIsIt">
@@ -603,7 +603,7 @@ export class GameBoardComponent implements OnInit {
         for (let i = 1; i < 5; i++) {
           let tokenID = 'token' +i.toString() + '_' + currentValue;
           let fieldID = 'field_'+gameBoard['positions'][index][i-1];
-          //console.log('moving ' + tokenID + ' to field ' + fieldID);
+          console.log('moving ' + tokenID + ' to field ' + fieldID);
           this.moveTokenToField(tokenID, fieldID);
         }
       });
@@ -716,6 +716,7 @@ export class GameBoardComponent implements OnInit {
   moveTokenToField(token: string, field: string): void{
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
+    console.log('moving token ' + token + ' to field ' + field);
     fieldElement.appendChild(tokenElement);
   }
 
