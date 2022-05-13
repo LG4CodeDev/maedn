@@ -1,7 +1,3 @@
-/* ToDo´s:
-        - create database if not existing
- */
-
 const express = require('express');
 const cors = require('cors')
 const app = express();
@@ -452,7 +448,7 @@ async function checkIfPlayerAlreadyInGame(response, request, next) {
         else next()
     }catch (err){
         console.log(err)
-        return response.sendStatus(500)
+        return response.status(500).send("Player already in Game")
     }
 }
 
