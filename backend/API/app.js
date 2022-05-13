@@ -434,7 +434,7 @@ Game Logic needed Functions
  */
 
 
-async function checkIfPlayerAlreadyInGame(response, request, next) {
+async function checkIfPlayerAlreadyInGame(request, response, next) {
     let playerID = request.locals.user['userid']
     try {
         let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND STATUS != finished", [playerID,playerID,playerID,playerID])
