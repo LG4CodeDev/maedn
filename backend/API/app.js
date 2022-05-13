@@ -425,7 +425,9 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
         const url = "http://localhost:4200/deleteGame/" + id
+        console.log("here428")
         axios({method :'delete', url : url})
+        console.log("not here")
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
@@ -460,11 +462,13 @@ async function joinGame(response, joiningGame, player) {
             await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 4})
         }
+        console.log("here463")
         axios({
             method: 'post',
             url: "https://spielehub.server-welt.com/joinGame",
             data: {"gameID": joiningGame['gameID'], "clientID": player}
         })
+        console.log("not here")
     }catch (err){
         console.log(err)
         response.sendStatus(500)
@@ -477,6 +481,7 @@ async function CreateGame(player1) {
 
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
+            console.log("here480")
             axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/createGame",
@@ -485,6 +490,7 @@ async function CreateGame(player1) {
                     "clientID": player1
                 }
             })
+            console.log("not here")
             return gameID
         }
         else return 400
@@ -729,6 +735,7 @@ async function makeMove(data, game, response) {
             })
 
             // Send game updates over SSE to all players of game
+            console.log("here 732")
             axios({
                 method :'post',
                 url : "https://spielehub.server-welt.com/sendGame",
@@ -741,6 +748,7 @@ async function makeMove(data, game, response) {
                     }
                 }
             })
+            console.log("Not here")
         } catch (err) {
             console.log(err)
             response.sendStatus(500)
