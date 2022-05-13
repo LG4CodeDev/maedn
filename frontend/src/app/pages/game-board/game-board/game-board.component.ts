@@ -378,7 +378,7 @@ import { Router } from '@angular/router';
         </div>
 
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
-        <button id="accordion">Regeln</button>
+        <button id="accordion" (click)="toggleRules()">Regeln</button>
         <div nz-row id="regeln">
           <p class="regeln_header">Spielstart</p>
           <p class="regeln_text">
@@ -822,4 +822,15 @@ export class GameBoardComponent implements OnInit {
     this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
   }
 
+  toggleRules(): void {
+    let accordion = document.getElementById('accordion');
+    let regeln = document.getElementById('regeln');
+    accordion.classList.toggle("active");
+
+    if (regeln.style.display === "block") {
+      regeln.style.display = "none";
+    } else {
+      regeln.style.display = "block";
+    }
+  }
 }
