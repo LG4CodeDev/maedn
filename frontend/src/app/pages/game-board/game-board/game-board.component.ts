@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   //templateUrl: './game-board.component.html',
   template: `
     <div nz-row>
-      <div nz-col class="side-left" nzFlex="auto">
+      <div nz-col class="side-left" nzFlex="auto" nzXs="6">
         <div class="whosTurnIsIt">
           Es ist dran:
           <div id="whosTurnIsIt">
@@ -376,7 +376,7 @@ import { Router } from '@angular/router';
             </div>
           </div>
         </div>
-      </div>
+
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
         <button id="accordion">Regeln</button>
         <div nz-row id="regeln">
@@ -430,6 +430,7 @@ import { Router } from '@angular/router';
           <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
         </div>
       </div>
+    </div>
   `,
   styleUrls: ['./game-board.component.css']
 })
