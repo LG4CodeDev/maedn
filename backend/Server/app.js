@@ -74,15 +74,18 @@ async function sendGame(request, response) {
     const newFact = request.body.msg;
     let game = games.filter(games => games.id === gameID)[0]
     console.log(game)
-    game = game.clients
-    let clientStreams = [];
-    for(const client of game){
-        clientStreams.push(clients.filter(clients => clients.id === e.toString())[0])
+    if(game !== undefined){
+        game = game.clients
+        let clientStreams = [];
+        for(const client of game){
+            clientStreams.push(clients.filter(clients => clients.id === e.toString())[0])
+        }
+
+        clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+
+        return  response.sendStatus(200)
     }
-
-    clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
-
-    return  response.sendStatus(200)
+    return response.sendStatus(500)
 }
 
 async function createGame(request, response){
