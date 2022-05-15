@@ -197,3 +197,16 @@ pre {
   width: 20%;
   margin-bottom: 0;
 }
+
+#editPicture {
+  width: 20px;
+  aspect-ratio: 1;
+}
+
+.imagePreview{
+  float: left;
+  width: 80px;
+  aspect-ratio: 1;
+  margin: 5px;
+  border-radius: 25px;
+}

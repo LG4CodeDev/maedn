@@ -2,6 +2,7 @@ import {Component, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {repeat} from "rxjs/operators";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-lobby',
@@ -38,13 +39,22 @@ import {repeat} from "rxjs/operators";
             </button>
           </div>
           <div nz-row nzJustify="center">
-            <button id="join_game_id" class="game_buttons" (click)="joinID(1)">
+            <button id="join_game_id" class="game_buttons" (click)="joinID()">
               Join Game with ID
               <span></span>
               <span></span>
               <span></span>
               <span></span>
             </button>
+            <form nz-form [formGroup]="joinIDForm" id="login-form" class="login-form">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-input-group>
+                    <input type="number" nz-input formControlName="joinID" placeholder="ID"/>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </form>
           </div>
         </div>
       </div>
@@ -52,13 +62,18 @@ import {repeat} from "rxjs/operators";
 
       <!--      STATISTICS-->
       <div id="statistics" class="gutter-row" nz-col nzFlex="7">
-        <div nz-row id="userInfo">
+        <div id="userInformation">
+          <div nz-row id="userInfo">
           <div nz-col>
             <img src="assets/avatar.jpeg" id="profilePicture">
           </div>
           <div nz-col>
             <p id="username">-</p>
-            <p id="user">-</p>
+          </div>
+          <div nz-col>
+            <div nz-row>
+              <button (click)="showUpdate()"><img src="assets/edit.png" id="editPicture"/></button>
+            </div>
           </div>
         </div>
         <span></span>
@@ -70,6 +85,61 @@ import {repeat} from "rxjs/operators";
             <div class="userStatItem" nz-row nzJustify="space-between"><p>Winning rate:</p><p id="userStatItemWR">-</p></div>
           </div>
         </div>
+        </div>
+
+
+        <form nz-form [formGroup]="updateAccount" id="update-form" class="register-form" style="display: none" (ngSubmit)="onUpdate()">
+          <nz-form-item>
+            <div *ngIf="imageURL && imageURL !== ''">
+              <img class="imagePreview" [src]="imageURL" [alt]="updateAccount.value.name">
+            </div>
+            <input type="file" accept="image/*" (change)="showPreview($event)" />
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please state your email!">
+              <nz-input-group nzPrefixIcon="user">
+                <input type="text" nz-input formControlName="email" placeholder="Email"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please choose your username!">
+              <nz-input-group nzPrefixIcon="user">
+                <input type="text" nz-input formControlName="userName" placeholder="Username"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Firstname">
+              <nz-input-group>
+                <input type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Surname">
+              <nz-input-group>
+                <input type="text" nz-input formControlName="surname" placeholder="Surname"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
+              <nz-input-group nzPrefixIcon="lock">
+                <input type="password" nz-input formControlName="password" placeholder="Password"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please repeat your Password!">
+              <nz-input-group nzPrefixIcon="lock">
+                <input type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <button type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'" (click)="cancel()">Cancel</button>
+          <button nz-button class="update-form-button update-form-margin" [nzType]="'primary'">Submit!</button>
+        </form>
       </div>
       <!--      END OF STATISTICS-->
     </div>
@@ -77,12 +147,35 @@ import {repeat} from "rxjs/operators";
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent implements OnInit {
-
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2,) {
+              private renderer: Renderer2, private fb: FormBuilder) {
   }
 
+  joinIDForm!: FormGroup;
+  token: String;
+  userID: number;
+  updateAccount!: FormGroup;
+  imageURL = "assets/avatar.jpeg";
+
   ngOnInit(): void {
+    if(localStorage.getItem('currentUser')){
+
+    }else {
+      console.log(localStorage.getItem('currentUser'))
+      this.router.navigate(['/login']);
+    }
+    this.joinIDForm = this.fb.group({
+      joinID: ['', [Validators.required]],
+    });
+    this.updateAccount = this.fb.group({
+      avatar: [File],
+      email: ['', [Validators.required, Validators.email]],
+      userName: ['', [Validators.required]],
+      firstname: ['', [Validators.required]],
+      surname: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      retypePassword: [''],
+    });
     this.getStats();
     this.getUserInfo();
     this.getLeaderboard();
@@ -96,19 +189,25 @@ export class LobbyComponent implements OnInit {
         observe: "response",
       },
     ).subscribe(response => {
-      console.log(response)
+      if (response.status == 200) {
+        localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
+        this.router.navigate(['/game']);
+      }
     });
   }
 
-  joinID(id: number): void {
-    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + id, {},{
+  joinID(): void {
+    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinIDForm.getRawValue()['joinID'], {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
         observe: "response",
       },
     ).subscribe(response => {
-      console.log(response)
+      if (response.status == 200) {
+        localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
+        this.router.navigate(['/game']);
+      }
     });
   }
 
@@ -212,27 +311,22 @@ export class LobbyComponent implements OnInit {
 
       let place = this.renderer.createElement('td');
       place.innerText = i+1;
-      // place.classList.add("userStatItem");
       place.classList.add("td");
 
       let tusernameWrapper = this.renderer.createElement('td');
       tusernameWrapper.innerText = body[i +  1 + "."]['username'];
-      // tusernameWrapper.classList.add("userStatItem");
       tusernameWrapper.classList.add("td");
 
       let levelWrapper = this.renderer.createElement('td');
       levelWrapper.innerText = body[i +  1 + "."]['Level'];
-      // levelWrapper.classList.add("userStatItem");
       levelWrapper.classList.add("td");
 
       let twinsWrapper = this.renderer.createElement('td');
       twinsWrapper.innerText = body[i +  1 + "."]['wins'];
-      // twinsWrapper.classList.add("userStatItem");
       twinsWrapper.classList.add("td");
 
       let WR = this.renderer.createElement('td');
       WR.innerText = body[i +  1 + "."]['winningRate'];
-      // WR.classList.add("userStatItem");
       WR.classList.add("td");
 
       userItemWrapper.appendChild(place);
@@ -244,5 +338,71 @@ export class LobbyComponent implements OnInit {
       userWrapper.appendChild(userItemWrapper);
     }
     lb.appendChild(userWrapper);
+  }
+
+  showPreview($event: Event) {
+    const file = ($event.target as HTMLInputElement).files[0];
+
+    this.updateAccount.get('avatar').updateValueAndValidity()
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageURL = reader.result as string;
+      this.updateAccount.patchValue({
+        avatar: reader.result
+      });
+    }
+    reader.readAsDataURL(file)
+  }
+
+  showUpdate() {
+    document.getElementById("update-form").style.display = "block";
+    document.getElementById("userInformation").style.display = "none";
+  }
+
+  cancel() {
+    document.getElementById("update-form").style.display = "none";
+    document.getElementById("userInformation").style.display = "block";
+  }
+
+  onUpdate() {
+    var avatarID = null;
+    if (this.updateAccount.valid) {
+      this.http.post<any>('https://spielehub.server-welt.com/api/createAvatar', {
+          "image": this.updateAccount.getRawValue()['avatar'],
+        }, {
+          observe: "response",
+        },
+      ).subscribe(response => {
+        avatarID = response.body['avatarID'];
+      });
+      this.http.put<any>('https://spielehub.server-welt.com/api/updateUser', {
+          "id": JSON.parse(localStorage.getItem('currentUser')).userid,
+          "email": this.updateAccount.getRawValue()['email'],
+          "password": this.updateAccount.getRawValue()['password'],
+          "username": this.updateAccount.getRawValue()['userName'],
+          "firstname": this.updateAccount.getRawValue()['firstname'],
+          "surname": this.updateAccount.getRawValue()['surname'],
+          "avatarID": avatarID,
+        }, {
+          observe: "response",
+          headers: {
+            'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
+          },
+        },
+      ).subscribe(response => {
+        console.log(response)
+        if (response.status == 201) {
+          // this.isLoggedIn = true;
+          this.router.navigate(['/lobby']);
+        }
+      });
+    } else {
+      Object.values(this.updateAccount.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf: true});
+        }
+      });
+    }
   }
 }
