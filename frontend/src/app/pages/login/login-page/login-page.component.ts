@@ -71,7 +71,7 @@ import {DOCUMENT} from "@angular/common";
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-control nzErrorTip="Passwords must have at least 4 cahracters.">
+          <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
             <nz-input-group nzPrefixIcon="lock">
               <input type="password" nz-input formControlName="password" placeholder="Password"/>
             </nz-input-group>

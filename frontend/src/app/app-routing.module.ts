@@ -5,7 +5,8 @@ import {PageNotFoundComponent} from "./pages/page-not-found/page-not-found.compo
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomeModule)
+    redirectTo: '/login',
+    pathMatch: 'full',
   },
   {
     path: '404',
