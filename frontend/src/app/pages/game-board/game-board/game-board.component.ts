@@ -378,7 +378,6 @@ import { Router } from '@angular/router';
         </div>
 
       <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
-        <button id="accordion" (click)="toggleRules()">Regeln</button>
         <div nz-row id="regeln">
           <p class="regeln_header">Spielstart</p>
           <p class="regeln_text">
