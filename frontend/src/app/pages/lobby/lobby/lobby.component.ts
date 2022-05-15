@@ -158,6 +158,7 @@ export class LobbyComponent implements OnInit {
       },
     ).subscribe(response => {
       console.log(response);
+      document.getElementById('profilePicture').setAttribute('src', response.body['image']);
       document.getElementById('username').innerText =
         response.body['username'];
       document.getElementById('user').innerText =
@@ -204,6 +205,8 @@ export class LobbyComponent implements OnInit {
     userWrapper.appendChild(thead);
 
     for(let i = 0; i<body.data; i++){
+      console.log(i+1+".");
+      console.log(body[i +  1 + "."]);
       let userItemWrapper = this.renderer.createElement('tr');
       userItemWrapper.classList.add("tr");
 
