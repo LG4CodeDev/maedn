@@ -204,7 +204,7 @@ export class LobbyComponent implements OnInit {
     thead.appendChild(theadRow);
     userWrapper.appendChild(thead);
 
-    for(let i = 0; i<body.length; i++){
+    for(let i = 0; i<Object.keys(body).length; i++){
       console.log(i+1+".");
       console.log(body[i +  1 + "."]);
       let userItemWrapper = this.renderer.createElement('tr');
