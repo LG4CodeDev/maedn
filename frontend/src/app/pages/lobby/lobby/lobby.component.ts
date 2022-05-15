@@ -53,7 +53,9 @@ import {repeat} from "rxjs/operators";
       <!--      STATISTICS-->
       <div id="statistics" class="gutter-row" nz-col nzFlex="7">
         <div nz-row id="userInfo">
-          <img src="assets/avatar.jpeg" id="profilePicture">
+          <div nz-col>
+            <img src="assets/avatar.jpeg" id="profilePicture">
+          </div>
           <div nz-col>
             <p id="username">-</p>
             <p id="user">-</p>
@@ -177,13 +179,67 @@ export class LobbyComponent implements OnInit {
   }
 
   buildLeaderboard(body: any): void {
-    var lb = document.getElementById('leaderboard');
-    var itemWrapper = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
-    var item = this.renderer.createElement('div');
+    let lb = document.getElementById('leaderboard');
+    let userWrapper = this.renderer.createElement('table');
+    userWrapper.classList.add("leaderboardTable");
+
+    let thead = this.renderer.createElement("thead");
+    let theadRow = this.renderer.createElement('tr');
+    let theadPlace = this.renderer.createElement('td');
+    let theadLevel = this.renderer.createElement('td');
+    let theadTWins = this.renderer.createElement('td');
+    let theadTGames = this.renderer.createElement('td');
+    let theadWR = this.renderer.createElement('td');
+    theadPlace.innerText = "Place";
+    theadLevel.innerText = "Level";
+    theadTWins.innerText = "Total Wins";
+    theadTGames.innerText = "Total Games";
+    theadWR.innerText = "Win ratio";
+    theadRow.appendChild(theadPlace);
+    theadRow.appendChild(theadLevel);
+    theadRow.appendChild(theadTWins);
+    theadRow.appendChild(theadTGames);
+    theadRow.appendChild(theadWR);
+    thead.appendChild(theadRow);
+    userWrapper.appendChild(thead);
+
+    for(let i = 0; i<body.data; i++){
+      let userItemWrapper = this.renderer.createElement('tr');
+      userItemWrapper.classList.add("tr");
+
+      let place = this.renderer.createElement('td');
+      place.innerText = i+1;
+      place.classList.add("userStatItem");
+      place.classList.add("td");
+
+      let levelWrapper = this.renderer.createElement('td');
+      levelWrapper.innerText = body[i]['Level'];
+      levelWrapper.classList.add("userStatItem");
+      levelWrapper.classList.add("td");
+
+      let twinsWrapper = this.renderer.createElement('td');
+      twinsWrapper.innerText = body[i]['wins'];
+      twinsWrapper.classList.add("userStatItem");
+      twinsWrapper.classList.add("td");
+
+      let tgamesWrapper = this.renderer.createElement('td');
+      tgamesWrapper.innerText = body[i]['gamesPlayed'];
+      tgamesWrapper.classList.add("userStatItem");
+      tgamesWrapper.classList.add("td");
+
+      let WR = this.renderer.createElement('td');
+      WR.innerText = body[i]['winningRate'];
+      WR.classList.add("userStatItem");
+      WR.classList.add("td");
+
+      userItemWrapper.appendChild(place);
+      userItemWrapper.appendChild(levelWrapper);
+      userItemWrapper.appendChild(twinsWrapper);
+      userItemWrapper.appendChild(tgamesWrapper);
+      userItemWrapper.appendChild(WR);
+
+      userWrapper.appendChild(userItemWrapper);
+    }
+    lb.appendChild(userWrapper);
   }
 }
