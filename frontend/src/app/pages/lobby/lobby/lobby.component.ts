@@ -227,7 +227,7 @@ export class LobbyComponent implements OnInit {
 
       let twinsWrapper = this.renderer.createElement('td');
       twinsWrapper.innerText = body[i +  1 + "."]['wins'];
-      twinsWrapper.classList.add("userStatItem");
+      // twinsWrapper.classList.add("userStatItem");
       twinsWrapper.classList.add("td");
 
       let WR = this.renderer.createElement('td');
