@@ -32,10 +32,9 @@
 }
 
 #regeln {
-  height: auto;
+  height: inherit;
   overflow-y: scroll;
   max-height: 560px;
-  display: none;
   overflow-x: hidden;
 }
 
