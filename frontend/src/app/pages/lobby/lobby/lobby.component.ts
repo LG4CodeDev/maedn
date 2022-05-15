@@ -212,17 +212,17 @@ export class LobbyComponent implements OnInit {
 
       let place = this.renderer.createElement('td');
       place.innerText = i+1;
-      place.classList.add("userStatItem");
+      // place.classList.add("userStatItem");
       place.classList.add("td");
 
       let tusernameWrapper = this.renderer.createElement('td');
       tusernameWrapper.innerText = body[i +  1 + "."]['username'];
-      tusernameWrapper.classList.add("userStatItem");
+      // tusernameWrapper.classList.add("userStatItem");
       tusernameWrapper.classList.add("td");
 
       let levelWrapper = this.renderer.createElement('td');
       levelWrapper.innerText = body[i +  1 + "."]['Level'];
-      levelWrapper.classList.add("userStatItem");
+      // levelWrapper.classList.add("userStatItem");
       levelWrapper.classList.add("td");
 
       let twinsWrapper = this.renderer.createElement('td');
@@ -232,7 +232,7 @@ export class LobbyComponent implements OnInit {
 
       let WR = this.renderer.createElement('td');
       WR.innerText = body[i +  1 + "."]['winningRate'];
-      WR.classList.add("userStatItem");
+      // WR.classList.add("userStatItem");
       WR.classList.add("td");
 
       userItemWrapper.appendChild(place);
