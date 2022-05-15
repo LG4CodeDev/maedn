@@ -188,17 +188,17 @@ export class LobbyComponent implements OnInit {
     let theadPlace = this.renderer.createElement('td');
     let theadLevel = this.renderer.createElement('td');
     let theadTWins = this.renderer.createElement('td');
-    let theadTGames = this.renderer.createElement('td');
+    let theadUser = this.renderer.createElement('td');
     let theadWR = this.renderer.createElement('td');
     theadPlace.innerText = "Place";
     theadLevel.innerText = "Level";
     theadTWins.innerText = "Total Wins";
-    theadTGames.innerText = "Total Games";
+    theadUser.innerText = "User";
     theadWR.innerText = "Win ratio";
     theadRow.appendChild(theadPlace);
+    theadRow.appendChild(theadUser);
     theadRow.appendChild(theadLevel);
     theadRow.appendChild(theadTWins);
-    theadRow.appendChild(theadTGames);
     theadRow.appendChild(theadWR);
     thead.appendChild(theadRow);
     userWrapper.appendChild(thead);
@@ -212,30 +212,30 @@ export class LobbyComponent implements OnInit {
       place.classList.add("userStatItem");
       place.classList.add("td");
 
+      let tusernameWrapper = this.renderer.createElement('td');
+      tusernameWrapper.innerText = body[i +  1 + "."]['username'];
+      tusernameWrapper.classList.add("userStatItem");
+      tusernameWrapper.classList.add("td");
+
       let levelWrapper = this.renderer.createElement('td');
-      levelWrapper.innerText = body[i]['Level'];
+      levelWrapper.innerText = body[i +  1 + "."]['Level'];
       levelWrapper.classList.add("userStatItem");
       levelWrapper.classList.add("td");
 
       let twinsWrapper = this.renderer.createElement('td');
-      twinsWrapper.innerText = body[i]['wins'];
+      twinsWrapper.innerText = body[i +  1 + "."]['wins'];
       twinsWrapper.classList.add("userStatItem");
       twinsWrapper.classList.add("td");
 
-      let tgamesWrapper = this.renderer.createElement('td');
-      tgamesWrapper.innerText = body[i]['gamesPlayed'];
-      tgamesWrapper.classList.add("userStatItem");
-      tgamesWrapper.classList.add("td");
-
       let WR = this.renderer.createElement('td');
-      WR.innerText = body[i]['winningRate'];
+      WR.innerText = body[i +  1 + "."]['winningRate'];
       WR.classList.add("userStatItem");
       WR.classList.add("td");
 
       userItemWrapper.appendChild(place);
+      userItemWrapper.appendChild(tusernameWrapper);
       userItemWrapper.appendChild(levelWrapper);
       userItemWrapper.appendChild(twinsWrapper);
-      userItemWrapper.appendChild(tgamesWrapper);
       userItemWrapper.appendChild(WR);
 
       userWrapper.appendChild(userItemWrapper);
