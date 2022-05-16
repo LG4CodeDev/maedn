@@ -75,6 +75,7 @@ export class GameBoardComponent implements OnInit {
   updateGameBoard(response: any){
     this.setPlayerPosition(response);
     this.whosTurn = response.nextPlayer;
+    this.unhiglightMoves()
     this.updateGameInfo();
     this.highlightWhosTurn();
   }
@@ -108,6 +109,7 @@ export class GameBoardComponent implements OnInit {
         }
 
         this.updateGameBoard(response.body);
+        this.highlightMoves(response.body.allowedMoves);
         this.setGameBoardForPlayer();
       },
       response => {
@@ -234,7 +236,7 @@ export class GameBoardComponent implements OnInit {
         if (response.status == 200) {
           console.log('game data successfully send!');
           console.log(response);
-          this.unhiglightMoves(this.jsonReturned);
+          this.unhiglightMoves();
           this.setPlayerPosition(response['body']);
           this.updateGameInfo();
         }
@@ -288,19 +290,19 @@ export class GameBoardComponent implements OnInit {
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json[1] != '' && json[1] != null && json['1'] != json['0']) {
+      if (json[1] != '' && json[1] != null && json[1] != json[0]) {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json[2] != '' && json[2] != null && json['2'] != json['0'] && json['2'] != json['1']) {
+      if (json[2] != '' && json[2] != null && json[2] != json[0] && json[2] != json[1]) {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json[3] != '' && json[3] != null && json['3'] != json['0'] && json['3'] != json['1'] && json['3'] != json['2']) {
+      if (json[3] != '' && json[3] != null && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
@@ -310,12 +312,12 @@ export class GameBoardComponent implements OnInit {
     }
   }
 
-  unhiglightMoves(json: any){
-    console.log(this.highlightetFields);
-    this.highlightetFields.forEach((currentValue: HTMLElement, index: any, array: any) => {
-      currentValue.classList.remove('highlightField');
-    });
-    this.highlightetFields = [];
+  unhiglightMoves(){
+    let allHighlightedFields = document.getElementsByClassName('highlightField');
+    console.log(allHighlightedFields);
+    for (let i = 0; i < allHighlightedFields.length; i++) {
+      allHighlightedFields[i].classList.remove('highlightField');
+    }
   }
 
 
@@ -366,7 +368,7 @@ export class GameBoardComponent implements OnInit {
   moveTokenToField(token: string, field: string): void{
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
-    //console.log('moving token ' + token + ' to field ' + field);
+    console.log('moving token ' + token + ' to field ' + field);
     fieldElement.appendChild(tokenElement);
   }
 
