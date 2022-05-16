@@ -48,7 +48,12 @@ export class GameBoardComponent implements OnInit {
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         console.log('sse tut');
-        testParent.updateGameBoard(JSON.parse(e.data));
+        if(e.data != []){
+          testParent.updateGameBoard(JSON.parse(e.data));
+        }
+        else{
+          console.log('received empty data');
+        }
         //TODO: use e.data for update of field
         console.log(e.data)
       }, false)
@@ -308,7 +313,6 @@ export class GameBoardComponent implements OnInit {
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[3], json));
       }
-      this.highlightetFields.push(fieldToHighlight);
     }
   }
 
