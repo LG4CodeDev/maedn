@@ -722,7 +722,7 @@ async function makeMove(data, game, response) {
 
         try {
             // Send game updates over SSE to all players of game
-            await axios({
+            let result = await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
                 data: {
@@ -734,6 +734,7 @@ async function makeMove(data, game, response) {
                     }
                 }
             })
+            console.log(result)
         }catch (err) {
             console.log(err)
         }
