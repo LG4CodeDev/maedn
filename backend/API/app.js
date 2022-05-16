@@ -44,7 +44,7 @@ Generals
 
 
 app.get(`/api`, function (request, response) {
-    response.send('This is version 3.2 of maedns REST API');
+    response.send('This is version 5.3 of maedns REST API');
 });
 
 /*
@@ -256,17 +256,17 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
 
         let stringOfMoves = listOfMoves.toString()
-        if (!roleAgain && listOfMoves.toString() === [null, null, null, null].toString()) {
+        if (!roleAgain && (listOfMoves.toString() === [null, null, null, null].toString() || listOfMoves.toString() === ",,,")) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             let result;
-            console.log([game.Position1,game.Position2,game.Position3,game.Position4])
+            console.log([game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")])
             await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
                 data: {
                     "gameID": parseInt(id),
                     "msg": {
-                        "positions": [game.Position1,game.Position2,game.Position3,game.Position4],
+                        "positions": [game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")],
                         "isFinished": game.isFinished,
                         "nextPlayer": nextPlayer
                     }
