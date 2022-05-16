@@ -16,6 +16,16 @@ let corsOptions = {
     optionsSuccessStatus: 200 // For legacy browser support
 }
 
+let fs = require('fs');
+let util = require('util');
+let logFile = fs.createWriteStream('log.txt', {flags: 'w'});
+let logStdout = process.stdout;
+
+console.log = function () {
+    logFile.write(util.format.apply(null, arguments) + '\n');
+    logStdout.write(util.format.apply(null, arguments) + '\n');
+}
+
 app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -71,7 +81,7 @@ app.get('/startStream/:id', eventsHandler);
 
 async function sendGame(request, response) {
     const gameID = request.body.gameID;
-    const newFact = request.body.msg;
+    const data = request.body.msg;
     let game = games.filter(games => games.id === gameID)[0]
     if(game !== undefined){
         game = game.clients
@@ -80,7 +90,7 @@ async function sendGame(request, response) {
             clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
         }
 
-        clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+        clientStreams.forEach(client => client.response.write(data))
 
         return response.sendStatus(200)
     }
