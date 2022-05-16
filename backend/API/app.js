@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 
-//const path = require('path');
-
 const bodyParser = require("body-parser");
 
 const bcrypt = require('bcrypt');
@@ -290,7 +288,8 @@ app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) =>
             "Player3" : result[0]['Player3'],
             "Player4" : result[0]['Player4'],
             "status" : result[0]['status'],
-            "nextPlayer" : result[0]['turn']})
+            "nextPlayer" : result[0]['turn'],
+            "allowedMoves" : result[0]['allowedMoves']})
     } catch (err) {
         console.log(err)
         return response.sendStatus(500);
