@@ -47,6 +47,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 Generals
  */
 
+/*
 //cross origin allow
 app.options('/*', async (request, response, next) =>{
     response.header("Access-Control-Allow-Origin", "*");
@@ -58,7 +59,7 @@ app.post('/*', function (request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Content-Type");
     next();
-});
+});*/
 
 
 
