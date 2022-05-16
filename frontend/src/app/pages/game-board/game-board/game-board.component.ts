@@ -74,7 +74,6 @@ export class GameBoardComponent implements OnInit {
   }
 
   getPlayerPositions(){
-    this.gameID = 85;
     this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
         observe: "response",
         headers: {
