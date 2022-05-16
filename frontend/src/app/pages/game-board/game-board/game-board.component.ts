@@ -74,7 +74,7 @@ export class GameBoardComponent implements OnInit {
 
   updateGameBoard(response: any){
     this.setPlayerPosition(response);
-    this.whosTurn = response.body.nextPlayer;
+    this.whosTurn = response.nextPlayer;
     this.updateGameInfo();
     this.highlightWhosTurn();
   }
