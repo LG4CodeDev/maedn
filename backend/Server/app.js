@@ -90,16 +90,9 @@ async function sendGame(request, response) {
             console.log(clientStreams)
 
             let body = JSON.stringify(data)
-
-            const headers = {
-                'Content-Type': 'text/event-stream',
-                'Connection': 'keep-alive',
-                'Cache-Control': 'no-cache'
-            };
-            response.writeHead(200, headers);
+            
 
             clientStreams.forEach(client => {
-                client.response.writeHead(200, headers);
                 client.response.write('data : '+ body)})
 
             response.sendStatus(200)
