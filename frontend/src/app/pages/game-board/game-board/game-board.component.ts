@@ -136,7 +136,6 @@ export class GameBoardComponent implements OnInit {
     homeFields[3] = ['DS_0','DS_1','DS_2','DS_3']; //black bottom left
 
     let toLoop: any[] = [];
-    this.whosTurn = 'Player3';
     switch(this.whosTurn){
       case "Player1":
         toLoop = homeFields[0];
