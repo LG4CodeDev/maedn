@@ -146,7 +146,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   highlightWhosTurn(){
-    let toLoop: any[] = [];
+    let toLoop;
     switch(this.whosTurn){
       case "Player1":
         toLoop = ['AS_0','AS_1','AS_2','AS_3'];
@@ -161,13 +161,12 @@ export class GameBoardComponent implements OnInit {
         toLoop = ['DS_0','DS_1','DS_2','DS_3'];
         break;
     }
-    toLoop.forEach((currentValue, index, array) => {
-      let id = 'field_' + currentValue;
-      if(!document.getElementById(id).classList.contains('highlightField')){
+    for (let i = 0; i < toLoop.length; i++) {
+      let id = 'field_' + toLoop[i].toString();
+      if(!(document.getElementById(id).classList.contains('highlightField'))){
         document.getElementById(id).classList.add('highlightField');
       }
-    });
-
+    }
   }
 
   updateGameInfo(){
