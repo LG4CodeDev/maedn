@@ -477,6 +477,8 @@ async function CreateGame(player1) {
     try {
         const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
+        console.log(result.warningStatus)
+
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
             await axios({
@@ -721,20 +723,22 @@ async function makeMove(data, game, response) {
         try {
             // Send game updates over SSE to all players of game
             await axios({
-                method :'post',
-                url : "https://spielehub.server-welt.com/sendGame",
-                data : {
-                    "gameID" : game['gameID'],
-                    "msg" : {
+                method: 'post',
+                url: "https://spielehub.server-welt.com/sendGame",
+                data: {
+                    "gameID": game['gameID'],
+                    "msg": {
                         "positions": positions,
                         "isFinished": isFinished,
                         "nextPlayer": nextPlayer
                     }
                 }
             })
+        }catch (err) {
+            console.log(err)
+        }
 
-            console.log('axios done')
-
+        try{
             //Update Game in Database
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameID = ?"
                 , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, "null, null, null, null", game['gameID']]);
@@ -748,7 +752,7 @@ async function makeMove(data, game, response) {
 
         } catch (err) {
             console.log(err)
-            response.status(500).send('Axios error')
+            response.sendStatus(500)
         }
     }
     else return response.status(400).send('Invalid Move')
