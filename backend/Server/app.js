@@ -48,11 +48,11 @@ function eventsHandler(request, response) {
 
     const data = `data: ${JSON.stringify(facts)}\n\n`;
 
-    response.write(data);
+    //response.write(data);
 
     const clientId = request.params.id;
 
-    response.write("id :" + clientId.toString() + "\n");
+    //response.write("id :" + clientId.toString() + "\n");
 
     const newClient = {
         id: clientId,
