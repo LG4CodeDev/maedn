@@ -19,7 +19,6 @@ export class GameBoardComponent implements OnInit {
 
   activeToken: string;
   apiToken: string;
-  jsonReturned: any;
   gameID: number;
   userID: number;
   userInGame: string; //player1 - player 4
@@ -146,25 +145,19 @@ export class GameBoardComponent implements OnInit {
   }
 
   highlightWhosTurn(){
-    let homeFields = [];
-    homeFields[0] = ['AS_0','AS_1','AS_2','AS_3']; //yellow top left
-    homeFields[1] = ['BS_0','BS_1','BS_2','BS_3']; //green top right
-    homeFields[2] = ['CS_0','CS_1','CS_2','CS_3']; //red bottom right
-    homeFields[3] = ['DS_0','DS_1','DS_2','DS_3']; //black bottom left
-
     let toLoop: any[] = [];
     switch(this.whosTurn){
       case "Player1":
-        toLoop = homeFields[0];
+        toLoop = ['AS_0','AS_1','AS_2','AS_3'];
         break;
       case "Player2":
-        toLoop = homeFields[1];
+        toLoop = ['BS_0','BS_1','BS_2','BS_3'];
         break;
       case "Player3":
-        toLoop = homeFields[2];
+        toLoop = ['CS_0','CS_1','CS_2','CS_3'];
         break;
       case "Player4":
-        toLoop = homeFields[3];
+        toLoop = ['DS_0','DS_1','DS_2','DS_3'];
         break;
     }
     toLoop.forEach((currentValue, index, array) => {
@@ -206,8 +199,7 @@ export class GameBoardComponent implements OnInit {
       console.log(response.status)
       if (response.status == 200) {
         console.log(response['body']);
-        this.jsonReturned = response['body'];
-        this.tossDice(response['body']['move']['dice'])
+        this.tossDice(response['body']['move']['dice'], response.body);
       }
     },
     response => {
@@ -253,8 +245,10 @@ export class GameBoardComponent implements OnInit {
   }
 
   setPlayerPosition(gameBoard: any){
-    if(gameBoard['positions'][0] != null && gameBoard['positions'][1] != null
-    && gameBoard['positions'][2] != null && gameBoard['positions'][3] != null){
+    if(gameBoard['positions'][0] != null && gameBoard['positions'][0] != 'null'
+    && gameBoard['positions'][1] != null && gameBoard['positions'][1] != 'null'
+    && gameBoard['positions'][2] != null && gameBoard['positions'][2] != 'null'
+    && gameBoard['positions'][3] != null && gameBoard['positions'][3] != 'null'){
       let colors = ['Yellow', 'Green', 'Red', 'Black'];
       colors.forEach((currentValue, index, array) => {
         for (let i = 1; i < 5; i++) {
@@ -267,7 +261,7 @@ export class GameBoardComponent implements OnInit {
     }
   }
 
-  tossDice(randNum: number) {
+  tossDice(randNum: number, jsonReturned: any) {
     const cube = document.getElementById('cube');
     cube.className = "";
 
@@ -276,8 +270,7 @@ export class GameBoardComponent implements OnInit {
       cube.classList.remove("is-spinning-" + randNum);
       const showClass = 'show-' + randNum;
       cube.classList.add(showClass);
-      console.log(randNum)
-      this.highlightMoves(this.jsonReturned['move']['fields']);
+      this.highlightMoves(jsonReturned.move.fields);
 
     }, {once: true});
   }
@@ -289,25 +282,25 @@ export class GameBoardComponent implements OnInit {
       }
     else {
       let fieldToHighlight;
-      if (json[0] != '' && json[0] != null) {
+      if (json[0] != 'null' && json[0] != '' && json[0] != null) {
         let id = 'field_' + json[0];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json[1] != '' && json[1] != null && json[1] != json[0]) {
+      if (json[1] != 'null' && json[1] != '' && json[1] != null && json[1] != json[0]) {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json[2] != '' && json[2] != null && json[2] != json[0] && json[2] != json[1]) {
+      if (json[2] != 'null' && json[2] != '' && json[2] != null && json[2] != json[0] && json[2] != json[1]) {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json[3] != '' && json[3] != null && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
+      if (json[3] != 'null' && json[3] != '' && json[3] != null && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
