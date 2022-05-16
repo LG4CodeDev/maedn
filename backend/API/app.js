@@ -35,7 +35,9 @@ const pool =
         database: process.env.DB_Name
     })
 
-app.use(express.json());
+
+
+app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
@@ -734,7 +736,8 @@ async function makeMove(data, game, response) {
             })
 
             console.log(result)
-            if (result.status === 500 )return response.sendStatus(500)
+            if (result.status === 500 )return response.status(500).send("Error in sending Messages")
+            else if (result.status === 300)return response.status(500).send("Game does not exist")
         }catch (err) {
             console.log(err)
         }
