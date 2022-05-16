@@ -43,12 +43,12 @@ export class GameBoardComponent implements OnInit {
 
 
     this.highlightetFields = [];
+    let testParent = this;
     if (!!window.EventSource) {
-
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         console.log('sse tut');
-        console.log(this);
+        testParent.setPlayerPosition(JSON.parse(e.data))
         //TODO: use e.data for update of field
         console.log(e)
       }, false)
@@ -100,7 +100,6 @@ export class GameBoardComponent implements OnInit {
           this.userInGame = 'Player4';
           console.log('set hard to 4');
         }
-        console.log(this.userInGame + ' has been set');
 
         this.whosTurn = response.body.nextPlayer;
         this.updateGameInfo(response, this.gameID);
@@ -115,7 +114,6 @@ export class GameBoardComponent implements OnInit {
 
   setGameBoardForPlayer(){
     //not working: the rotation
-    console.log('userInGame' + this.userInGame)
     switch (this.userInGame) {
       case "Player4":
         //document.getElementById('gameboard').style.transform = 'rotate(270deg)';
