@@ -233,9 +233,9 @@ export class GameBoardComponent implements OnInit {
         if (response.status == 200) {
           //console.log('game data successfully send!');
           console.log(response);
-          this.unhiglightMoves();
-          this.setPlayerPosition(response['body']);
-          this.updateGameInfo();
+          //this.unhiglightMoves();
+          //this.setPlayerPosition(response['body']);
+          //this.updateGameInfo();
         }
       });
     }
