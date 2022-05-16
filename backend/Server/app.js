@@ -121,6 +121,7 @@ async function createGame(request, response){
         clients : [clientID]
     }
     games.push(newGame)
+    console.log(games)
     return  response.json(gameID)
 }
 
