@@ -34,8 +34,9 @@ let clients = [];
 let games = [];
 let facts = [];
 
-app.listen(PORT)
-await reloadGames()
+app.listen(PORT, () => {
+    reloadGames().then()
+})
 
 function eventsHandler(request, response) {
     const headers = {
