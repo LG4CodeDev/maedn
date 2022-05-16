@@ -11,10 +11,7 @@ const e = require("express");
 
 const app = express();
 
-let corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // For legacy browser support
-}
+
 /*
 let fs = require('fs');
 let util = require('util');
@@ -26,7 +23,7 @@ console.log = function () {
     logStdout.write(util.format.apply(null, arguments) + '\n');
 }*/
 
-//app.use(express.json(), cors(corsOptions));
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 

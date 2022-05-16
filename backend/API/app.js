@@ -35,12 +35,7 @@ const pool =
         database: process.env.DB_Name
     })
 
-let corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // For legacy browser support
-}
-
-app.use(express.json(), cors(corsOptions));
+app.use(express.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
