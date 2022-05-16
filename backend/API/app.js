@@ -403,6 +403,15 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
 
 app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
+    await finishGame(request, response, id)
+
+})
+
+/*
+Game Logic needed Functions
+ */
+
+async function finishGame(request,response, id){
     try {
         let result = await pool.query("select * from mainGame where gameID = ?", [id]);
         let game = result[0]
@@ -421,19 +430,14 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
 
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
-        const url = "http://localhost:4200/deleteGame/" + id
+        const url = "https://spielehub.server-welt.com/deleteGame/" + id
         await axios({method :'delete', url : url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
         console.log(err);
     }
-})
-
-/*
-Game Logic needed Functions
- */
-
+}
 
 async function checkIfPlayerAlreadyInGame(request, response, next) {
     let playerID = response.locals.user['userid']
@@ -734,7 +738,9 @@ async function makeMove(data, game, response) {
 
         let status
         const isFinished = Boolean(checkFinished(newPlayerPos));
-        if (isFinished) status = "Finished"
+        if (isFinished) {
+            status = "Finished"
+        }
         else status = "started"
 
         try {
@@ -766,7 +772,17 @@ async function makeMove(data, game, response) {
             //Update Game in Database
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameID = ?"
                 , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, ",,,", game['gameID']]);
-
+            if (isFinished){
+                await axios({
+                    method: 'delete',
+                    url: "https://spielehub.server-welt.com/api/finishGame/"+game.gameID,
+                    headers: {
+                        "authorization" : "Bearer API"
+                        }
+                }).then(function (response){
+                    let result = response
+                })
+            }
             //Send response to client
             response.status(200).send({
                 "positions": positions,
@@ -810,6 +826,9 @@ async function validateAccess(request, response, next){
     }
     if (token == null) {
         return response.status(401).send("Token not present, missing Authorization or wrong format")
+    }
+    if (token === 'API'){
+        next()
     }
     let result;
     try{
