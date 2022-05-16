@@ -16,6 +16,16 @@ let corsOptions = {
     optionsSuccessStatus: 200 // For legacy browser support
 }
 
+let fs = require('fs');
+let util = require('util');
+let logFile = fs.createWriteStream('log.txt', {flags: 'w'});
+let logStdout = process.stdout;
+
+console.log = function () {
+    logFile.write(util.format.apply(null, arguments) + '\n');
+    logStdout.write(util.format.apply(null, arguments) + '\n');
+}
+
 app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
