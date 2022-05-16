@@ -106,6 +106,7 @@ async function sendGame(request, response) {
 }
 
 async function createGame(request, response){
+    console.log("Hello World")
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let newGame = {
