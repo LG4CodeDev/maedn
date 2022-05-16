@@ -19,14 +19,15 @@
 }
 
 #logoutBtn {
-  background-color: darkred;
-  border-radius: 25px;
-  border: 1px black;
-  box-shadow: 5px 5px 5px #8b0000;
+  background-color: #000000;
   width: 150px;
-  height: 35px;
   font-size: 20px;
 }
+
+#logoutBtn:hover {
+  cursor: pointer;
+}
+
 
 #logout {
   height: 56px;

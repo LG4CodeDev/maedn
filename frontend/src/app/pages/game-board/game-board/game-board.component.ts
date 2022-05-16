@@ -25,9 +25,8 @@ export class GameBoardComponent implements OnInit {
   whosTurn: string; //player1 - player4
   highlightetFields: any;
 
-  //TODO: Highlight who's turn it is
+
   //TODO: Display what to do now (wait, throw dice, pick field)
-  //TODO: Turn game board so every user has its own home bottom right
 
   async ngOnInit(): Promise<void> {
     try{
@@ -53,8 +52,7 @@ export class GameBoardComponent implements OnInit {
         else{
           console.log('received empty data');
         }
-        //TODO: use e.data for update of field
-        console.log(e.data)
+        //console.log(e.data)
       }, false)
 
       this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
@@ -79,8 +77,8 @@ export class GameBoardComponent implements OnInit {
   updateGameBoard(response: any){
     this.setPlayerPosition(response);
     this.whosTurn = response.nextPlayer;
-    this.unhiglightMoves()
     this.updateGameInfo();
+    this.unhiglightMoves();
     this.highlightWhosTurn();
   }
 
@@ -115,6 +113,7 @@ export class GameBoardComponent implements OnInit {
         this.setGameBoardForPlayer();
       },
       response => {
+        console.log('an error occured in getPlayerPositions() -> getMainGame')
         console.log(response);
       }
     )
@@ -141,7 +140,7 @@ export class GameBoardComponent implements OnInit {
         break;
       default:
         document.getElementById('whoAmI').innerHTML += 'something gone wrong';
-        console.log(this.userInGame + ' this.useringame');
+        console.log(this.userInGame + ' this.useringame gone wrong !!!');
     }
   }
 
@@ -198,7 +197,6 @@ export class GameBoardComponent implements OnInit {
         },
       },
     ).subscribe(response => {
-      console.log(response.status)
       if (response.status == 200) {
         console.log(response['body']);
         this.tossDice(response['body']['move']['dice'], response.body);
@@ -216,8 +214,8 @@ export class GameBoardComponent implements OnInit {
   }
 
   sendGameData(fieldID: string, json: any){
-    console.log(json[0]);
-    console.log(fieldID);
+    //console.log(json[0]);
+    //console.log(fieldID);
     if(json[0] == fieldID || json[1] == fieldID ||
       json[2] == fieldID || json[3] == fieldID){
       this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
@@ -233,7 +231,7 @@ export class GameBoardComponent implements OnInit {
         }
       ).subscribe(response => {
         if (response.status == 200) {
-          console.log('game data successfully send!');
+          //console.log('game data successfully send!');
           console.log(response);
           this.unhiglightMoves();
           this.setPlayerPosition(response['body']);
@@ -315,7 +313,9 @@ export class GameBoardComponent implements OnInit {
     let allHighlightedFields = document.getElementsByClassName('highlightField');
     console.log(allHighlightedFields);
     for (let i = 0; i < allHighlightedFields.length; i++) {
+      console.log('trying to remove class from ' + allHighlightedFields[i]);
       allHighlightedFields[i].classList.remove('highlightField');
+      console.log('removed, checking ' + allHighlightedFields[i]);
       if(allHighlightedFields[i].classList.contains('highlightField')){
         console.log(allHighlightedFields[i].id + ' still has class HighlightedFields');
       }
@@ -359,10 +359,6 @@ export class GameBoardComponent implements OnInit {
     let token = this.renderer.createElement("div");
     token.setAttribute("id", id);
     token.style.backgroundColor = color;
-    token.addEventListener('click', () => {
-      console.log(id);
-      this.activeToken = id;
-    }); //TODO onclick implement
     token.classList.add("gameBoardToken");
     return token;
   }
@@ -370,7 +366,7 @@ export class GameBoardComponent implements OnInit {
   moveTokenToField(token: string, field: string): void{
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
-    console.log('moving token ' + token + ' to field ' + field);
+    //console.log('moving token ' + token + ' to field ' + field);
     fieldElement.appendChild(tokenElement);
   }
 
