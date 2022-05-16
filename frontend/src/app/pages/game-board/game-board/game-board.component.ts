@@ -22,6 +22,8 @@ export class GameBoardComponent implements OnInit {
   jsonReturned: any;
   gameID: number;
   userID: number;
+  userInGame: string; //player1 - player 4
+  whosTurn: string; //player1 - player4
   highlightetFields: any;
 
   //TODO: Highlight who's turn it is
@@ -32,21 +34,25 @@ export class GameBoardComponent implements OnInit {
     try{
       this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
       this.gameID = JSON.parse(localStorage.getItem('currentGame')).gameID;
+      this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
     }
     catch (e) {
       //todo: error handling, real login check
       this.router.navigate(['/login']);
     }
 
-    this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
+
     this.highlightetFields = [];
     if (!!window.EventSource) {
 
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         console.log('sse tut');
+        console.log(this);
+        //TODO: use e.data for update of field
         console.log(e)
       }, false)
+
       this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
           "gameID":this.gameID,
           "cliendID":this.userID
@@ -62,9 +68,13 @@ export class GameBoardComponent implements OnInit {
 
     this.fillGridWithField();
     this.getPlayerPositions();
+    this.setGameBoardForPlayer();
+    console.log(JSON.parse('{"positions":[["AR_1","AS_1","AS_2","AS_3"],["BR_7","BS_1","BS_2","BS_3"],["CS_0","CS_1","CS_2","CS_3"],["DR_4","DS_1","DS_2","DS_3"]],"isFinished":false,"nextPlayer":"Player3"}'));
+    this.highlightWhosTurn();
   }
 
   getPlayerPositions(){
+    this.gameID = 85;
     this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
         observe: "response",
         headers: {
@@ -74,6 +84,20 @@ export class GameBoardComponent implements OnInit {
     ).subscribe(response => {
         console.log(response)
         this.setPlayerPosition(response['body']);
+        if(response.body.Player1 == this.userID){
+          this.userInGame = 'Player1';
+        }
+        else if(response.body.Player2 == this.userID){
+          this.userInGame = 'Player2';
+        }
+        else if(response.body.Player3 == this.userID){
+          this.userInGame = 'Player3';
+        }
+        else if(response.body.Player4 == this.userID){
+          this.userInGame = 'Player4';
+        }
+
+        this.whosTurn = response.body.nextTurn
         this.updateGameInfo(response, this.gameID);
       },
       response => {
@@ -82,9 +106,61 @@ export class GameBoardComponent implements OnInit {
     )
   }
 
+  setGameBoardForPlayer(){
+    //not working: the rotation
+    switch (this.userInGame) {
+      case "Player4":
+        //document.getElementById('gameboard').style.transform = 'rotate(270deg)';
+        document.getElementById('whoAmI').innerHTML += 'Schwarz';
+        break;
+      case "Player3":
+        //document.getElementById('gameboard').style.transform = 'rotate(0deg)';
+        document.getElementById('whoAmI').innerHTML += 'Rot';
+        break;
+      case "Player2":
+        //document.getElementById('gameboard').style.transform = 'rotate(90deg)';
+        document.getElementById('whoAmI').innerHTML += 'Grün';
+        break;
+      case "Player1":
+        //document.getElementById('gameboard').style.transform = 'rotate(180deg)';
+        document.getElementById('whoAmI').innerHTML += 'Gelb';
+        break;
+    }
+  }
+
+  highlightWhosTurn(){
+    let homeFields = [];
+    homeFields[0] = ['AS_0','AS_1','AS_2','AS_3']; //yellow top left
+    homeFields[1] = ['BS_0','BS_1','BS_2','BS_3']; //green top right
+    homeFields[2] = ['CS_0','CS_1','CS_2','CS_3']; //red bottom right
+    homeFields[3] = ['DS_0','DS_1','DS_2','DS_3']; //black bottom left
+
+    let toLoop: any[] = [];
+    this.whosTurn = 'Player3';
+    switch(this.whosTurn){
+      case "Player1":
+        toLoop = homeFields[0];
+        break;
+      case "Player2":
+        toLoop = homeFields[1];
+        break;
+      case "Player3":
+        toLoop = homeFields[2];
+        break;
+      case "Player4":
+        toLoop = homeFields[3];
+        break;
+    }
+    toLoop.forEach((currentValue, index, array) => {
+      let id = 'field_' + currentValue;
+      document.getElementById(id).classList.add('highlightField');
+    });
+
+  }
+
   updateGameInfo(response: any, gameID: number){
-    let nextPlayer = response.body.turn;
-    switch (nextPlayer) {
+    this.whosTurn = response.body.turn;
+    switch (this.whosTurn) {
       case "Player1":
         document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
         break;
@@ -99,19 +175,6 @@ export class GameBoardComponent implements OnInit {
         break;
       default:
         document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
-    }
-    document.getElementById('whoAmI').innerHTML = '';
-    if(response['body']['Player1'] == this.userID){
-      document.getElementById('whoAmI').innerHTML += 'Gelb';
-    }
-    if(response['body']['Player2'] == this.userID){
-      document.getElementById('whoAmI').innerHTML += 'Grün';
-    }
-    if(response['body']['Player3'] == this.userID){
-      document.getElementById('whoAmI').innerHTML += 'Rot';
-    }
-    if(response['body']['Player4'] == this.userID){
-      document.getElementById('whoAmI').innerHTML += 'Schwarz';
     }
     document.getElementById('whatsMyGameID').innerHTML = gameID.toString();
   }
@@ -181,11 +244,10 @@ export class GameBoardComponent implements OnInit {
         for (let i = 1; i < 5; i++) {
           let tokenID = 'token' +i.toString() + '_' + currentValue;
           let fieldID = 'field_'+gameBoard['positions'][index][i-1];
-          console.log('moving ' + tokenID + ' to field ' + fieldID);
+          //console.log('moving ' + tokenID + ' to field ' + fieldID);
           this.moveTokenToField(tokenID, fieldID);
         }
       });
-      //this.moveTokenToField()
     }
   }
 
@@ -262,6 +324,7 @@ export class GameBoardComponent implements OnInit {
     this.createBoardWritting();
 
     this.createInitialTokens();
+
   }
 
   generateSingleField(coordinates: string, color: string, content: string, isBig: Boolean): any{
@@ -294,12 +357,11 @@ export class GameBoardComponent implements OnInit {
   moveTokenToField(token: string, field: string): void{
     let tokenElement = document.getElementById(token);
     let fieldElement = document.getElementById(field);
-    console.log('moving token ' + token + ' to field ' + field);
+    //console.log('moving token ' + token + ' to field ' + field);
     fieldElement.appendChild(tokenElement);
   }
 
   //following are only methods for creating game board,
-  //TODO: auslagern
 
   createInitialTokens(){
     let tokenGreen = ['field_BS_0', 'field_BS_1', 'field_BS_2', 'field_BS_3'];
