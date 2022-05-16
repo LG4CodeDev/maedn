@@ -27,6 +27,7 @@ export class GameBoardComponent implements OnInit {
 
 
   //TODO: Display what to do now (wait, throw dice, pick field)
+  //TODO: always spin cube if its your turn, roll just stops it :)
 
   async ngOnInit(): Promise<void> {
     try{
@@ -45,7 +46,7 @@ export class GameBoardComponent implements OnInit {
     if (!!window.EventSource) {
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
-        console.log('sse tut');
+        //console.log('sse tut');
         if(e.data != []){
           testParent.updateGameBoard(JSON.parse(e.data));
         }
@@ -75,11 +76,19 @@ export class GameBoardComponent implements OnInit {
   }
 
   updateGameBoard(response: any){
-    this.setPlayerPosition(response);
-    this.whosTurn = response.nextPlayer;
-    this.updateGameInfo();
-    this.unhiglightMoves();
-    this.highlightWhosTurn();
+    //todo: fix bug that if no move possible, next player is highlightet even if cube still spinning
+    if(response.isFinished){
+      console.log('some just won the game ');
+      //TODO: Win animation
+    }
+    else{
+      this.setPlayerPosition(response);
+      this.whosTurn = response.nextPlayer;
+      this.updateGameInfo();
+      this.unhiglightMoves();
+      this.highlightWhosTurn();
+    }
+
   }
 
   async getPlayerPositions(){
@@ -312,29 +321,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   unhiglightMoves(){
-    //let allHighlightedFields = document.getElementsByClassName('highlightField');
-    //console.log(allHighlightedFields);
-
     Array.from(document.querySelectorAll('.highlightField')).forEach((el) => el.classList.remove('highlightField'));
-
-    /*while(document.getElementsByClassName('highlightField')){
-      document.getElementsByClassName('highlightField')[0].classList.remove('highlightField');
-      console.log('removed one element from highlight');
-    }
-    console.log('done')*/
-    /*for (let i = 0; i < allHighlightedFields.length; i++) {
-      if(allHighlightedFields[i] == undefined){
-        console.log('weird stuff happening');
-        continue;
-      }
-      console.log('trying to remove class from ' + allHighlightedFields[i].id);
-      allHighlightedFields[i].classList.remove('highlightField');
-
-      console.log('removed, checking ' + allHighlightedFields[i].id);
-      if(allHighlightedFields[i].classList.contains('highlightField')){
-        console.log(allHighlightedFields[i].id + ' still has class HighlightedFields');
-      }
-    }*/
   }
 
 
