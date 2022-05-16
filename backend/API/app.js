@@ -545,6 +545,9 @@ function getRightAreaOfFigure(currentField, game){
     }
     //if the figure is in again in his first quarter of the game(did one round)
     //he should move to the finish
+    console.log(game['turn'])
+    console.log(newArea)
+
     if (game['turn'] === 'Player1' && newArea === 'AR') {
         //if his dice role is little enough he can move to finish
         if (currentField[1] <= 3) newArea = 'AF';
