@@ -18,6 +18,7 @@
 .side-right {
   min-width: 400px;
   background-color: #2a9df4!important;
+  margin-left: 5%;
 }
 
 #accordion {
