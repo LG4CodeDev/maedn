@@ -77,7 +77,7 @@ export class GameBoardComponent implements OnInit {
 
   updateGameBoard(response: any){
     //todo: fix bug that if no move possible, next player is highlightet even if cube still spinning
-    if(response.isFinished){
+    if(response.status == 'Finished'){
       console.log('some just won the game ');
       //TODO: Win animation
     }
