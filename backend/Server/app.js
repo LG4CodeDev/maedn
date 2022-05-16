@@ -78,6 +78,8 @@ async function sendGame(request, response) {
     try{
         const gameID = request.body.gameID;
         const data = request.body.msg;
+        console.log(gameID)
+        console.log(games)
         let game = games.filter(games => games.id === gameID)[0]
         console.log(game)
         if(game !== undefined){
@@ -95,7 +97,7 @@ async function sendGame(request, response) {
 
             response.sendStatus(200)
         }
-        else response.sendStatus(500)
+        else response.sendStatus(300)
     }catch (err){
         console.log(err)
         return response.sendStatus(500)
