@@ -261,14 +261,14 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             let zero = 0
             await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
             let result;
-            console.log( [game.postition1,game.postition2,game.postition3,game.postition4])
+            console.log( [game.Position1,game.Position2,game.Position3,game.Position4])
             await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
                 data: {
                     "gameID": id,
                     "msg": {
-                        "positions": [game.postition1,game.postition2,game.postition3,game.postition4],
+                        "positions": [game.Position1,game.Position2,game.Position3,game.Position4],
                         "isFinished": game.isFinished,
                         "nextPlayer": nextPlayer
                     }
