@@ -306,7 +306,8 @@ app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) =>
             "Player2" : result[0]['Player2'],
             "Player3" : result[0]['Player3'],
             "Player4" : result[0]['Player4'],
-            "status" : result[0]['status']})
+            "status" : result[0]['status'],
+            "turn" : result[0]['turn']})
     } catch (err) {
         console.log(err)
         return response.sendStatus(500);
