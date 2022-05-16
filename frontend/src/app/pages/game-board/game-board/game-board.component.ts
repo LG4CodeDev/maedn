@@ -314,7 +314,12 @@ export class GameBoardComponent implements OnInit {
     console.log(allHighlightedFields);
     for (let i = 0; i < allHighlightedFields.length; i++) {
       console.log('trying to remove class from ' + allHighlightedFields[i].id);
+      if(allHighlightedFields[i] == undefined){
+        console.log('weird stuff happening');
+        continue;
+      }
       allHighlightedFields[i].classList.remove('highlightField');
+
       console.log('removed, checking ' + allHighlightedFields[i].id);
       if(allHighlightedFields[i].classList.contains('highlightField')){
         console.log(allHighlightedFields[i].id + ' still has class HighlightedFields');
