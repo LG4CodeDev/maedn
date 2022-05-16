@@ -85,39 +85,37 @@ export class GameBoardComponent implements OnInit {
   }
 
   async getPlayerPositions(){
-    await this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
+    this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/' + this.gameID.toString(), {
         observe: "response",
         headers: {
           "authorization": this.apiToken,
         },
-      },
+      }
     ).subscribe(response => {
-        console.log(response)
+        console.log(response);
 
 
-        if(response.body.Player1 == this.userID){
+        if (response.body.Player1 == this.userID) {
           this.userInGame = 'Player1';
-        }
-        else if(response.body.Player2 == this.userID){
+        } else if (response.body.Player2 == this.userID) {
           this.userInGame = 'Player2';
-        }
-        else if(response.body.Player3 == this.userID){
+        } else if (response.body.Player3 == this.userID) {
           this.userInGame = 'Player3';
-        }
-        else if(response.body.Player4 == this.userID){
+        } else if (response.body.Player4 == this.userID) {
           this.userInGame = 'Player4';
-        }
-        else{
+        } else {
           this.userInGame = 'Player4';
           console.log('set hard to 4');
         }
 
         this.updateGameBoard(response.body);
-        this.highlightMoves(response.body.allowedMoves);
+        if (response.body.nextPlayer == this.userInGame){
+          this.highlightMoves(response.body.allowedMoves);
+        }
         this.setGameBoardForPlayer();
       },
       response => {
-        console.log(response)
+        console.log(response);
       }
     )
   }
@@ -141,6 +139,9 @@ export class GameBoardComponent implements OnInit {
         //document.getElementById('gameboard').style.transform = 'rotate(180deg)';
         document.getElementById('whoAmI').innerHTML += 'Gelb';
         break;
+      default:
+        document.getElementById('whoAmI').innerHTML += 'something gone wrong';
+        console.log(this.userInGame + ' this.useringame');
     }
   }
 
@@ -162,7 +163,9 @@ export class GameBoardComponent implements OnInit {
     }
     toLoop.forEach((currentValue, index, array) => {
       let id = 'field_' + currentValue;
-      document.getElementById(id).classList.add('highlightField');
+      if(!document.getElementById(id).classList.contains('highlightField')){
+        document.getElementById(id).classList.add('highlightField');
+      }
     });
 
   }
@@ -314,6 +317,9 @@ export class GameBoardComponent implements OnInit {
     console.log(allHighlightedFields);
     for (let i = 0; i < allHighlightedFields.length; i++) {
       allHighlightedFields[i].classList.remove('highlightField');
+      if(allHighlightedFields[i].classList.contains('highlightField')){
+        console.log(allHighlightedFields[i].id + ' still has class HighlightedFields');
+      }
     }
   }
 
