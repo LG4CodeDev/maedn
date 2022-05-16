@@ -78,10 +78,7 @@ async function sendGame(request, response) {
     try{
         const gameID = request.body.gameID;
         const data = request.body.msg;
-        console.log(gameID)
-        console.log(games)
         let game = games.filter(games => games.id === gameID)[0]
-        console.log(game)
         if(game !== undefined){
             game = game.clients
             let clientStreams = [];
@@ -93,7 +90,16 @@ async function sendGame(request, response) {
 
             let body = JSON.stringify(data)
 
-            clientStreams.forEach(client => client.response.write(body))
+            const headers = {
+                'Content-Type': 'text/event-stream',
+                'Connection': 'keep-alive',
+                'Cache-Control': 'no-cache'
+            };
+            response.writeHead(200, headers);
+
+            clientStreams.forEach(client => {
+                client.response.writeHead(200, headers);
+                client.response.write('data : '+ body)})
 
             response.sendStatus(200)
         }
@@ -106,7 +112,6 @@ async function sendGame(request, response) {
 }
 
 async function createGame(request, response){
-    console.log("Hello World")
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let newGame = {
@@ -114,7 +119,6 @@ async function createGame(request, response){
         clients : [clientID]
     }
     games.push(newGame)
-    console.log(games)
     return  response.json(gameID)
 }
 
