@@ -55,7 +55,7 @@ function eventsHandler(request, response) {
 
     const clientId = request.params.id;
 
-    response.write("id :" + clientId.toString());
+    response.write("id :" + clientId.toString() + "\n");
 
     const newClient = {
         id: clientId,
@@ -93,12 +93,13 @@ async function sendGame(request, response) {
 
             clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(data)}\n\n`))
 
-            response.sendStatus(200)
+            //response.sendStatus(200)
+            return 200
         }
-        else response.sendStatus(300)
+        else return 300//response.sendStatus(300)
     }catch (err){
         console.log(err)
-        return response.sendStatus(500)
+        return 500 //return response.sendStatus(500)
     }
 
 }
