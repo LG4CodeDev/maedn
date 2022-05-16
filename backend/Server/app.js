@@ -84,6 +84,7 @@ async function sendGame(request, response) {
         const gameID = request.body.gameID;
         const data = request.body.msg;
         let game = games.filter(games => games.id === gameID)[0]
+        console.log(game)
         if(game !== undefined){
             game = game.clients
             let clientStreams = [];
@@ -91,11 +92,13 @@ async function sendGame(request, response) {
                 clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
             }
 
+            console.log(clientStreams)
+
             clientStreams.forEach(client => client.response.write(data))
 
-            return response.sendStatus(200)
+            response.sendStatus(200)
         }
-        else return response.sendStatus(500)
+        else response.sendStatus(500)
     }catch (err){
         console.log(err)
         return response.sendStatus(500)
