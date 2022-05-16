@@ -1,18 +1,16 @@
-const path = require('path');
-
 const dotenv = require('dotenv');
 dotenv.config({ path: './config/app.env'});
 
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const e = require("express");
+
+const mariadb = require('mariadb');
 
 const app = express();
 
 
-/*
+
 let fs = require('fs');
 let util = require('util');
 let logFile = fs.createWriteStream('log.txt', {flags: 'w'});
@@ -21,7 +19,7 @@ let logStdout = process.stdout;
 console.log = function () {
     logFile.write(util.format.apply(null, arguments) + '\n');
     logStdout.write(util.format.apply(null, arguments) + '\n');
-}*/
+}
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -37,6 +35,7 @@ let games = [];
 let facts = [];
 
 app.listen(PORT)
+await reloadGames()
 
 function eventsHandler(request, response) {
     const headers = {
@@ -144,3 +143,24 @@ app.use(express.static(process.env.FRONTEND_DIST_PATH));
 app.use('/*',(req, res) => {
     res.sendFile('frontend/index.html', { root: __dirname })
 });
+
+const pool =
+    mariadb.createPool({
+        host: process.env.DB_IP,
+        port: process.env.DB_PORT,
+        user: process.env.DB_User,
+        password: process.env.DB_Password,
+        database: process.env.DB_Name
+    })
+
+async function reloadGames(){
+    let result = await pool.query("Select * from mainGame")
+    for(let element of result){
+        let newGame = {
+            id: element.gameID,
+            clients : [element.Player1,element.Player2,element.Player3,element.Player4]
+        }
+        games.push(newGame)
+        console.log(games)
+    }
+}
