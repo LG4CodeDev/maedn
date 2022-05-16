@@ -26,7 +26,7 @@ console.log = function () {
     logStdout.write(util.format.apply(null, arguments) + '\n');
 }*/
 
-app.use(express.json(), cors(corsOptions));
+//app.use(express.json(), cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
