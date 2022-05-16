@@ -47,21 +47,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 Generals
  */
 
-/*
-//cross origin allow
-app.options('/*', async (request, response, next) =>{
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
-
-app.post('/*', function (request, response, next) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});*/
-
-
 
 app.get(`/api`, function (request, response) {
     response.send('This is version 3.2 of maedns REST API');
@@ -761,7 +746,7 @@ async function makeMove(data, game, response) {
 
         } catch (err) {
             console.log(err)
-            response.sendStatus(500)
+            response.status(500).send('Axios error')
         }
     }
     else return response.status(400).send('Invalid Move')
