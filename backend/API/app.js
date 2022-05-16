@@ -652,14 +652,14 @@ function checkRoleAgain(playerFields, diceResult, moves) {
             {
                 if (element[1] === 3) continue;
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
-                if (element[1] === 2)
+                else if (element[1] === 2)
                 {
                     playerFields.find(element => {
                         if (element.includes('F_3')){}
                         else return false});
                 }
                 //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
-                if (element[1] === 1)
+                else if (element[1] === 1)
                 {
                     playerFields.find(element => {
                         if (element.includes('F_3'))
@@ -670,6 +670,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                                 } else return false});
                         }else return false});
                 }
+                else return false;
             }
             else return false;
         }
