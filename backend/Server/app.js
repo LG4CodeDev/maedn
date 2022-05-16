@@ -71,7 +71,7 @@ app.get('/startStream/:id', eventsHandler);
 
 async function sendGame(request, response) {
     const gameID = request.body.gameID;
-    const newFact = request.body.msg;
+    const data = request.body.msg;
     let game = games.filter(games => games.id === gameID)[0]
     if(game !== undefined){
         game = game.clients
@@ -80,7 +80,7 @@ async function sendGame(request, response) {
             clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
         }
 
-        clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+        clientStreams.forEach(client => client.response.write(data))
 
         return response.sendStatus(200)
     }
