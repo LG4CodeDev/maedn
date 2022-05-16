@@ -30,7 +30,7 @@ export class GameBoardComponent implements OnInit {
   //TODO: Display what to do now (wait, throw dice, pick field)
   //TODO: Turn game board so every user has its own home bottom right
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     try{
       this.userID = JSON.parse(localStorage.getItem('currentUser')).userid;
       this.gameID = JSON.parse(localStorage.getItem('currentGame')).gameID;
@@ -67,14 +67,13 @@ export class GameBoardComponent implements OnInit {
     }
 
     this.fillGridWithField();
-    this.getPlayerPositions();
-    this.setGameBoardForPlayer();
-    console.log(JSON.parse('{"positions":[["AR_1","AS_1","AS_2","AS_3"],["BR_7","BS_1","BS_2","BS_3"],["CS_0","CS_1","CS_2","CS_3"],["DR_4","DS_1","DS_2","DS_3"]],"isFinished":false,"nextPlayer":"Player3"}'));
-    this.highlightWhosTurn();
+
+    await this.getPlayerPositions();
+    //console.log(JSON.parse('{"positions":[["AR_1","AS_1","AS_2","AS_3"],["BR_7","BS_1","BS_2","BS_3"],["CS_0","CS_1","CS_2","CS_3"],["DR_4","DS_1","DS_2","DS_3"]],"isFinished":false,"nextPlayer":"Player3"}'));
   }
 
-  getPlayerPositions(){
-    this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
+  async getPlayerPositions(){
+    await this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
         observe: "response",
         headers: {
           "authorization": this.apiToken,
@@ -83,6 +82,8 @@ export class GameBoardComponent implements OnInit {
     ).subscribe(response => {
         console.log(response)
         this.setPlayerPosition(response['body']);
+
+
         if(response.body.Player1 == this.userID){
           this.userInGame = 'Player1';
         }
@@ -95,9 +96,16 @@ export class GameBoardComponent implements OnInit {
         else if(response.body.Player4 == this.userID){
           this.userInGame = 'Player4';
         }
+        else{
+          this.userInGame = 'Player4';
+          console.log('set hard to 4');
+        }
+        console.log(this.userInGame + ' has been set');
 
-        this.whosTurn = response.body.nextTurn
+        this.whosTurn = response.body.nextPlayer;
         this.updateGameInfo(response, this.gameID);
+        this.setGameBoardForPlayer();
+        this.highlightWhosTurn();
       },
       response => {
         console.log(response)
@@ -107,6 +115,7 @@ export class GameBoardComponent implements OnInit {
 
   setGameBoardForPlayer(){
     //not working: the rotation
+    console.log('userInGame' + this.userInGame)
     switch (this.userInGame) {
       case "Player4":
         //document.getElementById('gameboard').style.transform = 'rotate(270deg)';
@@ -157,7 +166,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   updateGameInfo(response: any, gameID: number){
-    this.whosTurn = response.body.turn;
+    //this.whosTurn = response.body.turn;
     switch (this.whosTurn) {
       case "Player1":
         document.getElementById('whosTurnIsIt').innerHTML = 'Gelb';
