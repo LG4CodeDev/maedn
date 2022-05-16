@@ -477,8 +477,6 @@ async function CreateGame(player1) {
     try {
         const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
-        console.log(result.warningStatus)
-
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
             await axios({
