@@ -276,6 +276,8 @@ export class GameBoardComponent implements OnInit {
   }
 
   highlightMoves(json: any){
+    console.log('json for highlight moves:');
+    console.log(json);
     if (json[0] == null && json[1] == null &&
       json[2] == null && json[3] == null) {
         console.log('no moves available');
@@ -310,21 +312,26 @@ export class GameBoardComponent implements OnInit {
   }
 
   unhiglightMoves(){
-    let allHighlightedFields = document.getElementsByClassName('highlightField');
-    console.log(allHighlightedFields);
-    for (let i = 0; i < allHighlightedFields.length; i++) {
-      console.log('trying to remove class from ' + allHighlightedFields[i].id);
+    //let allHighlightedFields = document.getElementsByClassName('highlightField');
+    //console.log(allHighlightedFields);
+    while(document.getElementsByClassName('highlightField')){
+      document.getElementsByClassName('highlightField')[0].classList.remove('highlightField');
+      console.log('removed one element from highlight');
+    }
+    console.log('done')
+    /*for (let i = 0; i < allHighlightedFields.length; i++) {
       if(allHighlightedFields[i] == undefined){
         console.log('weird stuff happening');
         continue;
       }
+      console.log('trying to remove class from ' + allHighlightedFields[i].id);
       allHighlightedFields[i].classList.remove('highlightField');
 
       console.log('removed, checking ' + allHighlightedFields[i].id);
       if(allHighlightedFields[i].classList.contains('highlightField')){
         console.log(allHighlightedFields[i].id + ' still has class HighlightedFields');
       }
-    }
+    }*/
   }
 
 
