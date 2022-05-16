@@ -643,14 +643,14 @@ function checkRoleAgain(playerFields, diceResult, moves) {
     for (const playerFieldsKey of playerFields) {
         let element = playerFieldsKey.split("_");
         //If figure is in start he potentially can role again
-        element[0] = parseInt(element[0])
+        element[1] = parseInt(element[1])
         if (element[0][1] === 'S') {}
         //else check if figure is at the end/right place of finish
         else
         {
             if (element[0][1] === 'F')
             {
-                if (element[1] === 3) continue;
+                if (element[1] === 3){}
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
                 else if (element[1] === 2)
                 {
