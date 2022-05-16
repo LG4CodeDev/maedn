@@ -678,7 +678,7 @@ function kickFigures(positions, data){
                         playerChar = "D"
                         break;
                 }
-                positions[indexPlayer][indexField] = playerChar + "S " + indexField.toString()
+                positions[indexPlayer][indexField] = playerChar + "S_" + indexField.toString()
             }
             indexField++
         }
