@@ -79,6 +79,7 @@ async function sendGame(request, response) {
         const gameID = request.body.gameID;
         const data = request.body.msg;
         let game = games.filter(games => games.id === gameID)[0]
+        console.log(game)
         if(game !== undefined){
             game = game.clients
             let clientStreams = [];
@@ -112,6 +113,7 @@ async function sendGame(request, response) {
 }
 
 async function createGame(request, response){
+    console.log("Hello World")
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let newGame = {
