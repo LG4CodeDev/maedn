@@ -90,7 +90,7 @@ async function sendGame(request, response) {
 
             clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(data)}\n\n`))
 
-       
+
             response.sendStatus(200)
         }
         else response.sendStatus(300)

@@ -732,7 +732,9 @@ async function makeMove(data, game, response) {
             }).then(function (response){
                 result = response
             })
+
             console.log(result)
+            if (result.status === 500 )return response.sendStatus(500)
         }catch (err) {
             console.log(err)
         }
