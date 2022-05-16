@@ -314,11 +314,14 @@ export class GameBoardComponent implements OnInit {
   unhiglightMoves(){
     //let allHighlightedFields = document.getElementsByClassName('highlightField');
     //console.log(allHighlightedFields);
-    while(document.getElementsByClassName('highlightField')){
+
+    Array.from(document.querySelectorAll('.highlightField')).forEach((el) => el.classList.remove('highlightField'));
+
+    /*while(document.getElementsByClassName('highlightField')){
       document.getElementsByClassName('highlightField')[0].classList.remove('highlightField');
       console.log('removed one element from highlight');
     }
-    console.log('done')
+    console.log('done')*/
     /*for (let i = 0; i < allHighlightedFields.length; i++) {
       if(allHighlightedFields[i] == undefined){
         console.log('weird stuff happening');
