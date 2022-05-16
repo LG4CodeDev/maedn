@@ -90,10 +90,9 @@ async function sendGame(request, response) {
             console.log(clientStreams)
 
             let body = JSON.stringify(data)
-            
 
             clientStreams.forEach(client => {
-                client.response.write('data : '+ body)})
+                client.response.write(`data: ${JSON.stringify(data)}\n\n`)})
 
             response.sendStatus(200)
         }
