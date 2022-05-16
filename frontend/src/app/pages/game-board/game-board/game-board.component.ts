@@ -48,9 +48,9 @@ export class GameBoardComponent implements OnInit {
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         console.log('sse tut');
-        testParent.setPlayerPosition(JSON.parse(e.data))
+        testParent.updateGameBoard(JSON.parse(e.data));
         //TODO: use e.data for update of field
-        console.log(e)
+        console.log(e.data)
       }, false)
 
       this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
@@ -72,6 +72,13 @@ export class GameBoardComponent implements OnInit {
     //console.log(JSON.parse('{"positions":[["AR_1","AS_1","AS_2","AS_3"],["BR_7","BS_1","BS_2","BS_3"],["CS_0","CS_1","CS_2","CS_3"],["DR_4","DS_1","DS_2","DS_3"]],"isFinished":false,"nextPlayer":"Player3"}'));
   }
 
+  updateGameBoard(response: any){
+    this.setPlayerPosition(response);
+    this.whosTurn = response.body.nextPlayer;
+    this.updateGameInfo();
+    this.highlightWhosTurn();
+  }
+
   async getPlayerPositions(){
     await this.http.get<any>('https://spielehub.server-welt.com/api/getMainGame/'+this.gameID.toString(),{
         observe: "response",
@@ -81,7 +88,6 @@ export class GameBoardComponent implements OnInit {
       },
     ).subscribe(response => {
         console.log(response)
-        this.setPlayerPosition(response['body']);
 
 
         if(response.body.Player1 == this.userID){
@@ -101,10 +107,8 @@ export class GameBoardComponent implements OnInit {
           console.log('set hard to 4');
         }
 
-        this.whosTurn = response.body.nextPlayer;
-        this.updateGameInfo(response, this.gameID);
+        this.updateGameBoard(response.body);
         this.setGameBoardForPlayer();
-        this.highlightWhosTurn();
       },
       response => {
         console.log(response)
@@ -163,7 +167,7 @@ export class GameBoardComponent implements OnInit {
 
   }
 
-  updateGameInfo(response: any, gameID: number){
+  updateGameInfo(){
     //this.whosTurn = response.body.turn;
     switch (this.whosTurn) {
       case "Player1":
@@ -181,7 +185,7 @@ export class GameBoardComponent implements OnInit {
       default:
         document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
     }
-    document.getElementById('whatsMyGameID').innerHTML = gameID.toString();
+    document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
   }
 
   getGameData(){
@@ -232,7 +236,7 @@ export class GameBoardComponent implements OnInit {
           console.log(response);
           this.unhiglightMoves(this.jsonReturned);
           this.setPlayerPosition(response['body']);
-          this.updateGameInfo(response, this.gameID);
+          this.updateGameInfo();
         }
       });
     }
