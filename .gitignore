@@ -6,3 +6,7 @@ backend/API/log.txt
 backend/API/log.txt
 *.txt
 backend/Server/curl
+*.env
+*.xml
+*.xml
+backend/Server/.idea/dataSources.xml
