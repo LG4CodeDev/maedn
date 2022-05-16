@@ -258,15 +258,12 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         let stringOfMoves = listOfMoves.toString()
         if (!roleAgain && listOfMoves.toString() === [null, null, null, null].toString()) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
-            let zero = 0
-            await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
             let result;
-            console.log( [game.Position1,game.Position2,game.Position3,game.Position4])
             await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
                 data: {
-                    "gameID": id,
+                    "gameID": parseInt(id),
                     "msg": {
                         "positions": [game.Position1,game.Position2,game.Position3,game.Position4],
                         "isFinished": game.isFinished,
@@ -276,6 +273,8 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             }).then(function (response){
                 result = response
             })
+            let zero = 0
+            await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
         } else {
             let DoneMoves = game['movesOfPerson'] + 1
             await pool.query("UPDATE mainGame SET allowedMoves = ? , roleAgain = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, DoneMoves, id]);
@@ -546,6 +545,9 @@ function getRightAreaOfFigure(currentField, game){
     }
     //if the figure is in again in his first quarter of the game(did one round)
     //he should move to the finish
+    console.log(game['turn'])
+    console.log(newArea)
+
     if (game['turn'] === 'Player1' && newArea === 'AR') {
         //if his dice role is little enough he can move to finish
         if (currentField[1] <= 3) newArea = 'AF';
