@@ -1,22 +1,43 @@
 <div nz-row>
   <div nz-col class="side-left" nzFlex="auto">
     <div class="whosTurnIsIt">
-      Es ist dran:
-      <div id="whosTurnIsIt">
+      <p class="whosTurnIsIt_header">Es ist dran:</p>
+      <div id="whosTurnIsIt" class="whosTurnIsIt_body">
 
       </div>
     </div>
     <div class="whosTurnIsIt">
-      Du bist Farbe:
-      <div id="whoAmI">
+      <p class="whosTurnIsIt_header">Du bist Farbe:</p>
+      <div id="whoAmI" class="whosTurnIsIt_body">
 
       </div>
     </div>
     <div class="whosTurnIsIt">
-      GameID:
-      <div id="whatsMyGameID">
+      <p class="whosTurnIsIt_header">GameID:</p>
+      <div id="whatsMyGameID" class="whosTurnIsIt_body">
 
       </div>
+    </div>
+    <div class="whosTurnIsIt">
+      <p class="whosTurnIsIt_header">Status:</p>
+      <div id="whatsTheState" class="whosTurnIsIt_body">
+
+      </div>
+    </div>
+    <div nz-row id="dice" nzJustify="center" class="whosTurnIsIt">
+      <div class="scene">
+        <div id="cube">
+          <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
+          <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
+          <img src="assets/dice/dice-3.png" class="cube__face cube__face--3">
+          <img src="assets/dice/dice-4.png" class="cube__face cube__face--4">
+          <img src="assets/dice/dice-5.png" class="cube__face cube__face--5">
+          <img src="assets/dice/dice-6.png" class="cube__face cube__face--6">
+        </div>
+      </div>
+    </div>
+    <div nz-row class="whosTurnIsIt" id="dice-btn" nzJustify="center">
+      <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
     </div>
   </div>
   <div nz-col class="game" id="gameboard" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
@@ -268,21 +289,6 @@
         Dazu muss jedoch die genaue Augenzahl für ein freies Zielfeld erwürfelt werden. Geschieht das nicht, kann
         entweder mit einer anderen Figur gezogen werden oder der Spielzug wird beendet.
       </p>
-    </div>
-    <div nz-row id="dice" nzJustify="center">
-      <div class="scene">
-        <div id="cube">
-          <img src="assets/dice/dice-1.png" class="cube__face cube__face--1">
-          <img src="assets/dice/dice-2.png" class="cube__face cube__face--2">
-          <img src="assets/dice/dice-3.png" class="cube__face cube__face--3">
-          <img src="assets/dice/dice-4.png" class="cube__face cube__face--4">
-          <img src="assets/dice/dice-5.png" class="cube__face cube__face--5">
-          <img src="assets/dice/dice-6.png" class="cube__face cube__face--6">
-        </div>
-      </div>
-    </div>
-    <div nz-row id="dice-btn" nzJustify="center">
-      <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
     </div>
   </div>
 </div>

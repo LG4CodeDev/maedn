@@ -13,12 +13,12 @@
 }
 
 .side-left {
+  max-width: 300px;
 }
 
 .side-right {
-  min-width: 400px;
+  width: inherit;
   background-color: #2a9df4!important;
-  margin-left: 5%;
 }
 
 #accordion {
@@ -38,8 +38,8 @@
 
 #regeln {
   height: inherit;
+  max-height: 700px;
   overflow-y: scroll;
-  max-height: 560px;
   overflow-x: hidden;
 }
 
@@ -357,5 +357,18 @@ label { margin-right: 10px; }
   padding: 18px;
   width: 90%;
   text-align: left;
-  background-color: #dddddd;
+  background-color: #2a9df4!important;
+}
+
+.whosTurnIsIt_header{
+  font-size: 2vh;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-decoration: underline;
+}
+
+.whosTurnIsIt_body{
+  font-size: 1.5vh;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
