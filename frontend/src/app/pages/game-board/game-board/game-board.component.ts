@@ -46,14 +46,12 @@ export class GameBoardComponent implements OnInit {
     if (!!window.EventSource) {
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
-        //console.log('sse tut');
         if(e.data != []){
           parent.updateGameBoard(JSON.parse(e.data));
         }
         else{
           console.log('received empty data');
         }
-        //console.log(e.data)
       }, false)
 
       this.http.post<any>('https://spielehub.server-welt.com/joinGame',{
@@ -72,18 +70,19 @@ export class GameBoardComponent implements OnInit {
     this.fillGridWithField();
 
     await this.getPlayerPositions();
-    //console.log(JSON.parse('{"positions":[["AR_1","AS_1","AS_2","AS_3"],["BR_7","BS_1","BS_2","BS_3"],["CS_0","CS_1","CS_2","CS_3"],["DR_4","DS_1","DS_2","DS_3"]],"isFinished":false,"nextPlayer":"Player3"}'));
   }
 
   updateGameBoard(response: any){
     //todo: fix bug that if no move possible, next player is highlightet even if cube still spinning
     this.setPlayerPosition(response);
     if(response.status == 'Finished'){
-      console.log('some just won the game ');
+      //console.log('some just won the game ');
+      this.updateDisplayStatus('Jemand hat gewonnen, Spiel vorbei');
       //TODO: Win animation
     }
     else if(response.status == 'notStarted'){
-      console.log('the game hasn\'t started yet');
+      //console.log('the game hasn\'t started yet');
+      this.updateDisplayStatus('Das Spiel hat noch nicht angefangen \n Warte auf Spieler');
       document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
     }
     else{
@@ -92,7 +91,10 @@ export class GameBoardComponent implements OnInit {
       this.unhiglightMoves();
       this.highlightWhosTurn();
     }
+  }
 
+  updateDisplayStatus(message: string){
+    document.getElementById('whatsTheState').innerHTML = message;
   }
 
   async getPlayerPositions(){
@@ -115,8 +117,8 @@ export class GameBoardComponent implements OnInit {
         } else if (response.body.Player4 == this.userID) {
           this.userInGame = 'Player4';
         } else {
-          this.userInGame = 'Player4';
-          console.log('set hard to 4');
+          console.log('you are no part of the game');
+          //todo: remove player from game
         }
 
         this.updateGameBoard(response.body);
@@ -126,7 +128,7 @@ export class GameBoardComponent implements OnInit {
         this.setGameBoardForPlayer();
       },
       response => {
-        console.log('an error occured in getPlayerPositions() -> getMainGame')
+        console.log('an error occured in getPlayerPositions() -> getMainGame:')
         console.log(response);
       }
     )
@@ -151,9 +153,6 @@ export class GameBoardComponent implements OnInit {
         //document.getElementById('gameboard').style.transform = 'rotate(180deg)';
         document.getElementById('whoAmI').innerHTML += 'Gelb';
         break;
-      default:
-        document.getElementById('whoAmI').innerHTML += 'something gone wrong';
-        console.log(this.userInGame + ' this.useringame gone wrong !!!');
     }
   }
 
@@ -226,11 +225,12 @@ export class GameBoardComponent implements OnInit {
         }
         else if(response['error']['msg'] == 'unauthorized'){
           console.log('not your turn, please wait');
+          this.updateDisplayStatus('Es ist nicht dein Zug, bitte warten!');
         }
       }
       else if(response.status == 400){
         if(response['error']['msg'] == 'notStarted'){
-          console.log('game hasn\'t startet, please wait for other players');
+          this.updateDisplayStatus('Das Spiel hat noch nicht gewonnen, bitte warten!');
         }
       }
       else{
@@ -265,7 +265,8 @@ export class GameBoardComponent implements OnInit {
       );
     }
     else{
-      console.log('incorrect field, choose another');
+      //console.log('incorrect field, choose another');
+      this.updateDisplayStatus('Falsches Feld, bitte anderes aussuchen');
     }
   }
 
@@ -301,36 +302,36 @@ export class GameBoardComponent implements OnInit {
   }
 
   highlightMoves(json: any){
-    console.log('json for highlight moves:');
-    console.log(json);
+    //console.log('json for highlight moves:');
+    //console.log(json);
     if (json[0] == null && json[1] == null &&
       json[2] == null && json[3] == null) {
-        console.log('no moves available');
+      this.updateDisplayStatus('Keine Züge möglich!');
       }
     else {
       let fieldToHighlight;
-      if (json[0] != 'null' && json[0] != '' && json[0] != null) {
+      if (json[0] != null && json[0] != '' && json[0] != 'null') {
         let id = 'field_' + json[0];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.onclick = () => {this.sendGameData(json[0], json);};
         //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
-      if (json[1] != 'null' && json[1] != '' && json[1] != null && json[1] != json[0]) {
+      if (json[1] != null && json[1] != '' && json[1] != 'null' && json[1] != json[0]) {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.onclick = () => {this.sendGameData(json[1], json);};
         //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
-      if (json[2] != 'null' && json[2] != '' && json[2] != null && json[2] != json[0] && json[2] != json[1]) {
+      if (json[2] != null && json[2] != '' && json[2] != 'null' && json[2] != json[0] && json[2] != json[1]) {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
         fieldToHighlight.onclick = () => {this.sendGameData(json[2], json);};
         //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
-      if (json[3] != 'null' && json[3] != '' && json[3] != null && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
+      if (json[3] != null && json[3] != '' && json[3] != 'null' && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
