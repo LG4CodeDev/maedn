@@ -1,3 +1,36 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  grid-template-areas: 'info game rules';
+  column-gap: 10px;
+  min-width: 1160px;
+}
+
+.grid-info{
+  min-width: 220px;
+  grid-area: info;
+  background-color: #2a9df4;
+  /*max-height: 700px;*/
+}
+
+.grid-info-only{
+  /*overflow-y: scroll;
+  overflow-x: hidden;*/
+}
+
+.grid-game{
+  grid-area: game;
+  width: 700px;
+  left: 50%;
+  margin: 0 0 0 -350px;
+  position: relative;
+}
+
+.grid-rules{
+  min-width: 220px;
+  grid-area: rules;
+}
+
 .game_col{
   min-width: 500px;
   max-width: 765px;
@@ -9,7 +42,8 @@
 }
 
 #gameboard{
-  height: 100%;
+  /*margin: 0 auto;*/
+  /*width: 90%;*/
 }
 
 .side-left {
@@ -355,9 +389,7 @@ label { margin-right: 10px; }
 
 .whosTurnIsIt{
   padding: 18px;
-  width: 90%;
   text-align: left;
-  background-color: #2a9df4!important;
 }
 
 .whosTurnIsIt_header{
