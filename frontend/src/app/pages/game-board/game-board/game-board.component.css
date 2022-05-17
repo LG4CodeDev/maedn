@@ -9,13 +9,15 @@
 .grid-info{
   min-width: 220px;
   grid-area: info;
-  background-color: #2a9df4;
-  /*max-height: 700px;*/
+  background-color: #9AABD4;
+  max-height: 700px;
+  border-radius: 15px;
 }
 
 .grid-info-only{
-  /*overflow-y: scroll;
-  overflow-x: hidden;*/
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 432px;
 }
 
 .grid-game{
@@ -24,11 +26,13 @@
   left: 50%;
   margin: 0 0 0 -350px;
   position: relative;
+  border-radius: 15px;
 }
 
 .grid-rules{
   min-width: 220px;
   grid-area: rules;
+  border-radius: 15px;
 }
 
 .game_col{
@@ -41,18 +45,29 @@
   background-color: antiquewhite;
 }
 
-#gameboard{
-  /*margin: 0 auto;*/
-  /*width: 90%;*/
-}
-
 .side-left {
   max-width: 300px;
 }
 
 .side-right {
   width: inherit;
-  background-color: #2a9df4!important;
+  background-color: #9AABD4;
+}
+
+::-webkit-scrollbar{
+  border-radius: 0 15px 15px 0;
+  background: #9AABD4;
+  width: 15px;
+  }
+
+::-webkit-scrollbar-thumb{
+  background: #5B6D98;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-track{
+  border-radius: 0 15px 15px 0;
+  background: #9AABD4;
 }
 
 #accordion {
@@ -393,7 +408,7 @@ label { margin-right: 10px; }
 }
 
 .whosTurnIsIt_header{
-  font-size: 2vh;
+  font-size: 13pt;
   margin-top: 5px;
   margin-bottom: 5px;
   text-decoration: underline;
