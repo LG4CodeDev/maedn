@@ -351,7 +351,7 @@ app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,async (reque
 
 });
 
-app.put('/api/joinGame/:gameID', validateAccess,checkIfPlayerAlreadyInGame, async (request, response) => {
+app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
     let result;
     try {
@@ -367,6 +367,34 @@ app.put('/api/joinGame/:gameID', validateAccess,checkIfPlayerAlreadyInGame, asyn
         console.log(err);
     }
 })
+
+app.put('/api/leaveGame/:gamID', validateAccess, async (request, response) => {
+    let id = request.params.gameID;
+    try{
+        let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
+
+        let game = result[0]
+
+        if (result[0]['Player1'] === request.locals.user){
+            await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player2'] === request.locals.user){
+            await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player3'] === request.locals.user){
+            await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player4'] === request.locals.user){
+            await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
+        }
+        response.sendStatus(200)
+    }catch (err){
+        console.log(err)
+        return response.sendStatus(500)
+    }
+
+})
+
 
 app.put('/api/startGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
@@ -652,8 +680,6 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         //else check if figure is at the end/right place of finish
         else
         {
-            console.log(element[0][1])
-            console.log(playerFields)
             if (element[0][1] === 'F')
             {
                 if (element[1] === 3){}
