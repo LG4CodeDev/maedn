@@ -1,8 +1,7 @@
-import {Component, OnInit, Renderer2} from '@angular/core';
+import {Component, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {repeat} from "rxjs/operators";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-lobby',
@@ -11,7 +10,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class LobbyComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2, private fb: FormBuilder) {
+              private renderer: Renderer2, private fb: FormBuilder,) {
   }
 
   joinIDForm!: FormGroup;
@@ -19,6 +18,7 @@ export class LobbyComponent implements OnInit {
   userID: number;
   updateAccount!: FormGroup;
   imageURL = "assets/avatar.jpeg";
+  isVisible: boolean;
 
   ngOnInit(): void {
     if(localStorage.getItem('currentUser')){
@@ -28,7 +28,7 @@ export class LobbyComponent implements OnInit {
       this.router.navigate(['/login']);
     }
     this.joinIDForm = this.fb.group({
-      joinID: ['', [Validators.required]],
+      joinGameID: ['', [Validators.required]],
     });
     this.updateAccount = this.fb.group({
       avatar: [File],
@@ -44,7 +44,11 @@ export class LobbyComponent implements OnInit {
     this.getLeaderboard();
   }
 
-  joinRandom(): void {
+  get joinGameID() {
+    return this.joinIDForm.get('joinGameID') as FormControl;
+  }
+
+joinRandom(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame', {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
@@ -60,7 +64,7 @@ export class LobbyComponent implements OnInit {
   }
 
   joinID(): void {
-    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinIDForm.getRawValue()['joinID'], {},{
+    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinGameID.value, {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
@@ -267,5 +271,18 @@ export class LobbyComponent implements OnInit {
         }
       });
     }
+  }
+
+  openDialog() {
+    this.isVisible = true;
+  }
+
+  handleCancel() {
+    this.isVisible = false;
+  }
+
+  handleOk() {
+    this.joinID();
+    this.isVisible = false;
   }
 }
