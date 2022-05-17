@@ -686,21 +686,16 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
                 else if (element[1] === 2)
                 {
-                    playerFields.find(element => {
-                        if (element.includes('F_3')){}
-                        else return false});
+                    if(playerFields.some(item => item.includes('F_3'))){}
+                    else return false
                 }
                 //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
                 else if (element[1] === 1)
                 {
-                    playerFields.find(element => {
-                        if (element.includes('F_3'))
-                        {
-                            playerFields.find(element =>
-                            {
-                                if (element.includes('F_2')) {
-                                } else return false});
-                        }else return false});
+                    if(playerFields.some(item => item.includes('F_3')))
+                        if(playerFields.some(item => item.includes('F_2'))){}
+                        else return false
+                    else return false
                 }
                 else return false;
             }
