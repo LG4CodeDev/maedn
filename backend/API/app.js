@@ -180,7 +180,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, async (request, response) => {
     let user = request.body;
     if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -853,6 +853,15 @@ async function validateAccess(request, response, next){
 async function checkUniquenessOfEmail(request, response, next) {
     try {
         const result = await pool.query("select * from users where email = ?", [request.body.email]);
+        if (!result[0]) next()
+        else response.status(409).send("Username already used")
+    } catch (err) {
+        response.sendStatus(500)
+    }
+}
+async function checkUniquenessOfEmailPersonal(request, response, next) {
+    try {
+        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.locals.user]);
         if (!result[0]) next()
         else response.status(409).send("Username already used")
     } catch (err) {
