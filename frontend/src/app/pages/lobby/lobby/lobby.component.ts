@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-lobby',
@@ -11,8 +10,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 })
 export class LobbyComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2, private fb: FormBuilder,
-              public dialog: MatDialog) {
+              private renderer: Renderer2, private fb: FormBuilder,) {
   }
 
   joinIDForm!: FormGroup;
@@ -20,6 +18,7 @@ export class LobbyComponent implements OnInit {
   userID: number;
   updateAccount!: FormGroup;
   imageURL = "assets/avatar.jpeg";
+  isVisible: boolean;
 
   ngOnInit(): void {
     if(localStorage.getItem('currentUser')){
@@ -29,7 +28,7 @@ export class LobbyComponent implements OnInit {
       this.router.navigate(['/login']);
     }
     this.joinIDForm = this.fb.group({
-      joinID: ['', [Validators.required]],
+      joinGameID: ['', [Validators.required]],
     });
     this.updateAccount = this.fb.group({
       avatar: [File],
@@ -44,17 +43,9 @@ export class LobbyComponent implements OnInit {
     this.getUserInfo();
     this.getLeaderboard();
   }
-  joinGameID = ""
-  openDialog(): void {
-    const dialogRef = this.dialog.open(DialogueTemplateComponent, {
-    width: '250px',
-    data: {name: this.joinGameID},
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-    console.log('The dialog was closed');
-    this.joinGameID = result;
-    });
+  get joinGameID() {
+    return this.joinIDForm.get('joinGameID') as FormControl;
   }
 
 joinRandom(): void {
@@ -73,7 +64,7 @@ joinRandom(): void {
   }
 
   joinID(): void {
-    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinIDForm.getRawValue()['joinID'], {},{
+    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinGameID.value, {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
@@ -281,22 +272,17 @@ joinRandom(): void {
       });
     }
   }
-}
 
-@Component({
-  templateUrl: 'dialogueTemplate.html',
-})
-export class DialogueTemplateComponent {
-  constructor(
-    public dialogRef: MatDialogRef<DialogueTemplateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
+  openDialog() {
+    this.isVisible = true;
   }
-}
 
-export interface DialogData {
-  joinGameID: String,
+  handleCancel() {
+    this.isVisible = false;
+  }
+
+  handleOk() {
+    this.joinID();
+    this.isVisible = false;
+  }
 }

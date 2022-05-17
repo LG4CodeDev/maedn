@@ -37,15 +37,6 @@
           <span></span>
           <span></span>
         </button>
-        <form nz-form [formGroup]="joinIDForm" id="login-form" class="login-form">
-          <nz-form-item>
-            <nz-form-control>
-              <nz-input-group>
-                <input type="number" nz-input formControlName="joinID" placeholder="ID"/>
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-        </form>
       </div>
     </div>
   </div>
@@ -134,3 +125,9 @@
   </div>
   <!--      END OF STATISTICS-->
 </div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Join Game" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent>
+    <input type="number" nz-input [formControl]="joinGameID" placeholder="ID"/>
+  </ng-container>
+</nz-modal>

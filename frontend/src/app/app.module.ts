@@ -16,7 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
-import {MatDialogModule} from '@angular/material/dialog';
 
 registerLocaleData(de);
 
@@ -38,7 +37,6 @@ registerLocaleData(de);
     NzInputModule,
     ReactiveFormsModule,
     NzButtonModule,
-    MatDialogModule
   ],
   providers: [{ provide: NZ_I18N, useValue: de_DE }],
   bootstrap: [AppComponent]
