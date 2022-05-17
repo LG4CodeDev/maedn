@@ -10,6 +10,7 @@ import {NzFormModule} from "ng-zorro-antd/form";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatDialogModule} from "@angular/material";
 
 
 @NgModule({
@@ -26,8 +27,10 @@ import { MatInputModule } from '@angular/material/input';
     NzFormModule,
     ReactiveFormsModule,
     NzButtonModule,
+    MatDialogModule,
   ],
   exports: [
+    MatDialogModule
   ]
 })
 export class LobbyModule { }
