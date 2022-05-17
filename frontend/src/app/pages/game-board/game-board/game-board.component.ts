@@ -241,8 +241,6 @@ export class GameBoardComponent implements OnInit {
 
   sendGameData(fieldID: string, json: any){
     //TODO: onclick removal
-    //console.log(json[0]);
-    //console.log(fieldID);
     if(json[0] == fieldID || json[1] == fieldID ||
       json[2] == fieldID || json[3] == fieldID){
       this.http.put<any>('https://spielehub.server-welt.com/api/makeMove',
@@ -258,11 +256,7 @@ export class GameBoardComponent implements OnInit {
         }
       ).subscribe(response => {
         if (response.status == 200) {
-          //console.log('game data successfully send!');
           console.log(response);
-          //this.unhiglightMoves();
-          //this.setPlayerPosition(response['body']);
-          //this.updateGameInfo();
         }
       }, response => {
         console.log('makeMove crashed:');
@@ -319,25 +313,29 @@ export class GameBoardComponent implements OnInit {
         let id = 'field_' + json[0];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
+        fieldToHighlight.onclick = () => {this.sendGameData(json[0], json);};
+        //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[0], json));
       }
       if (json[1] != 'null' && json[1] != '' && json[1] != null && json[1] != json[0]) {
         let id = 'field_' + json[1];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
+        fieldToHighlight.onclick = () => {this.sendGameData(json[1], json);};
+        //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[1], json));
       }
       if (json[2] != 'null' && json[2] != '' && json[2] != null && json[2] != json[0] && json[2] != json[1]) {
         let id = 'field_' + json[2];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
+        fieldToHighlight.onclick = () => {this.sendGameData(json[2], json);};
+        //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[2], json));
       }
       if (json[3] != 'null' && json[3] != '' && json[3] != null && json[3] != json[0] && json[3] != json[1] && json[3] != json[2]) {
         let id = 'field_' + json[3];
         fieldToHighlight = document.getElementById(id);
         fieldToHighlight.classList.add('highlightField');
-        fieldToHighlight.addEventListener('click', () => this.sendGameData(json[3], json));
+        fieldToHighlight.onclick = () => {this.sendGameData(json[3], json);};
+        //fieldToHighlight.addEventListener('click', () => this.sendGameData(json[3], json));
       }
     }
   }
