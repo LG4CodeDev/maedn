@@ -25,6 +25,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/game-board/game-board.module').then(m => m.GameBoardModule)
   },
   {
+    path: 'impressum',
+    loadChildren: () => import('./pages/impressum/impressum.module').then(m => m.ImpressumModule)
+  },
+  {
     path: '**',
     redirectTo: '404'
   }
