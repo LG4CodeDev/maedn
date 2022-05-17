@@ -652,8 +652,6 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         //else check if figure is at the end/right place of finish
         else
         {
-            console.log(element[0][1])
-            console.log(playerFields)
             if (element[0][1] === 'F')
             {
                 if (element[1] === 3){}
