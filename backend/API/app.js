@@ -423,9 +423,9 @@ async function finishGame(request,response, id){
         let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
         for (let i = 0; i <= 3; i++) {
             if (checkFinished(positions[i])) {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winingRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
             } else {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winingRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
             }
 
         }
