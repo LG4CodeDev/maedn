@@ -1,8 +1,8 @@
-import {Component, OnInit, Renderer2} from '@angular/core';
+import {Component, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {repeat} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-lobby',
@@ -11,7 +11,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class LobbyComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2, private fb: FormBuilder) {
+              private renderer: Renderer2, private fb: FormBuilder,
+              public dialog: MatDialog) {
   }
 
   joinIDForm!: FormGroup;
@@ -43,8 +44,20 @@ export class LobbyComponent implements OnInit {
     this.getUserInfo();
     this.getLeaderboard();
   }
+  joinGameID = ""
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogueTemplateComponent, {
+    width: '250px',
+    data: {name: this.joinGameID},
+    });
 
-  joinRandom(): void {
+    dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+    this.joinGameID = result;
+    });
+  }
+
+joinRandom(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame', {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
@@ -268,4 +281,22 @@ export class LobbyComponent implements OnInit {
       });
     }
   }
+}
+
+@Component({
+  templateUrl: 'dialogueTemplate.html',
+})
+export class DialogueTemplateComponent {
+  constructor(
+    public dialogRef: MatDialogRef<DialogueTemplateComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
+export interface DialogData {
+  joinGameID: String,
 }
