@@ -18,19 +18,19 @@
   float: right;
 }
 
-#logoutBtn {
+#logoutBtn, #lobbyBtn {
   background-color: #000000;
   width: 150px;
   font-size: 20px;
   border: none;
 }
 
-#logoutBtn:hover {
+#logoutBtn:hover, #lobbyBtn:hover {
   cursor: pointer;
 }
 
 
-#logout {
+#logout, #lobby {
   height: 56px;
   display: flex;
   justify-content: center;

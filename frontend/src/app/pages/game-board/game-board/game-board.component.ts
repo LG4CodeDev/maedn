@@ -83,7 +83,8 @@ export class GameBoardComponent implements OnInit {
       //TODO: Win animation
     }
     else if(response.status == 'notStarted'){
-      console.log('the game hasn\'t started yet')
+      console.log('the game hasn\'t started yet');
+      document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
     }
     else{
       this.whosTurn = response.nextPlayer;
