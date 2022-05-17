@@ -1,30 +1,30 @@
-const path = require('path');
-
 const dotenv = require('dotenv');
 dotenv.config({ path: './config/app.env'});
 
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const e = require("express");
+
+const mariadb = require('mariadb');
 
 const app = express();
 
-let corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // For legacy browser support
+
+
+let fs = require('fs');
+let util = require('util');
+let logFile = fs.createWriteStream('log.txt', {flags: 'w'});
+let logStdout = process.stdout;
+
+console.log = function () {
+    logFile.write(util.format.apply(null, arguments) + '\n');
+    logStdout.write(util.format.apply(null, arguments) + '\n');
 }
 
-app.use(express.json(), cors(corsOptions));
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.options('/*', async (request, response, next) =>{
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
 
 app.get('/status', (request, response) => response.json({clients: clients.length}));
 
@@ -34,7 +34,9 @@ let clients = [];
 let games = [];
 let facts = [];
 
-app.listen(PORT)
+app.listen(PORT, () => {
+    reloadGames().then()
+})
 
 function eventsHandler(request, response) {
     const headers = {
@@ -46,11 +48,11 @@ function eventsHandler(request, response) {
 
     const data = `data: ${JSON.stringify(facts)}\n\n`;
 
-    response.write(data);
+    //response.write(data);
 
     const clientId = request.params.id;
 
-    response.write("id :" + clientId.toString());
+    //response.write("id :" + clientId.toString() + "\n");
 
     const newClient = {
         id: clientId,
@@ -70,24 +72,37 @@ app.get('/startStream/:id', eventsHandler);
 
 
 async function sendGame(request, response) {
-    const gameID = request.body.gameID;
-    const newFact = request.body.msg;
-    let game = games.filter(games => games.id === gameID)[0]
-    if(game !== undefined){
-        game = game.clients
-        let clientStreams = [];
-        for(const client of game){
-            clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
+    try{
+        const gameID = request.body.gameID;
+        const data = request.body.msg;
+        let game = games.filter(games => games.id === gameID)[0]
+        console.log(game)
+        if(game !== undefined){
+            game = game.clients
+            let clientStreams = [];
+            for(const client of game){
+                clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
+            }
+
+            console.log(clientStreams)
+
+            let body = JSON.stringify(data)
+
+            clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(data)}\n\n`))
+
+
+            response.sendStatus(200)
         }
-
-        clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
-
-        return  response.sendStatus(200)
+        else response.sendStatus(300)
+    }catch (err){
+        console.log(err)
+        response.sendStatus(500)
     }
-    return response.sendStatus(500)
+
 }
 
 async function createGame(request, response){
+    console.log("Hello World")
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let newGame = {
@@ -129,3 +144,24 @@ app.use(express.static(process.env.FRONTEND_DIST_PATH));
 app.use('/*',(req, res) => {
     res.sendFile('frontend/index.html', { root: __dirname })
 });
+
+const pool =
+    mariadb.createPool({
+        host: process.env.DB_IP,
+        port: process.env.DB_PORT,
+        user: process.env.DB_User,
+        password: process.env.DB_Password,
+        database: process.env.DB_Name
+    })
+
+async function reloadGames(){
+    let result = await pool.query("Select * from mainGame")
+    for(let element of result){
+        let newGame = {
+            id: element.gameID,
+            clients : [element.Player1,element.Player2,element.Player3,element.Player4]
+        }
+        games.push(newGame)
+        console.log(games)
+    }
+}

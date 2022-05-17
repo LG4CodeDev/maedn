@@ -36,7 +36,7 @@ registerLocaleData(de);
     NzGridModule,
     NzInputModule,
     ReactiveFormsModule,
-    NzButtonModule
+    NzButtonModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: de_DE }],
   bootstrap: [AppComponent]

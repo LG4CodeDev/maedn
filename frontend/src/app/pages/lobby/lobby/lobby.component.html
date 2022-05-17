@@ -1,1 +1,133 @@
-<p>lobby works!</p>
+<div id="lobby" nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+  <!--      LEADERBOARD-->
+  <div id="leaderboard" class="gutter-row" nz-col nzFlex="7">
+
+  </div>
+  <!--      END OF LEADERBOARD-->
+
+  <!--      GAME SELECTION-->
+  <div id="game_selection" class="gutter-row" nz-col nzFlex="10">
+    <div nz-col>
+      <div nz-row nzJustify="center">
+        <p id="game_headline">Mensch Ärgere Dich (Nicht)</p>
+      </div>
+      <div nz-row nzJustify="center">
+        <button id="create_game" class="game_buttons" (click)="createGame()">
+          Create Game
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div nz-row nzJustify="center">
+        <button id="join_game" class="game_buttons" (click)="joinRandom()">
+          Join Game
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div nz-row nzJustify="center">
+        <button id="join_game_id" class="game_buttons" (click)="openDialog()">
+          Join Game with ID
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!--      END OF GAME SELECTION-->
+
+  <!--      STATISTICS-->
+  <div id="statistics" class="gutter-row" nz-col nzFlex="7">
+    <div id="userInformation">
+      <div nz-row id="userInfo">
+        <div nz-col>
+          <img src="assets/avatar.jpeg" id="profilePicture">
+        </div>
+        <div nz-col>
+          <p id="username">-</p>
+        </div>
+        <div nz-col>
+          <div nz-row>
+            <button (click)="showUpdate()"><img src="assets/edit.png" id="editPicture"/></button>
+          </div>
+        </div>
+      </div>
+      <span></span>
+      <div nz-row id="userStats">
+        <div nz-col style="width: 100%">
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Level:</p><p id="userStatItemLevel" >-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Total wins:</p><p id="userStatItemTotalWins">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Games played:</p><p id="userStatItemTotalGames">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Winning rate:</p><p id="userStatItemWR">-</p></div>
+        </div>
+      </div>
+    </div>
+
+
+    <form nz-form [formGroup]="updateAccount" id="update-form" class="register-form" style="display: none" (ngSubmit)="onUpdate()">
+      <nz-form-item>
+        <div *ngIf="imageURL && imageURL !== ''">
+          <img class="imagePreview" [src]="imageURL" [alt]="updateAccount.value.name">
+        </div>
+        <input type="file" accept="image/*" (change)="showPreview($event)" />
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please state your email!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="email" placeholder="Email"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please choose your username!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="userName" placeholder="Username"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Firstname">
+          <nz-input-group>
+            <input type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Surname">
+          <nz-input-group>
+            <input type="text" nz-input formControlName="surname" placeholder="Surname"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="Password"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please repeat your Password!">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <button type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'" (click)="cancel()">Cancel</button>
+      <button nz-button class="update-form-button update-form-margin" [nzType]="'primary'">Submit!</button>
+    </form>
+  </div>
+  <!--      END OF STATISTICS-->
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Join Game" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent>
+    <input type="number" nz-input [formControl]="joinGameID" placeholder="ID"/>
+  </ng-container>
+</nz-modal>

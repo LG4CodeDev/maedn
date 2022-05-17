@@ -1,4 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {Router} from "@angular/router";
+import {DOCUMENT} from "@angular/common";
 
 @Component({
   selector: 'app-footer',
@@ -7,10 +9,16 @@ import {Component, OnInit} from '@angular/core';
 })
 export class FooterComponent implements OnInit {
 
-  constructor() {
-  }
+  constructor(
+    private router: Router,
+    @Inject(DOCUMENT) private document: Document,
+  ) { }
+
 
   ngOnInit(): void {
+    document.getElementById('impressumBtn').addEventListener('click', () => {
+      this.router.navigate(['/impressum']);
+    });
   }
 
 }

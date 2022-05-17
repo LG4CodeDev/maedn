@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 
-//const path = require('path');
-
 const bodyParser = require("body-parser");
 
 const bcrypt = require('bcrypt');
@@ -35,35 +33,18 @@ const pool =
         database: process.env.DB_Name
     })
 
-let corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // For legacy browser support
-}
 
-app.use(express.json(), cors(corsOptions));
+
+app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
 Generals
  */
 
-//cross origin allow
-app.options('/*', async (request, response, next) =>{
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
-
-app.post('/*', function (request, response, next) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
-
-
 
 app.get(`/api`, function (request, response) {
-    response.send('This is version 3.2 of maedns REST API');
+    response.send('This is version 5.3 of maedns REST API');
 });
 
 /*
@@ -199,7 +180,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, async (request, response) => {
     let user = request.body;
     if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -275,8 +256,26 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         roleAgain = Boolean(checkRoleAgain(playerFields, diceResult, game['movesOfPerson']));
 
         let stringOfMoves = listOfMoves.toString()
-        if (!roleAgain && listOfMoves.toString() === [null, null, null, null].toString()) {
+        if (!roleAgain && (listOfMoves.toString() === [null, null, null, null].toString() || listOfMoves.toString() === ",,,")) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
+            let result;
+            console.log([game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")])
+            await axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/sendGame",
+                data: {
+                    "gameID": parseInt(id),
+                    "msg": {
+                        "positions": [game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")],
+                        "isFinished": game.isFinished,
+                        "nextPlayer": nextPlayer
+                    }
+                }
+            }).then(function (response){
+                result = response
+            })
+            console.log(result)
+
             let zero = 0
             await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
         } else {
@@ -306,7 +305,9 @@ app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) =>
             "Player2" : result[0]['Player2'],
             "Player3" : result[0]['Player3'],
             "Player4" : result[0]['Player4'],
-            "status" : result[0]['status']})
+            "status" : result[0]['status'],
+            "nextPlayer" : result[0]['turn'],
+            "allowedMoves" : result[0]['allowedMoves'].split(",")})
     } catch (err) {
         console.log(err)
         return response.sendStatus(500);
@@ -402,6 +403,15 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
 
 app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
+    await finishGame(request, response, id)
+
+})
+
+/*
+Game Logic needed Functions
+ */
+
+async function finishGame(request,response, id){
     try {
         let result = await pool.query("select * from mainGame where gameID = ?", [id]);
         let game = result[0]
@@ -413,26 +423,21 @@ app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
         let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
         for (let i = 0; i <= 3; i++) {
             if (checkFinished(positions[i])) {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winingRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
             } else {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winingRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
             }
 
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
-        const url = "http://localhost:4200/deleteGame/" + id
+        const url = "https://spielehub.server-welt.com/deleteGame/" + id
         await axios({method :'delete', url : url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
         console.log(err);
     }
-})
-
-/*
-Game Logic needed Functions
- */
-
+}
 
 async function checkIfPlayerAlreadyInGame(request, response, next) {
     let playerID = response.locals.user['userid']
@@ -490,6 +495,8 @@ async function CreateGame(player1) {
     try {
         const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
 
+        console.log(result.warningStatus)
+
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
             await axios({
@@ -545,6 +552,7 @@ function getRightAreaOfFigure(currentField, game){
     }
     //if the figure is in again in his first quarter of the game(did one round)
     //he should move to the finish
+
     if (game['turn'] === 'Player1' && newArea === 'AR') {
         //if his dice role is little enough he can move to finish
         if (currentField[1] <= 3) newArea = 'AF';
@@ -562,7 +570,7 @@ function getRightAreaOfFigure(currentField, game){
         if (currentField[1] <= 3) newArea = 'CF';
         else return null
     }
-    else if (game['turn'] === 'Player4' && newArea[0] === 'DR')
+    else if (game['turn'] === 'Player4' && newArea === 'DR')
     {
         if (currentField[1] <= 3) newArea = 'DF';
         else return null
@@ -639,22 +647,25 @@ function checkRoleAgain(playerFields, diceResult, moves) {
     for (const playerFieldsKey of playerFields) {
         let element = playerFieldsKey.split("_");
         //If figure is in start he potentially can role again
+        element[1] = parseInt(element[1])
         if (element[0][1] === 'S') {}
         //else check if figure is at the end/right place of finish
         else
         {
+            console.log(element[0][1])
+            console.log(playerFields)
             if (element[0][1] === 'F')
             {
-                if (element[1] === 3) continue;
+                if (element[1] === 3){}
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
-                if (element[1] === 2)
+                else if (element[1] === 2)
                 {
                     playerFields.find(element => {
                         if (element.includes('F_3')){}
                         else return false});
                 }
                 //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
-                if (element[1] === 1)
+                else if (element[1] === 1)
                 {
                     playerFields.find(element => {
                         if (element.includes('F_3'))
@@ -665,6 +676,7 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                                 } else return false});
                         }else return false});
                 }
+                else return false;
             }
             else return false;
         }
@@ -693,7 +705,7 @@ function kickFigures(positions, data){
                         playerChar = "D"
                         break;
                 }
-                positions[indexPlayer][indexField] = playerChar + "S " + indexField.toString()
+                positions[indexPlayer][indexField] = playerChar + "S_" + indexField.toString()
             }
             indexField++
         }
@@ -728,14 +740,51 @@ async function makeMove(data, game, response) {
 
         let status
         const isFinished = Boolean(checkFinished(newPlayerPos));
-        if (isFinished) status = "Finished"
+        if (isFinished) {
+            status = "Finished"
+        }
         else status = "started"
 
         try {
+            // Send game updates over SSE to all players of game
+            let result;
+            await axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/sendGame",
+                data: {
+                    "gameID": game['gameID'],
+                    "msg": {
+                        "positions": positions,
+                        "isFinished": isFinished,
+                        "nextPlayer": nextPlayer
+                    }
+                }
+            }).then(function (response){
+                result = response
+            })
+
+            console.log(result)
+            if (result.status === 500 )return response.status(500).send("Error in sending Messages")
+            else if (result.status === 300)return response.status(500).send("Game does not exist")
+        }catch (err) {
+            console.log(err)
+        }
+
+        try{
             //Update Game in Database
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameID = ?"
-                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, "null, null, null, null", game['gameID']]);
-
+                , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, ",,,", game['gameID']]);
+            if (isFinished){
+                await axios({
+                    method: 'delete',
+                    url: "https://spielehub.server-welt.com/api/finishGame/"+game.gameID,
+                    headers: {
+                        "authorization" : "Bearer API"
+                        }
+                }).then(function (response){
+                    let result = response
+                })
+            }
             //Send response to client
             response.status(200).send({
                 "positions": positions,
@@ -743,19 +792,6 @@ async function makeMove(data, game, response) {
                 "nextPlayer": nextPlayer
             })
 
-            // Send game updates over SSE to all players of game
-            await axios({
-                method :'post',
-                url : "https://spielehub.server-welt.com/sendGame",
-                data : {
-                    "gameID" : game['gameID'],
-                    "msg" : {
-                        "positions": positions,
-                        "isFinished": isFinished,
-                        "nextPlayer": nextPlayer
-                    }
-                }
-            })
         } catch (err) {
             console.log(err)
             response.sendStatus(500)
@@ -793,24 +829,39 @@ async function validateAccess(request, response, next){
     if (token == null) {
         return response.status(401).send("Token not present, missing Authorization or wrong format")
     }
-    let result;
-    try{
-        result = await pool.query("Select * from users where token = ?",[token])
-    }catch (err) {
-        console.log(err)
-        return response.status(500)
-    }
-    if (result[0] === undefined) {
-        return response.status(403).send("Token invalid")
-    } else {
-        response.locals.user = result[0]
+    if (token === 'API'){
         next()
     }
+    else{
+        let result;
+        try{
+            result = await pool.query("Select * from users where token = ?",[token])
+        }catch (err) {
+            console.log(err)
+            return response.status(500)
+        }
+        if (result[0] === undefined) {
+            return response.status(403).send("Token invalid")
+        } else {
+            response.locals.user = result[0]
+            next()
+        }
+    }
+
 }
 
 async function checkUniquenessOfEmail(request, response, next) {
     try {
         const result = await pool.query("select * from users where email = ?", [request.body.email]);
+        if (!result[0]) next()
+        else response.status(409).send("Username already used")
+    } catch (err) {
+        response.sendStatus(500)
+    }
+}
+async function checkUniquenessOfEmailPersonal(request, response, next) {
+    try {
+        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.locals.user]);
         if (!result[0]) next()
         else response.status(409).send("Username already used")
     } catch (err) {

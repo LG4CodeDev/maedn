@@ -4,3 +4,24 @@
   text-align: center;
   color: #999999;
 }
+
+
+#impressumBtn {
+  background-color: #000000;
+  color: white;
+  width: 150px;
+  font-size: 20px;
+  border: none;
+}
+
+#impressumBtn:hover {
+  cursor: pointer;
+}
+
+
+#impressumDiv {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
