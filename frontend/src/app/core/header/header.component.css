@@ -18,7 +18,7 @@
   float: right;
 }
 
-#logoutBtn {
+#logoutBtn, #lobbyBtn {
   background-color: darkred;
   border-radius: 25px;
   border: 1px black;
@@ -28,7 +28,7 @@
   font-size: 20px;
 }
 
-#logout {
+#logout, #lobby {
   height: 56px;
   display: flex;
   justify-content: center;

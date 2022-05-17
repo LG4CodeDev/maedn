@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {repeat} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {DialogOverviewExampleDialogComponent} from "../../../shared/dialogue/dialogue.component";
 
 @Component({
   selector: 'app-lobby',

@@ -8,7 +8,7 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private router: Router) {
+  constructor(public router: Router) {
   }
 
   ngOnInit(): void {
@@ -17,5 +17,9 @@ export class HeaderComponent implements OnInit {
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
+  }
+
+  lobby() {
+    this.router.navigate(['/lobby']);
   }
 }
