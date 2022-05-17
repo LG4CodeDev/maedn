@@ -8,7 +8,7 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent  {
 
-  constructor(private router: Router) {
+  constructor(public router: Router) {
   }
 
   logout() {

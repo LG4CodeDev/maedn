@@ -42,7 +42,7 @@ export class LoginPageComponent implements OnInit {
       password: ['', [Validators.required]]
     });
 
-        this.registerForm = this.fb.group({
+    this.registerForm = this.fb.group({
       avatar: [File],
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required]],
@@ -100,7 +100,6 @@ export class LoginPageComponent implements OnInit {
       ).subscribe(response => {
         console.log(response)
         if (response.status == 201) {
-          // this.isLoggedIn = true;
           this.router.navigate(['/lobby']);
         }
       });
@@ -127,7 +126,6 @@ export class LoginPageComponent implements OnInit {
 
   showPreview($event: Event) {
     const file = ($event.target as HTMLInputElement).files[0];
-
     this.registerForm.get('avatar').updateValueAndValidity()
     const reader = new FileReader();
     reader.onload = () => {
