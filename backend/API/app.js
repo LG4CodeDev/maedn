@@ -423,9 +423,9 @@ async function finishGame(request,response, id){
         let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
         for (let i = 0; i <= 3; i++) {
             if (checkFinished(positions[i])) {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winingRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
             } else {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winingRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
             }
 
         }
@@ -652,6 +652,8 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         //else check if figure is at the end/right place of finish
         else
         {
+            console.log(element[0][1])
+            console.log(playerFields)
             if (element[0][1] === 'F')
             {
                 if (element[1] === 3){}
@@ -830,19 +832,22 @@ async function validateAccess(request, response, next){
     if (token === 'API'){
         next()
     }
-    let result;
-    try{
-        result = await pool.query("Select * from users where token = ?",[token])
-    }catch (err) {
-        console.log(err)
-        return response.status(500)
+    else{
+        let result;
+        try{
+            result = await pool.query("Select * from users where token = ?",[token])
+        }catch (err) {
+            console.log(err)
+            return response.status(500)
+        }
+        if (result[0] === undefined) {
+            return response.status(403).send("Token invalid")
+        } else {
+            response.locals.user = result[0]
+            next()
+        }
     }
-    if (result[0] === undefined) {
-        return response.status(403).send("Token invalid")
-    } else {
-        response.locals.user = result[0]
-        next()
-    }
+
 }
 
 async function checkUniquenessOfEmail(request, response, next) {
