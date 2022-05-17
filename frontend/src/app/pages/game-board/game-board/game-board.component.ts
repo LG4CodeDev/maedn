@@ -42,13 +42,13 @@ export class GameBoardComponent implements OnInit {
 
 
     this.highlightetFields = [];
-    let testParent = this;
+    let parent = this;
     if (!!window.EventSource) {
       var source = new EventSource('https://spielehub.server-welt.com/startStream/'+this.userID.toString());
       source.addEventListener('message', function(e) {
         //console.log('sse tut');
         if(e.data != []){
-          testParent.updateGameBoard(JSON.parse(e.data));
+          parent.updateGameBoard(JSON.parse(e.data));
         }
         else{
           console.log('received empty data');
@@ -77,12 +77,15 @@ export class GameBoardComponent implements OnInit {
 
   updateGameBoard(response: any){
     //todo: fix bug that if no move possible, next player is highlightet even if cube still spinning
+    this.setPlayerPosition(response);
     if(response.status == 'Finished'){
       console.log('some just won the game ');
       //TODO: Win animation
     }
+    else if(response.status == 'notStarted'){
+      console.log('the game hasn\'t started yet')
+    }
     else{
-      this.setPlayerPosition(response);
       this.whosTurn = response.nextPlayer;
       this.updateGameInfo();
       this.unhiglightMoves();
@@ -218,8 +221,15 @@ export class GameBoardComponent implements OnInit {
           this.highlightMoves(response['error']['moves']);
         }
       }
-    }
-    );
+      else if(response.status == 400){
+        if(response['error']['msg'] == 'notStarted'){
+          console.log('game hasn\'t startet, please wait for other players');
+        }
+      }
+      else{
+        console.log('other error, can\'t make move');
+      }
+    });
   }
 
   sendGameData(fieldID: string, json: any){
