@@ -652,6 +652,8 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         //else check if figure is at the end/right place of finish
         else
         {
+            console.log(element[0][1])
+            console.log(playerFields)
             if (element[0][1] === 'F')
             {
                 if (element[1] === 3){}
@@ -830,19 +832,22 @@ async function validateAccess(request, response, next){
     if (token === 'API'){
         next()
     }
-    let result;
-    try{
-        result = await pool.query("Select * from users where token = ?",[token])
-    }catch (err) {
-        console.log(err)
-        return response.status(500)
+    else{
+        let result;
+        try{
+            result = await pool.query("Select * from users where token = ?",[token])
+        }catch (err) {
+            console.log(err)
+            return response.status(500)
+        }
+        if (result[0] === undefined) {
+            return response.status(403).send("Token invalid")
+        } else {
+            response.locals.user = result[0]
+            next()
+        }
     }
-    if (result[0] === undefined) {
-        return response.status(403).send("Token invalid")
-    } else {
-        response.locals.user = result[0]
-        next()
-    }
+
 }
 
 async function checkUniquenessOfEmail(request, response, next) {
