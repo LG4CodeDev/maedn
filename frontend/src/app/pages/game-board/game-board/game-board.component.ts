@@ -82,7 +82,7 @@ export class GameBoardComponent implements OnInit {
     }
     else if(response.status == 'notStarted'){
       //console.log('the game hasn\'t started yet');
-      this.updateDisplayStatus('Das Spiel hat noch nicht angefangen \n Warte auf Spieler');
+      this.updateDisplayStatus('Das Spiel hat noch nicht angefangen, Warte auf Spieler');
       document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
     }
     else{
