@@ -202,6 +202,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   getGameData(){
+    //TODO: if cube still spinning no make move
     this.http.get<any>('https://spielehub.server-welt.com/api/getMoves/'+this.gameID.toString(),{
         observe: "response",
         headers: {
@@ -216,9 +217,14 @@ export class GameBoardComponent implements OnInit {
     },
     response => {
       if(response.status == 403){
+        console.log('error 403, message:');
+        console.log(response['error']['msg']);
         if(response['error']['msg'] == 'make Move first'){
           console.log(response);
           this.highlightMoves(response['error']['moves']);
+        }
+        else if(response['error']['msg'] == 'unauthorized'){
+          console.log('not your turn, please wait');
         }
       }
       else if(response.status == 400){
@@ -233,6 +239,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   sendGameData(fieldID: string, json: any){
+    //TODO: onclick removal
     //console.log(json[0]);
     //console.log(fieldID);
     if(json[0] == fieldID || json[1] == fieldID ||
@@ -256,7 +263,11 @@ export class GameBoardComponent implements OnInit {
           //this.setPlayerPosition(response['body']);
           //this.updateGameInfo();
         }
-      });
+      }, response => {
+        console.log('makeMove crashed:');
+        console.log(response.error);
+        }
+      );
     }
     else{
       console.log('incorrect field, choose another');
