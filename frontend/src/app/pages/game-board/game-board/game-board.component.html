@@ -1,27 +1,29 @@
-<div nz-row>
-  <div nz-col class="side-left" nzFlex="auto">
-    <div class="whosTurnIsIt">
-      <p class="whosTurnIsIt_header">Es ist dran:</p>
-      <div id="whosTurnIsIt" class="whosTurnIsIt_body">
+<div class="grid-container">
+  <div class="grid-item grid-info">
+    <div class="grid-info-only">
+      <div class="whosTurnIsIt">
+        <p class="whosTurnIsIt_header">Es ist dran:</p>
+        <div id="whosTurnIsIt" class="whosTurnIsIt_body">
 
+        </div>
       </div>
-    </div>
-    <div class="whosTurnIsIt">
-      <p class="whosTurnIsIt_header">Du bist Farbe:</p>
-      <div id="whoAmI" class="whosTurnIsIt_body">
+      <div class="whosTurnIsIt">
+        <p class="whosTurnIsIt_header">Du bist Farbe:</p>
+        <div id="whoAmI" class="whosTurnIsIt_body">
 
+        </div>
       </div>
-    </div>
-    <div class="whosTurnIsIt">
-      <p class="whosTurnIsIt_header">GameID:</p>
-      <div id="whatsMyGameID" class="whosTurnIsIt_body">
+      <div class="whosTurnIsIt">
+        <p class="whosTurnIsIt_header">GameID:</p>
+        <div id="whatsMyGameID" class="whosTurnIsIt_body">
 
+        </div>
       </div>
-    </div>
-    <div class="whosTurnIsIt">
-      <p class="whosTurnIsIt_header">Status:</p>
-      <div id="whatsTheState" class="whosTurnIsIt_body">
+      <div class="whosTurnIsIt">
+        <p class="whosTurnIsIt_header">Status:</p>
+        <div id="whatsTheState" class="whosTurnIsIt_body">
 
+        </div>
       </div>
     </div>
     <div nz-row id="dice" nzJustify="center" class="whosTurnIsIt">
@@ -40,7 +42,7 @@
       <button class="rollBtn" (click)="getGameData()">Roll the Dice</button>
     </div>
   </div>
-  <div nz-col class="game" id="gameboard" nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="12">
+  <div class="grid-item grid-game" id="gameboard">
     <div nz-row class="row">
       <div nz-col class="board" id="ul">
         <div nz-row class="row_4_4" id="ul_r_1">
@@ -253,8 +255,7 @@
       </div>
     </div>
   </div>
-
-  <div nz-col class="side-right" nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="4">
+  <div class="grid-item grid-rules side-right">
     <div nz-row id="regeln">
       <p class="regeln_header">Spielstart</p>
       <p class="regeln_text">
