@@ -878,6 +878,7 @@ async function checkUniquenessOfEmail(request, response, next) {
         else response.status(409).send("Username already used")
     } catch (err) {
         response.sendStatus(500)
+        console.log(err)
     }
 }
 async function checkUniquenessOfEmailPersonal(request, response, next) {
@@ -887,5 +888,6 @@ async function checkUniquenessOfEmailPersonal(request, response, next) {
         else response.status(409).send("Username already used")
     } catch (err) {
         response.sendStatus(500)
+        console.log(err)
     }
 }
