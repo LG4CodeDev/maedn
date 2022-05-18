@@ -883,7 +883,7 @@ async function checkUniquenessOfEmail(request, response, next) {
 }
 async function checkUniquenessOfEmailPersonal(request, response, next) {
     try {
-        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.locals.user]);
+        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.body.id]);
         if (!result[0]) next()
         else response.status(409).send("Username already used")
     } catch (err) {
