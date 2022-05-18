@@ -242,27 +242,27 @@ joinRandom(): void {
         },
       ).subscribe(response => {
         avatarID = response.body['avatarID'];
-      });
-      this.http.put<any>('https://spielehub.server-welt.com/api/updateUser', {
-          "id": JSON.parse(localStorage.getItem('currentUser')).userid,
-          "email": this.updateAccount.getRawValue()['email'],
-          "password": this.updateAccount.getRawValue()['password'],
-          "username": this.updateAccount.getRawValue()['userName'],
-          "firstname": this.updateAccount.getRawValue()['firstname'],
-          "surname": this.updateAccount.getRawValue()['surname'],
-          "avatarID": avatarID,
-        }, {
-          observe: "response",
-          headers: {
-            'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
+        this.http.put<any>('https://spielehub.server-welt.com/api/updateUser', {
+            "id": JSON.parse(localStorage.getItem('currentUser')).userid,
+            "email": this.updateAccount.getRawValue()['email'],
+            "password": this.updateAccount.getRawValue()['password'],
+            "username": this.updateAccount.getRawValue()['userName'],
+            "firstname": this.updateAccount.getRawValue()['firstname'],
+            "surname": this.updateAccount.getRawValue()['surname'],
+            "avatarID": avatarID,
+          }, {
+            observe: "response",
+            headers: {
+              'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
+            },
           },
-        },
-      ).subscribe(response => {
-        console.log(response)
-        if (response.status == 201) {
-          // this.isLoggedIn = true;
-          this.router.navigate(['/lobby']);
-        }
+        ).subscribe(response => {
+          console.log(response)
+          if (response.status == 201) {
+            // this.isLoggedIn = true;
+            this.router.navigate(['/lobby']);
+          }
+        });
       });
     } else {
       Object.values(this.updateAccount.controls).forEach(control => {
