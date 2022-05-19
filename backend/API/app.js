@@ -377,7 +377,7 @@ app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
     }
 })
 
-app.put('/api/leaveGame/:gamID', validateAccess, async (request, response) => {
+app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
     try{
         let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
@@ -846,6 +846,7 @@ function checkFinished(positions) {
 
 async function validateAccess(request, response, next){
     const authHeader = request.headers["authorization"]
+    console.log(authHeader)
     let token;
     try {
         token = authHeader.split(" ")[1]
