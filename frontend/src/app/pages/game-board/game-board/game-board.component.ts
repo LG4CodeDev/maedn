@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {DOCUMENT} from "@angular/common";
 import {Router} from '@angular/router';
 import {delay} from "rxjs/operators";
+import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
   selector: 'app-game-board',
@@ -15,6 +16,7 @@ export class GameBoardComponent implements OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private router: Router,
+    private modal: NzModalService,
     @Inject(DOCUMENT) private document: Document,
   ) {
   }
@@ -65,10 +67,6 @@ export class GameBoardComponent implements OnInit {
     }
     //create game board
     this.fillGridWithField();
-
-    //this.modalIsVisible = true;
-    //document.getElementById('finishPopUp').innerHTML = '.. won, you lost!'
-    //createFirework();
     //get on refresh all game information
     await this.getMainGame();
   }
@@ -82,8 +80,11 @@ export class GameBoardComponent implements OnInit {
     this.setPlayerPosition(response);
     if (response.status == 'Finished') {
       this.updateDisplayStatus('Jemand hat gewonnen, Spiel vorbei');
-      //document.getElementById('finishPopUp').innerHTML = '.. won, you lost!'
-      this.modalIsVisible = true;
+      const modal = this.modal.create({
+        nzTitle: "Das Spiel wurde beendet!",
+        nzContent: response.nextPlayer + " hat gewonnen",
+        nzClassName: "my-modal",
+      });
       createFirework();
     }
     else if (response.status == 'notStarted') {
