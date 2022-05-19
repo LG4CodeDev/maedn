@@ -90,9 +90,9 @@ app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) =>
 
 //creates Avatar of blob and returns ID
 app.post('/api/createAvatar', async (request, response) => {
-    let avatar = request.body.toJSON()
+    let avatar = request.body
     console.log(avatar.data)
-    avatar = avatar.data.toJSON()
+    avatar = avatar.data //.toJSON()
     console.log(avatar['image'])
     console.log(avatar)
     try {
