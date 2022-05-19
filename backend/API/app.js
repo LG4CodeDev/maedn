@@ -850,9 +850,10 @@ async function validateAccess(request, response, next){
     try {
         token = authHeader.split(" ")[1]
     } catch (err) {
+        console.log(err)
         token = null;
     }
-    if (token == null) {
+    if (token === null) {
         return response.status(401).send("Token not present, missing Authorization or wrong format")
     }
     if (token === 'API'){
