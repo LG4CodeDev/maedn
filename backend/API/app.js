@@ -92,6 +92,7 @@ app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) =>
 app.post('/api/createAvatar', async (request, response) => {
     let avatar = request.body.toJSON()
     console.log(avatar['image'])
+    console.log(avatar)
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
         if (result.length > 0) {
