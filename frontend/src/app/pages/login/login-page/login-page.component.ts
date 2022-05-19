@@ -11,6 +11,7 @@ import {
 } from "@angular/forms";
 import {Router} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
+import {SnackBarService} from "../../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-login-page',
@@ -27,7 +28,7 @@ export class LoginPageComponent implements OnInit {
   imageURL = "assets/avatar.jpeg";
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,
-              @Inject(DOCUMENT) private document: Document) {
+              @Inject(DOCUMENT) private document: Document, private snackBar: SnackBarService) {
   }
 
   ngOnInit(): void {
@@ -61,10 +62,12 @@ export class LoginPageComponent implements OnInit {
           observe: "response",
         },
       ).subscribe(response => {
-        console.log(response);
         if (response.status == 200) {
           this.router.navigate(['/lobby']);
           localStorage.setItem('currentUser', JSON.stringify({ token: response.body['token'], userid: response.body['userid'] }));
+        }else {
+          console.log("HALLOO");
+          this.snackBar.showSnackBar('red', 'Wrong credentials!');
         }
       })
     } else {
@@ -100,6 +103,8 @@ export class LoginPageComponent implements OnInit {
           console.log(response)
           if (response.status == 201) {
             this.router.navigate(['/lobby']);
+          }else {
+            this.snackBar.showSnackBar('red', 'Something went wrong!');
           }
         });
       });

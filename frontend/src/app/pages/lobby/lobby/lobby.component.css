@@ -3,7 +3,7 @@
 }
 
 #leaderboard {
-  background-color: #4990F9;
+  background-color: #9AABD4;
   border-radius: 25px;
   margin: 10px;
   box-shadow: -15px 15px 15px rgba(0,0,0,.4);
@@ -11,6 +11,18 @@
   max-width: 500px;
   min-width: 300px;
   padding: 10px;
+  overflow-y: auto;
+  overflow-x: clip;
+}
+
+::-webkit-scrollbar-thumb{
+  background: #5B6D98;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-track{
+  border-radius: 0 15px 15px 0;
+  background: #9AABD4;
 }
 
 pre {
@@ -19,7 +31,7 @@ pre {
 }
 
 #statistics {
-  background-color: #4990F9;
+  background-color: #9AABD4;
   border-radius: 25px;
   margin: 10px;
   box-shadow: 15px 15px 15px rgba(0,0,0,.4);
@@ -189,10 +201,16 @@ pre {
   table-layout: fixed;
   margin-bottom: 20px;
 }
+.leaderboardTable thead {
+  font-size: 2.5vh;
+  border-style: none none double none;
+}
 
 .leaderboardTable .td {
   display: table-cell;
-  border: 1px dotted red;
+  border-style: none none solid none;
+  font-size: 2vh;
+  overflow: clip;
   padding: 4px 6px;
   width: 20%;
   margin-bottom: 0;
@@ -210,3 +228,5 @@ pre {
   margin: 5px;
   border-radius: 25px;
 }
+
+

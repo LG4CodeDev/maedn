@@ -9,6 +9,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzModalModule} from "ng-zorro-antd/modal";
+import {NzAlertModule} from "ng-zorro-antd/alert";
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {NzModalModule} from "ng-zorro-antd/modal";
     NzFormModule,
     ReactiveFormsModule,
     NzButtonModule,
-    NzModalModule
+    NzModalModule,
+    NzAlertModule
   ],
   exports: [
   ]
