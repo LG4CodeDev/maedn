@@ -37,3 +37,12 @@
   border-radius: 25px;
 }
 
+.form-field {
+  margin: 0px;
+  font-size: 2vh;
+}
+
+p {
+  color: white;
+}
+

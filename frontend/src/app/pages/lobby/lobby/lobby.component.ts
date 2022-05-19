@@ -164,6 +164,9 @@ joinRandom(): void {
 
   buildLeaderboard(body: any): void {
     let lb = document.getElementById('leaderboard');
+    lb.childNodes.forEach((element) => {
+      element.remove();
+    })
     let userWrapper = this.renderer.createElement('table');
     userWrapper.classList.add("leaderboardTable");
 
