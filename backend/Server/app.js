@@ -80,8 +80,6 @@ async function sendGame(request, response) {
                 clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
             }
 
-            let body = JSON.stringify(data)
-
             clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(data)}\n\n`))
 
 
