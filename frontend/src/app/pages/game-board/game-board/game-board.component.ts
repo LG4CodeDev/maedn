@@ -71,6 +71,7 @@ export class GameBoardComponent implements OnInit {
     await this.getMainGame();
   }
 
+
   /**
    * update complete gameboard with new information (playerpositions, whosTurn, gameInfo etc
    * checks for winn or not started
@@ -78,26 +79,56 @@ export class GameBoardComponent implements OnInit {
    */
   updateGameBoard(response: any) {
     this.setPlayerPosition(response);
+
     if (response.status == 'Finished') {
-      this.updateDisplayStatus('Jemand hat gewonnen, Spiel vorbei');
-      const modal = this.modal.create({
-        nzTitle: "Das Spiel wurde beendet!",
-        nzContent: response.nextPlayer + " hat gewonnen",
-        nzClassName: "my-modal",
-      });
-      createFirework();
+      this.onFinished(response);
     }
     else if (response.status == 'notStarted') {
       this.updateDisplayStatus('Das Spiel hat noch nicht angefangen, Warte auf Spieler');
       document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
     }
     else {
-      this.updateDisplayStatus('Make a Move');
       this.whosTurn = response.nextPlayer;
       this.updateGameInfo();
       this.unhiglightMoves();
       this.highlightWhosTurn();
     }
+  }
+
+  /**
+   * display winning stuff: modal with who won, firework and info board status
+   * @param response body of api return, has to contain .nextPlayer
+   */
+  onFinished(response: any){
+    this.updateDisplayStatus('Jemand hat gewonnen, Spiel vorbei');
+    let userWhoWon;
+    switch (response.nextPlayer) { //in next player is player who whon game if state = 'Finished'
+      case "Player1":
+        userWhoWon = 'Gelb';
+        break;
+      case "Player2":
+        userWhoWon = 'Grün';
+        break;
+      case "Player3":
+        userWhoWon = 'Rot';
+        break;
+      case "Player4":
+        userWhoWon = 'Schwarz';
+        break;
+      default:
+        document.getElementById('whosTurnIsIt').innerHTML = 'something wrong';
+    }
+    let modal = this.modal.create({
+      nzTitle: "Das Spiel wurde beendet!",
+      nzContent: userWhoWon + " hat gewonnen!",
+      nzClassName: "my-modal",
+      nzOkText: 'Lobby',
+      nzOnOk: () => {
+        this.router.navigate(['/lobby']).then();
+        localStorage.removeItem('currentGame');
+      }
+    });
+    createFirework();
   }
 
   /**
@@ -123,7 +154,7 @@ export class GameBoardComponent implements OnInit {
         },
       }
     ).subscribe(response => {
-        console.log(response);
+        //console.log(response);
 
         if (response.body.Player1 == this.userID) {
           this.userInGame = 'Player1';
@@ -136,6 +167,7 @@ export class GameBoardComponent implements OnInit {
         } else {
           //TODO snackbar
           this.router.navigate(['/lobby']);
+          localStorage.removeItem('currentGame');
         }
 
         this.updateGameBoard(response.body);
@@ -234,7 +266,7 @@ export class GameBoardComponent implements OnInit {
       },
     ).subscribe(response => {
         if (response.status == 200) {
-          console.log(response['body']);
+          //console.log(response['body']);
           this.tossDice(response['body']['move']['dice'], response.body);
         }
       },
@@ -304,7 +336,7 @@ export class GameBoardComponent implements OnInit {
               toRemoveOnClick.onclick = () => {
               };
             }
-            console.log(response);
+            //console.log(response);
           }
         }, response => {
           console.log('makeMove crashed:');
