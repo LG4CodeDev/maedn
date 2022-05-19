@@ -27,7 +27,7 @@
 
 #snackbar.green {
   background-color: #BDF000;
-  color: white;
+  color: black;
 }
 #snackbar.yellow {
   background-color: #FFE140;
@@ -63,3 +63,4 @@
   from {bottom: 86px; opacity: 1;}
   to {bottom: 56px; opacity: 0;}
 }
+
