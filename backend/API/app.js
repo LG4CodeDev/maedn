@@ -382,6 +382,8 @@ app.put('/api/leaveGame/:gamID', validateAccess, async (request, response) => {
     try{
         let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
 
+        if (result['0']['status'] === 'notStarted') return response.sendStatus(403)
+
         if (result[0]['Player1'] === request.locals.user){
             await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
         }
