@@ -26,7 +26,6 @@ export class LobbyComponent implements OnInit {
     if(localStorage.getItem('currentUser')){
 
     }else {
-      console.log(localStorage.getItem('currentUser'))
       this.router.navigate(['/login']);
     }
     this.joinIDForm = this.fb.group({
@@ -157,7 +156,6 @@ joinRandom(): void {
         observe: "response",
       },
     ).subscribe(response => {
-      console.log(response);
       this.buildLeaderboard(response.body);
     });
   }
@@ -191,38 +189,36 @@ joinRandom(): void {
     userWrapper.appendChild(thead);
 
     for(let i = 0; i<Object.keys(body).length; i++){
-      for(let i = 0; i<2; i++){
-        let userItemWrapper = this.renderer.createElement('tr');
-        userItemWrapper.classList.add("tr");
+      let userItemWrapper = this.renderer.createElement('tr');
+      userItemWrapper.classList.add("tr");
 
-        let place = this.renderer.createElement('td');
-        place.innerText = i+1;
-        place.classList.add("td");
+      let place = this.renderer.createElement('td');
+      place.innerText = i+1;
+      place.classList.add("td");
 
-        let tusernameWrapper = this.renderer.createElement('td');
-        tusernameWrapper.innerText = body[i.toString()]['username'];
-        tusernameWrapper.classList.add("td");
+      let tusernameWrapper = this.renderer.createElement('td');
+      tusernameWrapper.innerText = body[i.toString()]['username'];
+      tusernameWrapper.classList.add("td");
 
-        let levelWrapper = this.renderer.createElement('td');
-        levelWrapper.innerText = body[i.toString()]['level'];
-        levelWrapper.classList.add("td");
+      let levelWrapper = this.renderer.createElement('td');
+      levelWrapper.innerText = body[i.toString()]['level'];
+      levelWrapper.classList.add("td");
 
-        let twinsWrapper = this.renderer.createElement('td');
-        twinsWrapper.innerText = body[i.toString()]['wins'];
-        twinsWrapper.classList.add("td");
+      let twinsWrapper = this.renderer.createElement('td');
+      twinsWrapper.innerText = body[i.toString()]['wins'];
+      twinsWrapper.classList.add("td");
 
-        let WR = this.renderer.createElement('td');
-        WR.innerText = body[i.toString()]['winningRate'];
-        WR.classList.add("td");
+      let WR = this.renderer.createElement('td');
+      WR.innerText = body[i.toString()]['winningRate'];
+      WR.classList.add("td");
 
-        userItemWrapper.appendChild(place);
-        userItemWrapper.appendChild(tusernameWrapper);
-        userItemWrapper.appendChild(levelWrapper);
-        userItemWrapper.appendChild(twinsWrapper);
-        userItemWrapper.appendChild(WR);
+      userItemWrapper.appendChild(place);
+      userItemWrapper.appendChild(tusernameWrapper);
+      userItemWrapper.appendChild(levelWrapper);
+      userItemWrapper.appendChild(twinsWrapper);
+      userItemWrapper.appendChild(WR);
 
-        userWrapper.appendChild(userItemWrapper);
-      }
+      userWrapper.appendChild(userItemWrapper);
     }
     lb.appendChild(userWrapper);
   }

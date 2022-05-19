@@ -1,74 +1,77 @@
 <div id="outer">
-  <form nz-form [formGroup]="loginForm" id="login-form" class="login-form" (ngSubmit)="onLogin()">
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Please input your email!">
-        <nz-input-group nzPrefixIcon="user">
-          <input class="form-field" type="email" nz-input formControlName="email" placeholder="Email"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Please input your Password!">
-        <nz-input-group nzPrefixIcon="lock">
-          <input class="form-field" type="password" nz-input formControlName="password" placeholder="Password"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
-    <p>Or
-    <a (click)="showRegister()">register now!</a></p>
-  </form>
-  <form nz-form [formGroup]="registerForm" id="register-form" class="register-form" (ngSubmit)="onRegister()">
-    <nz-form-item>
-      <div *ngIf="imageURL && imageURL !== ''">
-        <img class="imagePreview" [src]="imageURL" [alt]="registerForm.value.name">
-      </div>
-      <input type="file" accept="image/*" (change)="showPreview($event)" />
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Please state your email!">
-        <nz-input-group nzPrefixIcon="user">
-          <input class="form-field" type="text" nz-input formControlName="email" placeholder="Email"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Please choose your username!">
-        <nz-input-group nzPrefixIcon="user">
-          <input class="form-field" type="text" nz-input formControlName="userName" placeholder="Username"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Firstname">
-        <nz-input-group>
-          <input class="form-field" type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Surname">
-        <nz-input-group>
-          <input class="form-field" type="text" nz-input formControlName="surname" placeholder="Surname"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
-        <nz-input-group nzPrefixIcon="lock">
-          <input class="form-field" type="password" nz-input formControlName="password" placeholder="Password"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="Please repeat your Password!">
-        <nz-input-group nzPrefixIcon="lock">
-          <input class="form-field" type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <button nz-button class="register-form-button register-form-margin" [nzType]="'primary'">Register now!</button>
-    <p>Or
-    <a (click)="showLogin()">login</a></p>
-  </form>
+
+  <nz-tabset id="login-tabset" nzSize="large">
+    <nz-tab nzTitle="Login" id="login-tab">
+      <form nz-form [formGroup]="loginForm" id="login-form" class="login-form" (ngSubmit)="onLogin()">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please input your email!">
+            <nz-input-group nzPrefixIcon="user">
+              <input class="form-field" type="email" nz-input formControlName="email" placeholder="Email"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please input your Password!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input class="form-field" type="password" nz-input formControlName="password" placeholder="Password"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
+      </form>
+    </nz-tab>
+    <nz-tab nzTitle="Register">
+      <form nz-form [formGroup]="registerForm" id="register-form" class="register-form" (ngSubmit)="onRegister()">
+        <nz-form-item>
+          <div *ngIf="imageURL && imageURL !== ''">
+            <img class="imagePreview" [src]="imageURL" [alt]="registerForm.value.name">
+          </div>
+          <input type="file" accept="image/*" (change)="showPreview($event)" />
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please state your email!">
+            <nz-input-group nzPrefixIcon="user">
+              <input class="form-field" type="text" nz-input formControlName="email" placeholder="Email"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please choose your username!">
+            <nz-input-group nzPrefixIcon="user">
+              <input class="form-field" type="text" nz-input formControlName="userName" placeholder="Username"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Firstname">
+            <nz-input-group>
+              <input class="form-field" type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Surname">
+            <nz-input-group>
+              <input class="form-field" type="text" nz-input formControlName="surname" placeholder="Surname"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
+            <nz-input-group nzPrefixIcon="lock">
+              <input class="form-field" type="password" nz-input formControlName="password" placeholder="Password"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Please repeat your Password!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input class="form-field" type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <button nz-button class="register-form-button register-form-margin" [nzType]="'primary'">Register now!</button>
+      </form>
+    </nz-tab>
+  </nz-tabset>
 </div>

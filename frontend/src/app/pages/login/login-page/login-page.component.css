@@ -1,7 +1,13 @@
 #outer {
-  width:100%;
+  width: 400px;
+  margin: 100px auto;
   display: flex;
   justify-content: center;
+  background-color: #9AABD4;
+  border-radius: 15px;
+  box-shadow: 0px 10px 10px rgba(0,0,0,.6);
+  padding-bottom: 25px;
+  padding-top: 10px;
 }
 
 .login-form {
@@ -10,7 +16,6 @@
 
 .register-form {
   width: 300px;
-  display: none;
 }
 
 .login-form-margin {
@@ -45,6 +50,11 @@
 }
 
 p {
+  color: white;
+}
+
+#login-tabset{
+  font-size: 1.5vh;
   color: white;
 }
 

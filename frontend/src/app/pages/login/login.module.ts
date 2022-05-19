@@ -10,6 +10,7 @@ import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {NzCheckboxModule} from "ng-zorro-antd/checkbox";
 import {NzFormModule} from "ng-zorro-antd/form";
+import {NzTabsModule} from "ng-zorro-antd/tabs";
 
 
 
@@ -17,18 +18,19 @@ import {NzFormModule} from "ng-zorro-antd/form";
   declarations: [
     LoginPageComponent
   ],
-  imports: [
-    SharedModule,
-    CommonModule,
-    HttpClientModule,
-    LoginRoutingModule,
-    ReactiveFormsModule,
-    NzInputModule,
-    NzButtonModule,
-    NzGridModule,
-    NzCheckboxModule,
-    NzFormModule,
-  ]
+    imports: [
+        SharedModule,
+        CommonModule,
+        HttpClientModule,
+        LoginRoutingModule,
+        ReactiveFormsModule,
+        NzInputModule,
+        NzButtonModule,
+        NzGridModule,
+        NzCheckboxModule,
+        NzFormModule,
+        NzTabsModule,
+    ]
 })
 export class LoginModule { }
 

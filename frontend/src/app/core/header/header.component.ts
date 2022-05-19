@@ -24,9 +24,9 @@ export class HeaderComponent  {
   }
 
   handleOk() {
-    let gameID = JSON.parse(localStorage.getItem('currentGame')).gameID;
-    if(gameID != null && gameID != ''){
-      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + gameID, {}, {
+    // let gameID = JSON.parse(localStorage.getItem('currentGame'));
+    if(true){
+      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + 125, {}, {
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
