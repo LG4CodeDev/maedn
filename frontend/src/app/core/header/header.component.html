@@ -1,11 +1,11 @@
-<div class="header">
+<div class="header" xmlns="http://www.w3.org/1999/html">
   <div class="header-nav left">
-    <div id="lobby">
+    <div id="lobby" *ngIf="this.router.url !== '/lobby' && this.router.url !== '/login'">
       <button id="lobbyBtn" (click)="lobby()">Lobby</button>
     </div>
   </div>
   <div class="header-nav right">
-    <div id="logout">
+    <div id="logout" *ngIf="this.router.url !== '/login'">
       <button id="logoutBtn" (click)="logout()">Logout</button>
     </div>
   </div>

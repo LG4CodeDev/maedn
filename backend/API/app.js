@@ -153,7 +153,7 @@ app.post('/api/loginVerification', async (request, response) => {
 app.get('/api/user/:id', validateAccess, async (request, response) => {
     let id = request.params.id;
     try {
-        const result = await pool.query("select userid, username, image from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
+        const result = await pool.query("select userid, username, image, email, firstname, surname from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
         response.send(result[0]);
     } catch (err) {
         response.sendStatus(500);
@@ -180,7 +180,7 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.put('/api/updateUser', validateAccess, checkUniquenessOfEmail, async (request, response) => {
+app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, async (request, response) => {
     let user = request.body;
     if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -351,7 +351,7 @@ app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,async (reque
 
 });
 
-app.put('/api/joinGame/:gameID', validateAccess,checkIfPlayerAlreadyInGame, async (request, response) => {
+app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
     let result;
     try {
@@ -367,6 +367,34 @@ app.put('/api/joinGame/:gameID', validateAccess,checkIfPlayerAlreadyInGame, asyn
         console.log(err);
     }
 })
+
+app.put('/api/leaveGame/:gamID', validateAccess, async (request, response) => {
+    let id = request.params.gameID;
+    try{
+        let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
+
+        let game = result[0]
+
+        if (result[0]['Player1'] === request.locals.user){
+            await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player2'] === request.locals.user){
+            await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player3'] === request.locals.user){
+            await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player4'] === request.locals.user){
+            await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
+        }
+        response.sendStatus(200)
+    }catch (err){
+        console.log(err)
+        return response.sendStatus(500)
+    }
+
+})
+
 
 app.put('/api/startGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
@@ -423,9 +451,9 @@ async function finishGame(request,response, id){
         let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
         for (let i = 0; i <= 3; i++) {
             if (checkFinished(positions[i])) {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winingRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
             } else {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winingRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
             }
 
         }
@@ -658,21 +686,16 @@ function checkRoleAgain(playerFields, diceResult, moves) {
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
                 else if (element[1] === 2)
                 {
-                    playerFields.find(element => {
-                        if (element.includes('F_3')){}
-                        else return false});
+                    if(playerFields.some(item => item.includes('F_3'))){}
+                    else return false
                 }
                 //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
                 else if (element[1] === 1)
                 {
-                    playerFields.find(element => {
-                        if (element.includes('F_3'))
-                        {
-                            playerFields.find(element =>
-                            {
-                                if (element.includes('F_2')) {
-                                } else return false});
-                        }else return false});
+                    if(playerFields.some(item => item.includes('F_3')))
+                        if(playerFields.some(item => item.includes('F_2'))){}
+                        else return false
+                    else return false
                 }
                 else return false;
             }
@@ -830,19 +853,22 @@ async function validateAccess(request, response, next){
     if (token === 'API'){
         next()
     }
-    let result;
-    try{
-        result = await pool.query("Select * from users where token = ?",[token])
-    }catch (err) {
-        console.log(err)
-        return response.status(500)
+    else{
+        let result;
+        try{
+            result = await pool.query("Select * from users where token = ?",[token])
+        }catch (err) {
+            console.log(err)
+            return response.status(500)
+        }
+        if (result[0] === undefined) {
+            return response.status(403).send("Token invalid")
+        } else {
+            response.locals.user = result[0]
+            next()
+        }
     }
-    if (result[0] === undefined) {
-        return response.status(403).send("Token invalid")
-    } else {
-        response.locals.user = result[0]
-        next()
-    }
+
 }
 
 async function checkUniquenessOfEmail(request, response, next) {
@@ -852,5 +878,16 @@ async function checkUniquenessOfEmail(request, response, next) {
         else response.status(409).send("Username already used")
     } catch (err) {
         response.sendStatus(500)
+        console.log(err)
+    }
+}
+async function checkUniquenessOfEmailPersonal(request, response, next) {
+    try {
+        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.body.id]);
+        if (!result[0]) next()
+        else response.status(409).send("Username already used")
+    } catch (err) {
+        response.sendStatus(500)
+        console.log(err)
     }
 }

@@ -42,7 +42,7 @@ export class LoginPageComponent implements OnInit {
       password: ['', [Validators.required]]
     });
 
-        this.registerForm = this.fb.group({
+    this.registerForm = this.fb.group({
       avatar: [File],
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required]],
@@ -86,23 +86,22 @@ export class LoginPageComponent implements OnInit {
         },
       ).subscribe(response => {
         avatarID = response.body['avatarID'];
-      });
-      this.http.post<any>('https://spielehub.server-welt.com/api/createUser', {
-          "email": this.registerForm.getRawValue()['email'],
-          "password": this.registerForm.getRawValue()['password'],
-          "username": this.registerForm.getRawValue()['userName'],
-          "firstname": this.registerForm.getRawValue()['firstname'],
-          "surname": this.registerForm.getRawValue()['surname'],
-          "avatarID": avatarID,
-        }, {
-          observe: "response",
-        },
-      ).subscribe(response => {
-        console.log(response)
-        if (response.status == 201) {
-          // this.isLoggedIn = true;
-          this.router.navigate(['/lobby']);
-        }
+        this.http.post<any>('https://spielehub.server-welt.com/api/createUser', {
+            "email": this.registerForm.getRawValue()['email'],
+            "password": this.registerForm.getRawValue()['password'],
+            "username": this.registerForm.getRawValue()['userName'],
+            "firstname": this.registerForm.getRawValue()['firstname'],
+            "surname": this.registerForm.getRawValue()['surname'],
+            "avatarID": avatarID,
+          }, {
+            observe: "response",
+          },
+        ).subscribe(response => {
+          console.log(response)
+          if (response.status == 201) {
+            this.router.navigate(['/lobby']);
+          }
+        });
       });
     } else {
       Object.values(this.registerForm.controls).forEach(control => {
@@ -127,7 +126,6 @@ export class LoginPageComponent implements OnInit {
 
   showPreview($event: Event) {
     const file = ($event.target as HTMLInputElement).files[0];
-
     this.registerForm.get('avatar').updateValueAndValidity()
     const reader = new FileReader();
     reader.onload = () => {

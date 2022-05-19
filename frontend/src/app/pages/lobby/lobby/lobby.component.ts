@@ -1,8 +1,8 @@
-import {Component, OnInit, Renderer2} from '@angular/core';
+import {Component, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {repeat} from "rxjs/operators";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-lobby',
@@ -11,7 +11,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class LobbyComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2, private fb: FormBuilder) {
+              private renderer: Renderer2, private fb: FormBuilder,) {
   }
 
   joinIDForm!: FormGroup;
@@ -19,6 +19,7 @@ export class LobbyComponent implements OnInit {
   userID: number;
   updateAccount!: FormGroup;
   imageURL = "assets/avatar.jpeg";
+  isVisible: boolean;
 
   ngOnInit(): void {
     if(localStorage.getItem('currentUser')){
@@ -28,7 +29,7 @@ export class LobbyComponent implements OnInit {
       this.router.navigate(['/login']);
     }
     this.joinIDForm = this.fb.group({
-      joinID: ['', [Validators.required]],
+      joinGameID: ['', [Validators.required]],
     });
     this.updateAccount = this.fb.group({
       avatar: [File],
@@ -44,7 +45,11 @@ export class LobbyComponent implements OnInit {
     this.getLeaderboard();
   }
 
-  joinRandom(): void {
+  get joinGameID() {
+    return this.joinIDForm.get('joinGameID') as FormControl;
+  }
+
+joinRandom(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame', {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
@@ -60,7 +65,7 @@ export class LobbyComponent implements OnInit {
   }
 
   joinID(): void {
-    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinIDForm.getRawValue()['joinID'], {},{
+    this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinGameID.value, {},{
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
@@ -237,27 +242,27 @@ export class LobbyComponent implements OnInit {
         },
       ).subscribe(response => {
         avatarID = response.body['avatarID'];
-      });
-      this.http.put<any>('https://spielehub.server-welt.com/api/updateUser', {
-          "id": JSON.parse(localStorage.getItem('currentUser')).userid,
-          "email": this.updateAccount.getRawValue()['email'],
-          "password": this.updateAccount.getRawValue()['password'],
-          "username": this.updateAccount.getRawValue()['userName'],
-          "firstname": this.updateAccount.getRawValue()['firstname'],
-          "surname": this.updateAccount.getRawValue()['surname'],
-          "avatarID": avatarID,
-        }, {
-          observe: "response",
-          headers: {
-            'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
+        this.http.put<any>('https://spielehub.server-welt.com/api/updateUser', {
+            "id": JSON.parse(localStorage.getItem('currentUser')).userid,
+            "email": this.updateAccount.getRawValue()['email'],
+            "password": this.updateAccount.getRawValue()['password'],
+            "username": this.updateAccount.getRawValue()['userName'],
+            "firstname": this.updateAccount.getRawValue()['firstname'],
+            "surname": this.updateAccount.getRawValue()['surname'],
+            "avatarID": avatarID,
+          }, {
+            observe: "response",
+            headers: {
+              'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
+            },
           },
-        },
-      ).subscribe(response => {
-        console.log(response)
-        if (response.status == 201) {
-          // this.isLoggedIn = true;
-          this.router.navigate(['/lobby']);
-        }
+        ).subscribe(response => {
+          console.log(response)
+          if (response.status == 201) {
+            // this.isLoggedIn = true;
+            this.router.navigate(['/lobby']);
+          }
+        });
       });
     } else {
       Object.values(this.updateAccount.controls).forEach(control => {
@@ -267,5 +272,18 @@ export class LobbyComponent implements OnInit {
         }
       });
     }
+  }
+
+  openDialog() {
+    this.isVisible = true;
+  }
+
+  handleCancel() {
+    this.isVisible = false;
+  }
+
+  handleOk() {
+    this.joinID();
+    this.isVisible = false;
   }
 }
