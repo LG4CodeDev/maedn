@@ -34,7 +34,7 @@ const pool =
     })
 
 
-app.use(express.raw({ type: '*/*', limit: '50mb' }));
+app.use(express.raw({ type: '*/*', limit: '6.9mb' }));
 app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -91,6 +91,7 @@ app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) =>
 //creates Avatar of blob and returns ID
 app.post('/api/createAvatar', async (request, response) => {
     let avatar = request.body
+    console.log(avatar)
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
         if (result.length > 0) {
