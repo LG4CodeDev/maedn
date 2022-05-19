@@ -127,23 +127,26 @@ app.post('/api/loginVerification', async (request, response) => {
     if (result[0] !== undefined) {
         let answer = result[0]
         //compare hashed password with unhashed password
-        try{
-            bcrypt.compare(user.password, answer['password'], function (err, res){
-                if (err){
-                    return response.sendStatus(500)
-                }
-                if (res){}
-                else {
-                    return response.sendStatus(401)
+
+        bcrypt.compare(user.password, answer['password'], async (err, res) => {
+            if (err){
+                response.sendStatus(500)
+                console.log(err);
             }
-            });
-            let token = bcrypt.hashSync('LoremIpsum12345', 10)
-            await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
-            response.status(200).send({userid: answer.userid, "token" : token})
-        }catch (err) {
-            response.sendStatus(500)
-            console.log(err);
+            if (res){
+                let token = bcrypt.hashSync('LoremIpsum12345', 10)
+                try{
+                    await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
+                    response.status(200).send({userid: answer.userid, "token" : token})
+                }catch (err){
+                    response.sendStatus(500)
+                    console.log(err)
+                }
+            }
+            else {
+                return response.sendStatus(401)
         }
+        });
 
     } else {
         response.sendStatus(403)
