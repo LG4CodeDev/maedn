@@ -28,6 +28,7 @@ export class GameBoardComponent implements OnInit {
 
   //TODO: Display what to do now (wait, throw dice, pick field)
   //TODO: always spin cube if its your turn, roll just stops it :)
+  //TODO: status 'anderer player dran'
 
   async ngOnInit(): Promise<void> {
     try{
