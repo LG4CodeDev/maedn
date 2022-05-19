@@ -34,7 +34,7 @@ const pool =
     })
 
 
-
+app.use(express.raw({ type: '*/*', limit: '50mb' }));
 app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
