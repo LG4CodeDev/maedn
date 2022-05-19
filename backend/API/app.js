@@ -128,13 +128,16 @@ app.post('/api/loginVerification', async (request, response) => {
         let answer = result[0]
         //compare hashed password with unhashed password
         try{
-            bcrypt.compare(user.password, answer['password']).then(
-                () => {}, //on success do nothing
-                () => {
-                    return response.sendStatus(401)
+            bcrypt.compare(user.password, answer['password'], function (err, res){
+                if (err){
+                    return response.sendStatus(500)
                 }
-            );
-            let token = bcrypt.hashSync('LoremIpsum12345', 5)
+                if (res){}
+                else {
+                    return response.sendStatus(401)
+            }
+            });
+            let token = bcrypt.hashSync('LoremIpsum12345', 10)
             await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
             response.status(200).send({userid: answer.userid, "token" : token})
         }catch (err) {
@@ -212,7 +215,14 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
 app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
     try {
         let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
-        response.status(200).send({"1.": result[0],"2.": result[1],"3.": result[2],"4.": result[3],"5.": result[4] })
+        let index = 0
+        let json = {}
+        for(let element of result){
+            json[index.toString()] = element
+            index++
+        }
+
+        response.status(200).send(json)
     }catch (err) {
         response.sendStatus(500)
         console.log(err)
