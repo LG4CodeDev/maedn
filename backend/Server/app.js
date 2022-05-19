@@ -48,11 +48,7 @@ function eventsHandler(request, response) {
 
     const data = `data: ${JSON.stringify(facts)}\n\n`;
 
-    //response.write(data);
-
     const clientId = request.params.id;
-
-    //response.write("id :" + clientId.toString() + "\n");
 
     const newClient = {
         id: clientId,
@@ -62,7 +58,7 @@ function eventsHandler(request, response) {
     clients.push(newClient);
 
     request.on('close', () => {
-        console.log(`${clientId} Connection closed`);
+        //console.log(`${clientId} Connection closed`);
         clients = clients.filter(client => client.id !== clientId);
     });
 }
@@ -76,7 +72,7 @@ async function sendGame(request, response) {
         const gameID = request.body.gameID;
         const data = request.body.msg;
         let game = games.filter(games => games.id === gameID)[0]
-        console.log(game)
+        //(game)
         if(game !== undefined){
             game = game.clients
             let clientStreams = [];
@@ -84,7 +80,7 @@ async function sendGame(request, response) {
                 clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
             }
 
-            console.log(clientStreams)
+            //console.log(clientStreams)
 
             let body = JSON.stringify(data)
 
@@ -102,7 +98,6 @@ async function sendGame(request, response) {
 }
 
 async function createGame(request, response){
-    console.log("Hello World")
     const clientID = request.body.clientID
     const gameID = request.body.gameID
     let newGame = {
@@ -110,7 +105,7 @@ async function createGame(request, response){
         clients : [clientID]
     }
     games.push(newGame)
-    console.log(games)
+    //console.log(games)
     return  response.json(gameID)
 }
 
@@ -162,6 +157,5 @@ async function reloadGames(){
             clients : [element.Player1,element.Player2,element.Player3,element.Player4]
         }
         games.push(newGame)
-        console.log(games)
     }
 }
