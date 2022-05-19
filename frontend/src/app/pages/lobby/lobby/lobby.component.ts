@@ -26,7 +26,6 @@ export class LobbyComponent implements OnInit {
     if(localStorage.getItem('currentUser')){
 
     }else {
-      console.log(localStorage.getItem('currentUser'))
       this.router.navigate(['/login']);
     }
     this.joinIDForm = this.fb.group({
@@ -135,8 +134,8 @@ joinRandom(): void {
         observe: "response",
       },
     ).subscribe(response => {
-      console.log(response);
       document.getElementById('profilePicture').setAttribute('src', response.body['image']);
+      document.getElementById('updateImagePreview').setAttribute('src', response.body['image']);
       document.getElementById('username').innerText =
         response.body['username'];
       this.updateAccount.patchValue({
@@ -157,13 +156,15 @@ joinRandom(): void {
         observe: "response",
       },
     ).subscribe(response => {
-      console.log(response);
       this.buildLeaderboard(response.body);
     });
   }
 
   buildLeaderboard(body: any): void {
     let lb = document.getElementById('leaderboard');
+    lb.childNodes.forEach((element) => {
+      element.remove();
+    })
     let userWrapper = this.renderer.createElement('table');
     userWrapper.classList.add("leaderboardTable");
 
@@ -275,11 +276,12 @@ joinRandom(): void {
             },
           },
         ).subscribe(response => {
-          console.log(response)
-          if (response.status == 201) {
+          if (response.status == 200) {
             document.getElementById("update-form").style.display = "none";
             document.getElementById("userInformation").style.display = "block";
             this.snackBar.showSnackBar('green', 'Update successful!');
+            this.getUserInfo();
+            this.getLeaderboard();
           }
         });
       });

@@ -70,21 +70,6 @@
   background: #9AABD4;
 }
 
-#accordion {
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
-  background-color: #ccc;
-}
-
 #regeln {
   height: inherit;
   max-height: 700px;
@@ -184,24 +169,23 @@
 #cube.show-5 { transform: translateZ(-100px) rotateX( -90deg); }
 #cube.show-6 { transform: translateZ(-100px) rotateY(-180deg); }
 
-
 #cube.is-spinning-1 {
-  animation: spinCube-1 5s linear;
+  animation: spinCube-1 3s linear;
 }
 #cube.is-spinning-2 {
-  animation: spinCube-2 5s linear;
+  animation: spinCube-2 3s linear;
 }
 #cube.is-spinning-3 {
-  animation: spinCube-3 5s linear;
+  animation: spinCube-3 3s linear;
 }
 #cube.is-spinning-4 {
-  animation: spinCube-4 5s linear;
+  animation: spinCube-4 3s linear;
 }
 #cube.is-spinning-5 {
-  animation: spinCube-5 5s linear;
+  animation: spinCube-5 3s linear;
 }
 #cube.is-spinning-6 {
-  animation: spinCube-6 5s linear;
+  animation: spinCube-6 3s linear;
 }
 
 @keyframes spinCube-1 {

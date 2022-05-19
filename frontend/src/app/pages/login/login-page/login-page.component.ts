@@ -82,20 +82,41 @@ export class LoginPageComponent implements OnInit {
   onRegister(): void {
     var avatarID = null;
     if (this.registerForm.valid) {
-      this.http.post<any>('https://spielehub.server-welt.com/api/createAvatar', {
-          "image": this.registerForm.getRawValue()['avatar'],
-        }, {
-          observe: "response",
-        },
-      ).subscribe(response => {
-        avatarID = response.body['avatarID'];
+      if(this.imageURL != 'assets/avatar.jpeg'){
+        this.http.post<any>('https://spielehub.server-welt.com/api/createAvatar', {
+            "image": this.registerForm.getRawValue()['avatar'],
+          }, {
+            observe: "response",
+          },
+        ).subscribe(response => {
+          avatarID = response.body['avatarID'];
+          this.http.post<any>('https://spielehub.server-welt.com/api/createUser', {
+              "email": this.registerForm.getRawValue()['email'],
+              "password": this.registerForm.getRawValue()['password'],
+              "username": this.registerForm.getRawValue()['userName'],
+              "firstname": this.registerForm.getRawValue()['firstname'],
+              "surname": this.registerForm.getRawValue()['surname'],
+              "avatarID": avatarID,
+            }, {
+              observe: "response",
+            },
+          ).subscribe(response => {
+            console.log(response)
+            if (response.status == 201) {
+              this.router.navigate(['/lobby']);
+            }else {
+              this.snackBar.showSnackBar('red', 'Something went wrong!');
+            }
+          });
+        });
+      }else {
         this.http.post<any>('https://spielehub.server-welt.com/api/createUser', {
             "email": this.registerForm.getRawValue()['email'],
             "password": this.registerForm.getRawValue()['password'],
             "username": this.registerForm.getRawValue()['userName'],
             "firstname": this.registerForm.getRawValue()['firstname'],
             "surname": this.registerForm.getRawValue()['surname'],
-            "avatarID": avatarID,
+            "avatarID": 0,
           }, {
             observe: "response",
           },
@@ -107,7 +128,8 @@ export class LoginPageComponent implements OnInit {
             this.snackBar.showSnackBar('red', 'Something went wrong!');
           }
         });
-      });
+      }
+
     } else {
       Object.values(this.registerForm.controls).forEach(control => {
         if (control.invalid) {

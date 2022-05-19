@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzModalModule} from "ng-zorro-antd/modal";
 
 registerLocaleData(de);
 
@@ -26,18 +27,19 @@ registerLocaleData(de);
     FooterComponent,
     PageNotFoundComponent,
   ],
-  imports: [
-    CommonModule,
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    NzGridModule,
-    NzInputModule,
-    ReactiveFormsModule,
-    NzButtonModule,
-  ],
+    imports: [
+        CommonModule,
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        NzGridModule,
+        NzInputModule,
+        ReactiveFormsModule,
+        NzButtonModule,
+        NzModalModule,
+    ],
   providers: [{ provide: NZ_I18N, useValue: de_DE }],
   bootstrap: [AppComponent]
 })

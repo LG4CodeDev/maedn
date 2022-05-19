@@ -30,7 +30,7 @@
         </button>
       </div>
       <div nz-row nzJustify="center">
-        <button id="join_game_id" class="game_buttons" (click)="joinID()">
+        <button id="join_game_id" class="game_buttons" (click)="openDialog()">
           Join Game with ID
           <span></span>
           <span></span>
@@ -54,7 +54,7 @@
         </div>
         <div nz-col>
           <div nz-row>
-            <button (click)="showUpdate()"><img src="assets/edit.png" id="editPicture"/></button>
+            <button id="editButton" (click)="showUpdate()"><img src="assets/edit.png" id="editPicture"/></button>
           </div>
         </div>
       </div>
@@ -78,56 +78,56 @@
           (ngSubmit)="onUpdate()">
       <nz-form-item>
         <div *ngIf="imageURL && imageURL !== ''">
-          <img class="imagePreview" [src]="imageURL" [alt]="updateAccount.value.name">
+          <img class="imagePreview" [src]="imageURL" [alt]="updateAccount.value.name" id="updateImagePreview">
         </div>
         <input type="file" accept="image/*" (change)="showPreview($event)"/>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Please state your email!">
           <nz-input-group nzPrefixIcon="user">
-            <input type="text" nz-input formControlName="email" placeholder="Email"/>
+            <input class="update-form-field" type="text" nz-input formControlName="email" placeholder="Email"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Please choose your username!">
           <nz-input-group nzPrefixIcon="user">
-            <input type="text" nz-input formControlName="userName" placeholder="Username"/>
+            <input class="update-form-field" type="text" nz-input formControlName="userName" placeholder="Username"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Firstname">
-          <nz-input-group>
-            <input type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
+          <nz-input-group nzPrefixIcon="user">
+            <input class="update-form-field" type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Surname">
-          <nz-input-group>
-            <input type="text" nz-input formControlName="surname" placeholder="Surname"/>
+          <nz-input-group nzPrefixIcon="user">
+            <input class="update-form-field" type="text" nz-input formControlName="surname" placeholder="Surname"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Passwords must have at least 4 characters.">
           <nz-input-group nzPrefixIcon="lock">
-            <input type="password" nz-input formControlName="password" placeholder="Password"/>
+            <input class="update-form-field" type="password" nz-input formControlName="password" placeholder="Password"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Please repeat your Password!">
           <nz-input-group nzPrefixIcon="lock">
-            <input type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
+            <input class="update-form-field" type="password" nz-input formControlName="retypePassword" placeholder="Password"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-      <button type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'"
+      <button id="cancelUpdate" type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'"
               (click)="cancel()">Cancel
       </button>
-      <button nz-button class="update-form-button update-form-margin" [nzType]="'primary'">Submit!</button>
+      <button nz-button id="submitUpdate" class="update-form-button update-form-margin" [nzType]="'primary'">Submit!</button>
     </form>
   </div>
   <!--      END OF STATISTICS-->
