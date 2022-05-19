@@ -34,7 +34,7 @@ const pool =
     })
 
 
-app.use(express.raw({ type: '*/*', limit: '6.9mb' }));
+app.use(express.raw({ type: 'image/*', limit: '6.9mb' }));
 app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -127,8 +127,8 @@ app.post('/api/loginVerification', async (request, response) => {
     try {
         result = await pool.query("select * from users where email = ?", [user.email]);
     } catch (err) {
-        response.send(500)
         console.log(err);
+        return response.sendStatus(500)
     }
     if (result[0] !== undefined) {
         let answer = result[0]
