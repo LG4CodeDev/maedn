@@ -254,7 +254,7 @@ joinRandom(): void {
           "image": this.updateAccount.getRawValue()['avatar'],
         }, {
         headers: {
-          contentType: "image/png",
+          // contentType: "image/png",
         },
           observe: "response",
         },
