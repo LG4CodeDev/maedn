@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {repeat} from "rxjs/operators";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {SnackBarService} from "../../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-lobby',
@@ -11,7 +11,8 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 })
 export class LobbyComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router,
-              private renderer: Renderer2, private fb: FormBuilder,) {
+              private renderer: Renderer2, private fb: FormBuilder,
+              private snackBar: SnackBarService) {
   }
 
   joinIDForm!: FormGroup;
@@ -49,6 +50,7 @@ export class LobbyComponent implements OnInit {
     return this.joinIDForm.get('joinGameID') as FormControl;
   }
 
+
 joinRandom(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame', {},{
         headers: {
@@ -60,6 +62,9 @@ joinRandom(): void {
       if (response.status == 200) {
         localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
         this.router.navigate(['/game']);
+        this.snackBar.showSnackBar('green', 'Successfully joined!');
+      }else {
+        this.snackBar.showSnackBar('red', 'Error on request!');
       }
     });
   }
@@ -75,6 +80,9 @@ joinRandom(): void {
       if (response.status == 200) {
         localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
         this.router.navigate(['/game']);
+        this.snackBar.showSnackBar('green', 'Successfully joined!');
+      }else {
+        this.snackBar.showSnackBar('red', 'Error on request!');
       }
     });
   }
@@ -90,6 +98,9 @@ joinRandom(): void {
       if (response.status == 200) {
         localStorage.setItem('currentGame', JSON.stringify({ gameID: response.body['gameID'] }));
         this.router.navigate(['/game']);
+        this.snackBar.showSnackBar('green', 'Successfully created!');
+      }else {
+        this.snackBar.showSnackBar('red', 'Error on request!');
       }
     });
   }
@@ -128,8 +139,13 @@ joinRandom(): void {
       document.getElementById('profilePicture').setAttribute('src', response.body['image']);
       document.getElementById('username').innerText =
         response.body['username'];
-      document.getElementById('user').innerText =
-        response.body['wins'];
+      this.updateAccount.patchValue({
+        avatar: response.body['image'],
+        email: response.body['email'],
+        userName: response.body['username'],
+        firstname: response.body['firstname'],
+        surname: response.body['surname'],
+      });
     });
   }
 
@@ -160,9 +176,9 @@ joinRandom(): void {
     let theadWR = this.renderer.createElement('td');
     theadPlace.innerText = "Place";
     theadLevel.innerText = "Level";
-    theadTWins.innerText = "Total Wins";
+    theadTWins.innerText = "Wins";
     theadUser.innerText = "User";
-    theadWR.innerText = "Win ratio";
+    theadWR.innerText = "W/L";
     theadRow.appendChild(theadPlace);
     theadRow.appendChild(theadUser);
     theadRow.appendChild(theadLevel);
@@ -172,8 +188,6 @@ joinRandom(): void {
     userWrapper.appendChild(thead);
 
     for(let i = 0; i<Object.keys(body).length; i++){
-      console.log(i+1+".");
-      console.log(body[i +  1 + "."]);
       let userItemWrapper = this.renderer.createElement('tr');
       userItemWrapper.classList.add("tr");
 
@@ -182,19 +196,19 @@ joinRandom(): void {
       place.classList.add("td");
 
       let tusernameWrapper = this.renderer.createElement('td');
-      tusernameWrapper.innerText = body[i +  1 + "."]['username'];
+      tusernameWrapper.innerText = body[i.toString()]['username'];
       tusernameWrapper.classList.add("td");
 
       let levelWrapper = this.renderer.createElement('td');
-      levelWrapper.innerText = body[i +  1 + "."]['Level'];
+      levelWrapper.innerText = body[i.toString()]['level'];
       levelWrapper.classList.add("td");
 
       let twinsWrapper = this.renderer.createElement('td');
-      twinsWrapper.innerText = body[i +  1 + "."]['wins'];
+      twinsWrapper.innerText = body[i.toString()]['wins'];
       twinsWrapper.classList.add("td");
 
       let WR = this.renderer.createElement('td');
-      WR.innerText = body[i +  1 + "."]['winningRate'];
+      WR.innerText = body[i.toString()]['winningRate'];
       WR.classList.add("td");
 
       userItemWrapper.appendChild(place);
@@ -230,6 +244,7 @@ joinRandom(): void {
   cancel() {
     document.getElementById("update-form").style.display = "none";
     document.getElementById("userInformation").style.display = "block";
+    this.snackBar.showSnackBar('yellow', 'Update canceled!');
   }
 
   onUpdate() {
@@ -238,6 +253,9 @@ joinRandom(): void {
       this.http.post<any>('https://spielehub.server-welt.com/api/createAvatar', {
           "image": this.updateAccount.getRawValue()['avatar'],
         }, {
+        headers: {
+          // contentType: "image/png",
+        },
           observe: "response",
         },
       ).subscribe(response => {
@@ -259,8 +277,9 @@ joinRandom(): void {
         ).subscribe(response => {
           console.log(response)
           if (response.status == 201) {
-            // this.isLoggedIn = true;
-            this.router.navigate(['/lobby']);
+            document.getElementById("update-form").style.display = "none";
+            document.getElementById("userInformation").style.display = "block";
+            this.snackBar.showSnackBar('green', 'Update successful!');
           }
         });
       });

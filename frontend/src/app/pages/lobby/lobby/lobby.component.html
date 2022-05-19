@@ -30,7 +30,7 @@
         </button>
       </div>
       <div nz-row nzJustify="center">
-        <button id="join_game_id" class="game_buttons" (click)="openDialog()">
+        <button id="join_game_id" class="game_buttons" (click)="joinID()">
           Join Game with ID
           <span></span>
           <span></span>
@@ -61,21 +61,26 @@
       <span></span>
       <div nz-row id="userStats">
         <div nz-col style="width: 100%">
-          <div class="userStatItem" nz-row nzJustify="space-between"><p>Level:</p><p id="userStatItemLevel" >-</p></div>
-          <div class="userStatItem" nz-row nzJustify="space-between"><p>Total wins:</p><p id="userStatItemTotalWins">-</p></div>
-          <div class="userStatItem" nz-row nzJustify="space-between"><p>Games played:</p><p id="userStatItemTotalGames">-</p></div>
-          <div class="userStatItem" nz-row nzJustify="space-between"><p>Winning rate:</p><p id="userStatItemWR">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Level:</p>
+            <p id="userStatItemLevel">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Total wins:</p>
+            <p id="userStatItemTotalWins">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Games played:</p>
+            <p id="userStatItemTotalGames">-</p></div>
+          <div class="userStatItem" nz-row nzJustify="space-between"><p>Winning rate:</p>
+            <p id="userStatItemWR">-</p></div>
         </div>
       </div>
     </div>
 
 
-    <form nz-form [formGroup]="updateAccount" id="update-form" class="register-form" style="display: none" (ngSubmit)="onUpdate()">
+    <form nz-form [formGroup]="updateAccount" id="update-form" class="register-form" style="display: none"
+          (ngSubmit)="onUpdate()">
       <nz-form-item>
         <div *ngIf="imageURL && imageURL !== ''">
           <img class="imagePreview" [src]="imageURL" [alt]="updateAccount.value.name">
         </div>
-        <input type="file" accept="image/*" (change)="showPreview($event)" />
+        <input type="file" accept="image/*" (change)="showPreview($event)"/>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Please state your email!">
@@ -119,7 +124,9 @@
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-      <button type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'" (click)="cancel()">Cancel</button>
+      <button type="button" nz-button class="update-form-button update-form-margin" [nzType]="'primary'"
+              (click)="cancel()">Cancel
+      </button>
       <button nz-button class="update-form-button update-form-margin" [nzType]="'primary'">Submit!</button>
     </form>
   </div>
@@ -131,3 +138,5 @@
     <input type="number" nz-input [formControl]="joinGameID" placeholder="ID"/>
   </ng-container>
 </nz-modal>
+
+

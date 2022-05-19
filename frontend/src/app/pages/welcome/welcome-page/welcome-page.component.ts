@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Echo} from "../../../models/echo.model";
-import {ApiService} from "../../../core/services/api.service";
+import {ApiService} from "../../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-welcome-page',
