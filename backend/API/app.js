@@ -794,7 +794,7 @@ async function makeMove(data, game, response) {
                     "gameID": game['gameID'],
                     "msg": {
                         "positions": positions,
-                        "isFinished": isFinished,
+                        "status": status,
                         "nextPlayer": nextPlayer
                     }
                 }
