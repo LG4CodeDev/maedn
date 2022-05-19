@@ -271,7 +271,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         if (!roleAgain && (listOfMoves.toString() === [null, null, null, null].toString() || listOfMoves.toString() === ",,,")) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             let result;
-            console.log([game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")])
+            //console.log([game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")])
             await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
@@ -286,7 +286,7 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             }).then(function (response){
                 result = response
             })
-            console.log(result)
+            //console.log(result)
 
             let zero = 0
             await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
