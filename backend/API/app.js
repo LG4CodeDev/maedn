@@ -217,11 +217,11 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
 //returns leaderboard
 app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
     try {
-        let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC")
+        let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC LIMIT 20")
         let index = 0
         let json = {}
         for(let element of result){
-            json[index.toString()] = element
+            json[index.toString()] = {"username": element["username"], "level" : element["Level"], "winningRate" : element["winningRate"], "wins" : element["wins"], "image" : element["image"]}
             index++
         }
 
