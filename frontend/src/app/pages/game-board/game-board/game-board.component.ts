@@ -171,7 +171,7 @@ export class GameBoardComponent implements OnInit {
         }
 
         this.updateGameBoard(response.body);
-        if (response.body.nextPlayer == this.userInGame) {
+        if (response.body.nextPlayer == this.userInGame && response.body.status != 'notStarted') {
           this.highlightMoves(response.body.allowedMoves);
         }
         this.setOwnPlayerColorInfo();
