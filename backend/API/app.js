@@ -384,18 +384,19 @@ app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
 
         if (result['0']['status'] !== 'notStarted') return response.sendStatus(403)
 
-        if (result[0]['Player1'] === response.locals.user){
+        if (result[0]['Player1'] === response.locals.user['userid']){
             await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
         }
-        else if (result[0]['Player2'] === response.locals.user){
+        else if (result[0]['Player2'] === response.locals.user['userid']){
             await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
         }
-        else if (result[0]['Player3'] === response.locals.user){
+        else if (result[0]['Player3'] === response.locals.user['userid']){
             await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
         }
-        else if (result[0]['Player4'] === response.locals.user){
+        else if (result[0]['Player4'] === response.locals.user['userid']){
             await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
         }
+        else return response.sendStatus(308)
         response.sendStatus(200)
     }catch (err){
         console.log(err)
