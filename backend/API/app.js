@@ -141,7 +141,7 @@ app.post('/api/loginVerification', async (request, response) => {
             await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
             response.status(200).send({userid: answer.userid, "token" : token})
         }catch (err) {
-            response.send(500)
+            response.sendStatus(500)
             console.log(err);
         }
 
