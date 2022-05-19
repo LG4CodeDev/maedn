@@ -59,7 +59,6 @@ function eventsHandler(request, response) {
     clients.push(newClient);
 
     request.on('close', () => {
-        //console.log(`${clientId} Connection closed`);
         clients = clients.filter(client => client.id !== clientId);
     });
 }
@@ -80,8 +79,6 @@ async function sendGame(request, response) {
             for(const client of game){
                 clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
             }
-
-            //console.log(clientStreams)
 
             let body = JSON.stringify(data)
 
@@ -106,7 +103,6 @@ async function createGame(request, response){
         clients : [clientID]
     }
     games.push(newGame)
-    //console.log(games)
     return  response.json(gameID)
 }
 
