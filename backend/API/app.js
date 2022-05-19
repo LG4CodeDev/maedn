@@ -34,7 +34,7 @@ const pool =
     })
 
 
-app.use(express.raw({ type: 'image/*', limit: '6.9mb' }));
+app.use(express.raw({ type: 'image/png', limit: '6.9mb' }));
 app.use(express.json(), cors());
 app.use(bodyParser.urlencoded({extended: false}));
 
