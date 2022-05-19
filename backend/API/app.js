@@ -760,14 +760,16 @@ async function makeMove(data, game, response) {
         let nextPlayer;
 
         //if Player is allowed to role again don´t change anything else set new player and Moves of player = 0
-        if (game['roleAgain']) nextPlayer = game['turn']
+
+        const isFinished = Boolean(checkFinished(newPlayerPos));
+
+        if (game['roleAgain'] || isFinished) nextPlayer = game['turn']
         else {
             nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             CountOfDoneMovesOfPlayer = 0
         }
 
         let status
-        const isFinished = Boolean(checkFinished(newPlayerPos));
         if (isFinished) {
             status = "Finished"
         }
