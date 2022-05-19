@@ -23,10 +23,12 @@
 
 .login-form-button {
   width: 100%;
+  height: 40px;
 }
 
 .register-form-button {
   width: 100%;
+  height: 40px;
 }
 
 .imagePreview{
