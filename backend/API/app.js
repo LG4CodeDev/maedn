@@ -397,6 +397,14 @@ app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
             await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
         }
         else return response.sendStatus(308)
+        result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
+
+        if (result[0]['Player1'] === null && result[0]['Player2'] === null && result[0]['Player3'] === null && result[0]['Player4'] === null){
+            await pool.query("Delete from mainGame where gameID = ?", [id])
+            const url = "https://spielehub.server-welt.com/deleteGame/" + id
+            await axios({method :'delete', url : url})
+        }
+
         response.sendStatus(200)
     }catch (err){
         console.log(err)
