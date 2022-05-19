@@ -380,7 +380,7 @@ app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
 app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
     try{
-        let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
+        let result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
 
         if (result['0']['status'] === 'notStarted') return response.sendStatus(403)
 
