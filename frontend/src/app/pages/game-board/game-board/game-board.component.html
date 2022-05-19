@@ -293,3 +293,14 @@
     </div>
   </div>
 </div>
+
+<nz-modal [(nzVisible)]="modalIsVisible" nzTitle="The Game is finished!" (nzOnCancel)="handleCancel()">
+  <ng-container *nzModalContent>
+    <div id="finishPopUp">
+
+    </div>
+  </ng-container>
+  <div *nzModalFooter>
+    <button nz-button nzType="primary" (click)="handleCancel()">Ok</button>
+  </div>
+</nz-modal>

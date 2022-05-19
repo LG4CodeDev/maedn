@@ -1,7 +1,8 @@
 import {Component, ElementRef, Inject, OnInit, Renderer2} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {DOCUMENT} from "@angular/common";
 import {Router} from '@angular/router';
+import {delay} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-board',
@@ -14,7 +15,6 @@ export class GameBoardComponent implements OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private router: Router,
-    private snackbar: SnackbarService,
     @Inject(DOCUMENT) private document: Document,
   ) {
   }
@@ -22,11 +22,9 @@ export class GameBoardComponent implements OnInit {
   activeToken: string;
   apiToken: string;
   gameID: number;
-  userID: number;
+  userID: number;   //number of own user
   userInGame: string; //player1 - player 4
   whosTurn: string; //player1 - player4
-  highlightetFields: any;
-
 
   //TODO: Display what to do now (wait, throw dice, pick field)
   //TODO: always spin cube if its your turn, roll just stops it :)
@@ -39,14 +37,12 @@ export class GameBoardComponent implements OnInit {
       this.apiToken = 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token;
     } catch (e) {
       //todo: error handling, real login check
-      this.router.navigate(['/login']);
+      await this.router.navigate(['/login']);
     }
 
-
-    this.highlightetFields = [];
     let parent = this;
     if (!!window.EventSource) {
-      var source = new EventSource('https://spielehub.server-welt.com/startStream/' + this.userID.toString());
+      let source = new EventSource('https://spielehub.server-welt.com/startStream/' + this.userID.toString());
       source.addEventListener('message', function (e) {
         if (e.data != []) {
           parent.updateGameBoard(JSON.parse(e.data));
@@ -67,24 +63,34 @@ export class GameBoardComponent implements OnInit {
         },
       )
     }
-
+    //create game board
     this.fillGridWithField();
 
+    //this.modalIsVisible = true;
+    //document.getElementById('finishPopUp').innerHTML = '.. won, you lost!'
+    //createFirework();
+    //get on refresh all game information
     await this.getMainGame();
   }
 
+  /**
+   * update complete gameboard with new information (playerpositions, whosTurn, gameInfo etc
+   * checks for winn or not started
+   * @param response has to be body from api call or sse
+   */
   updateGameBoard(response: any) {
-    //todo: fix bug that if no move possible, next player is highlightet even if cube still spinning
     this.setPlayerPosition(response);
     if (response.status == 'Finished') {
-      //console.log('some just won the game ');
       this.updateDisplayStatus('Jemand hat gewonnen, Spiel vorbei');
-      //TODO: Win animation
-    } else if (response.status == 'notStarted') {
-      //console.log('the game hasn\'t started yet');
+      //document.getElementById('finishPopUp').innerHTML = '.. won, you lost!'
+      this.modalIsVisible = true;
+      createFirework();
+    }
+    else if (response.status == 'notStarted') {
       this.updateDisplayStatus('Das Spiel hat noch nicht angefangen, Warte auf Spieler');
       document.getElementById('whatsMyGameID').innerHTML = this.gameID.toString();
-    } else {
+    }
+    else {
       this.updateDisplayStatus('Make a Move');
       this.whosTurn = response.nextPlayer;
       this.updateGameInfo();
@@ -93,6 +99,10 @@ export class GameBoardComponent implements OnInit {
     }
   }
 
+  /**
+   * set info of state on info panel on the left
+   * @param message innerHTML that shall be set
+   */
   updateDisplayStatus(message: string) {
     document.getElementById('whatsTheState').innerHTML = message;
   }
@@ -275,19 +285,23 @@ export class GameBoardComponent implements OnInit {
             //remove all event listeners of fields so it can't be send again
             if (json[0] != null && json[0] != '' && json[0] != 'null') {
               let toRemoveOnClick = document.getElementById(json[0]);
-              toRemoveOnClick.onclick = () => {};
+              toRemoveOnClick.onclick = () => {
+              };
             }
             if (json[1] != null && json[1] != '' && json[1] != 'null') {
               let toRemoveOnClick = document.getElementById(json[1]);
-              toRemoveOnClick.onclick = () => {};
+              toRemoveOnClick.onclick = () => {
+              };
             }
             if (json[2] != null && json[2] != '' && json[2] != 'null') {
               let toRemoveOnClick = document.getElementById(json[2]);
-              toRemoveOnClick.onclick = () => {};
+              toRemoveOnClick.onclick = () => {
+              };
             }
             if (json[3] != null && json[3] != '' && json[3] != 'null') {
               let toRemoveOnClick = document.getElementById(json[3]);
-              toRemoveOnClick.onclick = () => {};
+              toRemoveOnClick.onclick = () => {
+              };
             }
             console.log(response);
           }
@@ -572,4 +586,78 @@ export class GameBoardComponent implements OnInit {
     boardWritting.classList.add('boardWrittingBottom');
     this.renderer.appendChild(document.getElementById('br_r_1_c_2'), boardWritting);
   }
+
+  //here is the code for the modal
+
+  modalIsVisible: boolean;
+
+  handleCancel() {
+    this.modalIsVisible = false;
+  }
 }
+
+//firework win animation:
+//from 'https://codepen.io/kitjenson/pen/oNGMgWo'
+
+let fw_spread = 180 // how wide the particles expand
+let fw_scale = 10 // how large the particles get
+let fw_launch_rate = 100 // in milliseconds
+
+function createFirework() {
+  let f = document.createElement('div')
+  f.className = 'firework'
+  f.style.width = '3px'
+  f.style.height = '3px'
+  f.style.position = 'absolute'
+  let fx = Math.random() * 100 + '%'
+  f.style.left = Math.random() * 33 + 33 + '%'
+  f.style.top = '100%'
+  let clr = 'hsl(' + Math.random() * 360 + 'deg,100%,50%)'
+  // f.style.backgroundColor = clr
+  f.style.transition = 'ease-out ' + (Math.random() * 3) + 1 + 's'
+
+  document.getElementById('gameboard').appendChild(f);
+//  document.body.appendChild(f)
+
+  for (let i = 0; i < 25; i++) {
+    let p = document.createElement('div')
+    p.className = 'particle'
+    p.style.width = '100%'
+    p.style.height = '100%'
+    p.style.backgroundColor = clr
+    p.style.position = 'absolute'
+    p.style.left = '0'
+    p.style.top = '0'
+    p.style.transition = '.5s'
+    f.appendChild(p)
+  }
+
+  setTimeout(function () {
+    f.style.top = Math.random() * 50 + 5 + '%'
+    f.style.left = fx
+    f.ontransitionend = function () {
+      let p = document.querySelectorAll('.particle')
+      p.forEach(function (elm: any) {
+        let x = Math.random() < .5 ? Math.random() * fw_spread : (-1) * Math.random() * fw_spread
+        let y = Math.random() < .5 ? Math.random() * fw_spread : (-1) * Math.random() * fw_spread
+        elm.style.left = x + 'px'
+        elm.style.top = y + 'px'
+        elm.style.opacity = '0'
+        elm.style.transform = 'scale(' + fw_scale + ')'
+        elm.style.borderRadius = '50%'
+        elm.style.filter = 'blur(1px)'
+        elm.ontransitionend = function () {
+          this.remove()
+        }
+      })
+      setTimeout(function () {
+        f.remove()
+      }, 1000)
+    }
+  }, 100)
+
+  setTimeout(createFirework, fw_launch_rate)
+}
+
+// window.addEventListener('click', createFirework)
+
