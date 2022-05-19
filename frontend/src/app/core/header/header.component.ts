@@ -26,12 +26,12 @@ export class HeaderComponent  {
   handleOk() {
     let gameID = JSON.parse(localStorage.getItem('currentGame')).gameID;
     if(gameID != null && gameID != ''){
-      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + gameID, {
-          headers: {
-            'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
-          },
-          observe: "response",
+      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + gameID, {}, {
+        headers: {
+          'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
+        observe: "response",
+      },
       ).subscribe(response => {
         if(response.status == 200) {
           this.snackBar.showSnackBar('green', 'Leave successful');
