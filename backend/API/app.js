@@ -271,7 +271,6 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         if (!roleAgain && (listOfMoves.toString() === [null, null, null, null].toString() || listOfMoves.toString() === ",,,")) {
             let nextPlayer = game['turn'].slice(0, -1) + ((parseInt(game['turn'].slice(-1)) % 4) + 1).toString()
             let result;
-            //console.log([game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")])
             await axios({
                 method: 'post',
                 url: "https://spielehub.server-welt.com/sendGame",
@@ -286,8 +285,6 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
             }).then(function (response){
                 result = response
             })
-            //console.log(result)
-
             let zero = 0
             await pool.query("UPDATE mainGame SET  allowedMoves = ? , roleAgain = ?,turn = ?, movesOfPerson = ? where gameID = ?", [stringOfMoves, roleAgain, nextPlayer, zero, id]);
         } else {
@@ -384,8 +381,6 @@ app.put('/api/leaveGame/:gamID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
     try{
         let result = await pool.query("Select Player1,Player2,Player3,Player4 from mainGame where gameID = ?", [id])
-
-        let game = result[0]
 
         if (result[0]['Player1'] === request.locals.user){
             await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
@@ -534,8 +529,6 @@ async function joinGame(response, joiningGame, player) {
 async function CreateGame(player1) {
     try {
         const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
-
-        console.log(result.warningStatus)
 
         if (result.warningStatus === 0) {
             let gameID = parseInt(result.insertId.toString())
@@ -795,8 +788,6 @@ async function makeMove(data, game, response) {
             }).then(function (response){
                 result = response
             })
-
-            console.log(result)
             if (result.status === 500 )return response.status(500).send("Error in sending Messages")
             else if (result.status === 300)return response.status(500).send("Game does not exist")
         }catch (err) {
