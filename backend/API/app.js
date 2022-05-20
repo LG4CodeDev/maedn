@@ -405,14 +405,13 @@ app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
             await axios({method :'delete', url : url})
         }
 
-        response.sendStatus(200)
+        response.status(200).send("Successfully leaved the game")
     }catch (err){
         console.log(err)
         return response.sendStatus(500)
     }
 
 })
-
 
 app.put('/api/startGame/:gameID', validateAccess, async (request, response) => {
     let id = request.params.gameID;
@@ -898,6 +897,7 @@ async function checkUniquenessOfEmail(request, response, next) {
         console.log(err)
     }
 }
+
 async function checkUniquenessOfEmailPersonal(request, response, next) {
     try {
         const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.body.id]);
