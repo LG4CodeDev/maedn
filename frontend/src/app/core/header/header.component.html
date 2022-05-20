@@ -1,7 +1,7 @@
 <div class="header" xmlns="http://www.w3.org/1999/html">
   <div class="header-nav left">
     <div id="lobby" *ngIf="this.router.url !== '/lobby' && this.router.url !== '/login'">
-      <button id="lobbyBtn" (click)="isVisible = true">Lobby</button>
+      <button id="lobbyBtn" (click)="openPopup()">Lobby</button>
     </div>
   </div>
   <div class="header-nav right">
@@ -11,14 +11,24 @@
   </div>
 </div>
 
-<nz-modal [(nzVisible)]="isVisible" nzTitle="Back to Lobby?" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="isVisibleGame" nzTitle="Back to Lobby?" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <ng-container *nzModalContent>
     Do you want to leave the game, too?
   </ng-container>
   <div *nzModalFooter>
     <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
-    <button nz-button (click)="handleNo()">Lobby</button>
-    <button nz-button nzType="primary" (click)="handleOk()">Leave</button>
+    <button nz-button (click)="handleOk()" style="border-color: red; color: red">Leave</button>
+    <button nz-button nzType="primary" (click)="handleNo()">Lobby</button>
+  </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleNoGame" nzTitle="Back to Lobby?" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent>
+    Do you want to go back to Lobby?
+  </ng-container>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+    <button nz-button nzType="primary" (click)="handleNo()">Lobby</button>
   </div>
 </nz-modal>
 

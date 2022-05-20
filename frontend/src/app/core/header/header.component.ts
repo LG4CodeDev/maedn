@@ -9,7 +9,8 @@ import {SnackBarService} from "../services/snackbar.service";
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent  {
-  isVisible: boolean;
+  isVisibleGame: boolean;
+  isVisibleNoGame: boolean;
 
   constructor(public router: Router, private http: HttpClient, private snackBar: SnackBarService) {
   }
@@ -20,13 +21,14 @@ export class HeaderComponent  {
   }
 
   handleCancel() {
-    this.isVisible = false;
+    this.isVisibleGame = false;
+    this.isVisibleNoGame = false;
   }
 
   handleOk() {
-    // let gameID = JSON.parse(localStorage.getItem('currentGame'));
-    if(true){
-      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + 125, {}, {
+    let game = JSON.parse(localStorage.getItem('currentGame')).gameID;
+    if(JSON.parse(localStorage.getItem('currentGame')).gameID) {
+      this.http.put<any>('https://spielehub.server-welt.com/api/leaveGame/' + game, {}, {
         headers: {
           'authorization': "Bearer " + JSON.parse(localStorage.getItem('currentUser')).token,
         },
@@ -34,6 +36,7 @@ export class HeaderComponent  {
       },
       ).subscribe(response => {
         if(response.status == 200) {
+          localStorage.removeItem('currentGame');
           this.snackBar.showSnackBar('green', 'Leave successful');
         }else {
           this.snackBar.showSnackBar('red', 'Something went wrong');
@@ -42,12 +45,22 @@ export class HeaderComponent  {
     }else {
       this.snackBar.showSnackBar('yellow', 'No ongoing matches');
     }
-    this.isVisible = false;
+    this.isVisibleGame = false;
+    this.isVisibleNoGame = false;
     this.router.navigate(['/lobby']);
   }
 
   handleNo() {
-    this.isVisible = false;
+    this.isVisibleGame = false;
+    this.isVisibleNoGame = false;
     this.router.navigate(['/lobby']);
+  }
+
+  openPopup() {
+    if(localStorage.getItem('currentGame')){
+      this.isVisibleGame = true;
+    }else {
+      this.isVisibleNoGame = true;
+    }
   }
 }

@@ -10,9 +10,9 @@
   aspect-ratio: 0.7;
   max-width: 500px;
   min-width: 300px;
-  padding: 0px 10px 10px 10px;
   overflow-y: auto;
   overflow-x: clip;
+  padding: 0!important;
 }
 
 ::-webkit-scrollbar-thumb{
