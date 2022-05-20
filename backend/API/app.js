@@ -293,9 +293,9 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
         }
 
         response.status(200).send({
-            move: {dice: diceResult, fields: listOfMoves},
-            roleAgain: roleAgain,
-            currentPlayer: game['turn']
+            "move": {dice: diceResult, fields: listOfMoves},
+            "roleAgain": roleAgain,
+            "currentPlayer": game['turn']
         })
 
     } catch (err) {
