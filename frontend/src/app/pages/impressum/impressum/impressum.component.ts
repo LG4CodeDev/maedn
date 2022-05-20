@@ -26,12 +26,7 @@ export class ImpressumComponent implements OnInit {
       '<h2 style="color: white;">Kontakt</h2>\n' +
       '<p class="text">Tel. +49 711 1849 4513<br />\n' +
       'Fax +49 711 1849 4510<br />\n' +
-      'E-Mail: <br />\n' +
-      '<div style="margin-left: 20px">inf20142@lehre.dhbw-stuttgart.de,<br />\n' +
-      'inf20129@lehre.dhbw-stuttgart.de,<br />\n' +
-      'inf20086@lehre.dhbw-stuttgart.de, <br />\n' +
-      'inf20161@lehre.dhbw-stuttgart.de, <br />\n' +
-      'inf20005@lehre.dhbw-stuttgart.de </div></p>\n' +
+      'E-Mail: <a href="mailto:lg4codedev@gmail.com">lg4codedev@gmail.com</a> <br />\n' +
       '\n' +
       '<p class="text">Quelle: <a href="https://www.e-recht24.de/impressum-generator.html">https://www.e-recht24.de/impressum-generator.html</a></p>';
   }

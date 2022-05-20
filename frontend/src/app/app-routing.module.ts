@@ -29,6 +29,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/impressum/impressum.module').then(m => m.ImpressumModule)
   },
   {
+    path: 'dsgvo',
+    loadChildren: () => import('./pages/dsgvo/dsgvo.module').then(m => m.DsgvoModule)
+  },
+  {
     path: '**',
     redirectTo: '404'
   }

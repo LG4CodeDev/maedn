@@ -19,6 +19,9 @@ export class FooterComponent implements OnInit {
     document.getElementById('impressumBtn').addEventListener('click', () => {
       this.router.navigate(['/impressum']);
     });
+    document.getElementById('dsgvoBtn').addEventListener('click', () => {
+      this.router.navigate(['/dsgvo']);
+    });
   }
 
 }
