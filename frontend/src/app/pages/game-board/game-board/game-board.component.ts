@@ -130,7 +130,50 @@ export class GameBoardComponent implements OnInit {
     createFirework();
   }
 
+  /**
+   * shall be called at any stage of game and get correct state -> collected update function
+   * @param message body of message from sse, getMainGame or getMoves
+   */
+  updateStatusForUser(message: any){
+    console.log(message);
+    //if getMoves -> dice was thrown. if body exists, move has to be made
+    if(message.move != null){
+      console.log('case: getMoves');
+      if(message.roleAgain != null && message.roleAgain != '' && message.roleAgain != 'null'){
+        if(message.roleAgain == true){
+          this.updateDisplayStatus('Kein Zug möglich, würfel nochmal!');
+        }
+        else{
+          if(message.move.fields != null && message.move.fields != ''){
+            if(message.move.fields[0] == null &&
+               message.move.fields[0] == null &&
+               message.move.fields[0] == null &&
+               message.move.fields[0] == null)
+            {
+              this.updateDisplayStatus('Kein Zug möglich!');
+            }
+            else{
+              this.updateDisplayStatus('Du bist dran, mache einen Zug!');
+            }
+          }
+        }
+      }
+    }
+    //if getMainGames
+    else if(message.allowedMoves != null){
+      console.log('case: getMainGames');
 
+    }
+    //if sse
+    else{
+      console.log('case: SSE');
+      /*if(message.status != null && message.status != 'null' && message.status != ''){
+        if(message.nextPlayer == this.userInGame){
+
+        }
+      }*/
+    }
+  }
 
   /**
    * set info of state on info panel on the left
