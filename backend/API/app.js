@@ -524,6 +524,20 @@ async function joinGame(response, joiningGame, player) {
             await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 4})
             await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [joiningGame['gameID']]);
+            await axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/sendGame",
+                data: {
+                    "gameID": joiningGame['gameID'],
+                    "msg": {
+                        "positions": [joiningGame['Position1'],joiningGame['Position2'],joiningGame['Position3'],joiningGame['Position4']],
+                        "status": joiningGame['status'],
+                        "nextPlayer": joiningGame['turn']
+                    }
+                }
+            }).then(function (response){
+                result = response
+            })
         }
         await axios({
             method: 'post',
