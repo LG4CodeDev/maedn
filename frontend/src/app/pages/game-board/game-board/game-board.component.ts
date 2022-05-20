@@ -29,8 +29,7 @@ export class GameBoardComponent implements OnInit {
   whosTurn: string; //player1 - player4
 
   //TODO: Display what to do now (wait, throw dice, pick field)
-  //TODO: always spin cube if its your turn, roll just stops it :)
-  //TODO: status 'anderer player dran'
+  //TODO: if last player joins start game and display start
 
   async ngOnInit(): Promise<void> {
     try {
@@ -130,6 +129,8 @@ export class GameBoardComponent implements OnInit {
     });
     createFirework();
   }
+
+
 
   /**
    * set info of state on info panel on the left

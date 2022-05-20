@@ -6,7 +6,7 @@
 }
 
 
-#impressumBtn {
+#impressumBtn, #dsgvoBtn {
   background-color: #000000;
   color: white;
   width: 150px;
@@ -14,12 +14,12 @@
   border: none;
 }
 
-#impressumBtn:hover {
+#impressumBtn:hover, #dsgvoBtn:hover{
   cursor: pointer;
 }
 
 
-#impressumDiv {
+#impressumDiv, #dsgvoDiv {
   height: 56px;
   display: flex;
   justify-content: center;
