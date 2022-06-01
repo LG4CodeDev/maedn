@@ -60,7 +60,11 @@ console.log = function () {
 }
 
 /*
-User stuff
+User management
+ */
+
+/*
+Endpoints
  */
 
 /*
@@ -69,7 +73,42 @@ User stuff
                 username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
             }
  */
-app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) => {
+app.post('/api/createUser', checkUniquenessOfEmail, createUser);
+
+//creates Avatar of blob and returns ID
+app.post('/api/createAvatar', createAvatar);
+
+/*
+    validates access
+    body : {email : 123@123 , password : 123}
+ */
+app.post('/api/loginVerification', loginVerification);
+
+//returns a Single user
+app.get('/api/user/:id', validateAccess, getUser)
+
+//delete User with id
+app.delete('/api/deleteUser/:id', validateAccess, deleteUser);
+
+/*
+    update user
+    body:   {
+                username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
+            }
+ */
+app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, updateUser);
+
+//returns Stats of specific player
+app.get('/api/getUserStats/:id', validateAccess, getUserStats)
+
+//returns leaderboard
+app.get('/api/MainGame/leaderboard', validateAccess, getLeaderboard)
+
+/*
+Functions of user management
+ */
+
+async function createUser(request, response){
     let user = request.body
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -79,16 +118,14 @@ app.post('/api/createUser', checkUniquenessOfEmail, async (request, response) =>
         await pool.query("INSERT INTO statsMainGame (userid) VALUES (?)", [id]);
 
         if (result.warningStatus === 0) return response.status(201).json({userid: id, username: user.username})
-        else response.sendStatus(400)
+        else return response.sendStatus(400)
     } catch (err) {
-        response.sendStatus(500);
         console.log(err);
+        return response.sendStatus(500);
     }
-});
+}
 
-
-//creates Avatar of blob and returns ID
-app.post('/api/createAvatar', async (request, response) => {
+async function createAvatar(request, response){
     let avatar = request.body
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
@@ -107,14 +144,9 @@ app.post('/api/createAvatar', async (request, response) => {
         response.sendStatus(500);
         console.log(err);
     }
-});
+}
 
-
-/*
-    validates access
-    body : {email : 123@123 , password : 123}
- */
-app.post('/api/loginVerification', async (request, response) => {
+async function loginVerification(request, response){
     let user = request.body;
     let result;
     try {
@@ -144,18 +176,15 @@ app.post('/api/loginVerification', async (request, response) => {
             }
             else {
                 return response.sendStatus(401)
-        }
+            }
         });
 
     } else {
         response.sendStatus(403)
     }
-});
+}
 
-
-
-//returns a Single user
-app.get('/api/user/:id', validateAccess, async (request, response) => {
+async function getUser(request, response){
     let id = request.params.id;
     try {
         const result = await pool.query("select userid, username, image, email, firstname, surname from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
@@ -164,10 +193,9 @@ app.get('/api/user/:id', validateAccess, async (request, response) => {
         response.sendStatus(500);
         console.log(err);
     }
-})
+}
 
-//delete User with id
-app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
+async function deleteUser(request, response){
     let id = request.params.id;
     if (id !== response.locals.user['userid']) return response.sendStatus(403)
     try {
@@ -177,15 +205,9 @@ app.delete('/api/deleteUser/:id', validateAccess, async (request, response) => {
         response.sendStatus(500);
         console.log(err);
     }
-});
+}
 
-/*
-    update user
-    body:   {
-                username : Muster, password : 1234, email : 123@123, firstname : null, surname : null, avatarID : 5/null
-            }
- */
-app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, async (request, response) => {
+async function updateUser(request, response){
     let user = request.body;
     if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -197,11 +219,9 @@ app.put('/api/updateUser', validateAccess, checkUniquenessOfEmailPersonal, async
         response.sendStatus(500);
         console.log(err);
     }
-});
+}
 
-
-//returns Stats of specific player
-app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
+async function getUserStats(request, response){
     let id = request.params.id;
     try {
         const result = await pool.query("select * from statsMainGame where userid = ?", [id]);
@@ -210,11 +230,9 @@ app.get('/api/getUserStats/:id', validateAccess, async (request, response) => {
         response.sendStatus(500);
         console.log(err);
     }
-})
+}
 
-
-//returns leaderboard
-app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>{
+async function getLeaderboard(request, response){
     try {
         let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC LIMIT 20")
         let index = 0
@@ -229,8 +247,62 @@ app.get('/api/MainGame/leaderboard', validateAccess, async (request, response)=>
         response.sendStatus(500)
         console.log(err)
     }
-})
+}
 
+async function validateAccess(request, response, next){
+    const authHeader = request.headers["authorization"]
+    let token;
+    try {
+        token = authHeader.split(" ")[1]
+    } catch (err) {
+        console.log(err)
+        token = null;
+    }
+    if (token === null) {
+        return response.status(401).send("Token not present, missing Authorization or wrong format")
+    }
+    if (token === 'API'){
+        next()
+    }
+    else{
+        let result;
+        try{
+            result = await pool.query("Select * from users where token = ?",[token])
+        }catch (err) {
+            console.log(err)
+            return response.status(500)
+        }
+        if (result[0] === undefined) {
+            return response.status(403).send("Token invalid")
+        } else {
+            response.locals.user = result[0]
+            next()
+        }
+    }
+
+}
+
+async function checkUniquenessOfEmail(request, response, next) {
+    try {
+        const result = await pool.query("select * from users where email = ?", [request.body.email]);
+        if (!result[0]) next()
+        else response.status(409).send("Username already used")
+    } catch (err) {
+        response.sendStatus(500)
+        console.log(err)
+    }
+}
+
+async function checkUniquenessOfEmailPersonal(request, response, next) {
+    try {
+        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.body.id]);
+        if (!result[0]) next()
+        else response.status(409).send("Username already used")
+    } catch (err) {
+        response.sendStatus(500)
+        console.log(err)
+    }
+}
 
 /*
 Game Logic
@@ -446,17 +518,14 @@ app.put('/api/makeMove', validateAccess, async (request, response) => {
 
 });
 
-app.delete('/api/finishGame/:id', validateAccess, async (request, response) => {
-    let id = request.params.id;
-    await finishGame(request, response, id)
-
-})
+app.delete('/api/finishGame/:id', validateAccess, finishGame)
 
 /*
 Game Logic needed Functions
  */
 
-async function finishGame(request,response, id){
+async function finishGame(request,response){
+    let id = request.params.id;
     try {
         let result = await pool.query("select * from mainGame where gameID = ?", [id]);
         let game = result[0]
@@ -866,59 +935,4 @@ function checkFinished(positions) {
         if (position[1] !== "F") return false
     }
     return true;
-}
-
-async function validateAccess(request, response, next){
-    const authHeader = request.headers["authorization"]
-    let token;
-    try {
-        token = authHeader.split(" ")[1]
-    } catch (err) {
-        console.log(err)
-        token = null;
-    }
-    if (token === null) {
-        return response.status(401).send("Token not present, missing Authorization or wrong format")
-    }
-    if (token === 'API'){
-        next()
-    }
-    else{
-        let result;
-        try{
-            result = await pool.query("Select * from users where token = ?",[token])
-        }catch (err) {
-            console.log(err)
-            return response.status(500)
-        }
-        if (result[0] === undefined) {
-            return response.status(403).send("Token invalid")
-        } else {
-            response.locals.user = result[0]
-            next()
-        }
-    }
-
-}
-
-async function checkUniquenessOfEmail(request, response, next) {
-    try {
-        const result = await pool.query("select * from users where email = ?", [request.body.email]);
-        if (!result[0]) next()
-        else response.status(409).send("Username already used")
-    } catch (err) {
-        response.sendStatus(500)
-        console.log(err)
-    }
-}
-
-async function checkUniquenessOfEmailPersonal(request, response, next) {
-    try {
-        const result = await pool.query("select * from users where email = ? and userid != ?", [request.body.email, request.body.id]);
-        if (!result[0]) next()
-        else response.status(409).send("Username already used")
-    } catch (err) {
-        response.sendStatus(500)
-        console.log(err)
-    }
 }
