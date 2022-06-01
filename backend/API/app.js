@@ -308,7 +308,30 @@ async function checkUniquenessOfEmailPersonal(request, response, next) {
 Game Logic
  */
 
-app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
+app.get('/api/getMoves/:gameID', validateAccess, getMoves);
+
+app.get('/api/getMainGame/:gameID', validateAccess, getGame);
+
+
+app.post('/api/createMainGame', validateAccess,checkIfPlayerAlreadyInGame,CreateGame);
+
+app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,joinAnyGame);
+
+app.put('/api/joinGame/:gameID', validateAccess, joinSpecificGame);
+
+app.put('/api/leaveGame/:gameID', validateAccess, leaveGame);
+
+app.put('/api/startGame/:gameID', validateAccess, startGame);
+
+app.put('/api/makeMove', validateAccess, doMove);
+
+app.delete('/api/finishGame/:id', validateAccess, finishGame)
+
+/*
+Game Logic needed Functions
+ */
+
+async function getMoves(request, response){
     let id = request.params.gameID;
     let result;
     let listOfMoves;
@@ -373,272 +396,6 @@ app.get('/api/getMoves/:gameID', validateAccess, async (request, response) => {
     } catch (err) {
         response.sendStatus(500)
         console.log(err);
-    }
-});
-
-app.get('/api/getMainGame/:gameID', validateAccess, async (request, response) => {
-    let id = request.params.gameID;
-    try {
-        const result = await pool.query("select * from mainGame where gameID = ?", [id]);
-        let positions = [result[0]['Position1'].split(","),result[0]['Position2'].split(","),result[0]['Position3'].split(","),result[0]['Position4'].split(",")]
-        response.status(200).send({"positions": positions,
-            "Player1" : result[0]['Player1'],
-            "Player2" : result[0]['Player2'],
-            "Player3" : result[0]['Player3'],
-            "Player4" : result[0]['Player4'],
-            "status" : result[0]['status'],
-            "nextPlayer" : result[0]['turn'],
-            "allowedMoves" : result[0]['allowedMoves'].split(",")})
-    } catch (err) {
-        console.log(err)
-        return response.sendStatus(500);
-    }
-
-})
-
-//creates a Game
-app.post('/api/createMainGame', validateAccess,checkIfPlayerAlreadyInGame, async (request, response) => {
-    try {
-        let result = await CreateGame(response.locals.user['userid'])
-
-        if (result === 400)response.sendStatus(400)
-        else if (result === 500) response.sendStatus(500)
-        else response.status(200).send({gameID: result, players: 1})
-
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-
-})
-
-app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,async (request, response) => {
-    let result;
-    try {
-        result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
-        if (result[0] === undefined) {
-            result = await CreateGame(response.locals.user['userid'])
-
-        if (result === 400)response.sendStatus(400)
-        else if (result === 500) response.sendStatus(500)
-        else response.status(200).send({gameID: result, players: 1})
-        } else {
-            await joinGame(response, result[0], response.locals.user['userid'])
-        }
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-
-});
-
-app.put('/api/joinGame/:gameID', validateAccess, async (request, response) => {
-    let id = request.params.gameID;
-    let result;
-    try {
-        result = await pool.query("select * from mainGame where gameID = ?", [id])
-        if (result[0] === undefined) {
-            response.status(400).send({msg: "Game does not exist"})
-        } else {
-            await joinGame(response, result[0], response.locals.user['userid'])
-        }
-
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-})
-
-app.put('/api/leaveGame/:gameID', validateAccess, async (request, response) => {
-    let id = request.params.gameID;
-    try{
-        let result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
-
-        if (result['0']['status'] !== 'notStarted') return response.sendStatus(403)
-
-        if (result[0]['Player1'] === response.locals.user['userid']){
-            await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player2'] === response.locals.user['userid']){
-            await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player3'] === response.locals.user['userid']){
-            await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player4'] === response.locals.user['userid']){
-            await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
-        }
-        else return response.sendStatus(308)
-        result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
-
-        if (result[0]['Player1'] === null && result[0]['Player2'] === null && result[0]['Player3'] === null && result[0]['Player4'] === null){
-            await pool.query("Delete from mainGame where gameID = ?", [id])
-            const url = "https://spielehub.server-welt.com/deleteGame/" + id
-            await axios({method :'delete', url : url})
-        }
-
-        response.status(200).send("Successfully leaved the game")
-    }catch (err){
-        console.log(err)
-        return response.sendStatus(500)
-    }
-
-})
-
-app.put('/api/startGame/:gameID', validateAccess, async (request, response) => {
-    let id = request.params.gameID;
-    try {
-        await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [id]);
-        response.sendStatus(200)
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-});
-
-app.put('/api/makeMove', validateAccess, async (request, response) => {
-    let data = request.body;
-    let result;
-    try {
-        result = await pool.query("select * from mainGame where gameID = ?", [data.id]);
-        let game = result[0]
-        if (game === undefined) {
-            response.status(400).send({msg: "Game does not exist"})
-        }
-
-        if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
-
-        if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
-
-        else await makeMove(data, result[0], response)
-    } catch (err) {
-        response.sendStatus(500)
-        console.log(err);
-    }
-
-});
-
-app.delete('/api/finishGame/:id', validateAccess, finishGame)
-
-/*
-Game Logic needed Functions
- */
-
-async function finishGame(request,response){
-    let id = request.params.id;
-    try {
-        let result = await pool.query("select * from mainGame where gameID = ?", [id]);
-        let game = result[0]
-        if (result[0] === undefined) {
-            return response.status(400).send({msg: "Game does not exist"})
-        }
-        if (game['status'] !== 'Finished') return response.status(400).send({"msg": "Not finished jet"})
-        let players = [game['Player1'], game['Player2'], game['Player3'], game['Player4']]
-        let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
-        for (let i = 0; i <= 3; i++) {
-            if (checkFinished(positions[i])) {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
-            } else {
-                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
-            }
-
-        }
-        await pool.query("Delete from mainGame where gameID = ?", [id])
-        const url = "https://spielehub.server-welt.com/deleteGame/" + id
-        await axios({method :'delete', url : url})
-        response.sendStatus(200);
-    } catch (err) {
-        response.sendStatus(500);
-        console.log(err);
-    }
-}
-
-async function checkIfPlayerAlreadyInGame(request, response, next) {
-    let playerID = response.locals.user['userid']
-    try {
-        let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND status != ?", [playerID,playerID,playerID,playerID, "finished"])
-        let game = result[0]
-        if(game !== undefined){
-            if(game['Player1'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player1"})
-            else if(game['Player2'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player2"})
-            else if(game['Player3'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player3"})
-            else return response.status(200).send({gameID: game['gameID'], players: "Player4"})
-        }
-        else next()
-    }catch (err){
-        console.log(err)
-        return response.status(500).send("Player already in Game")
-    }
-}
-
-async function joinGame(response, joiningGame, player) {
-    try {
-        if (joiningGame['Player1'] == null)
-        {
-            await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
-            response.status(200).send({gameID: joiningGame['gameID'], players: 1})
-        }
-        else if (joiningGame['Player2'] == null)
-        {
-            await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
-            response.status(200).send({gameID: joiningGame['gameID'], players: 2})
-        }
-        else if (joiningGame['Player3'] == null)
-        {
-            await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
-            response.status(200).send({gameID: joiningGame['gameID'], players: 3})
-        }
-        else if (joiningGame['Player4'] == null)
-        {
-            await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
-            response.status(200).send({gameID: joiningGame['gameID'], players: 4})
-            await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [joiningGame['gameID']]);
-            await axios({
-                method: 'post',
-                url: "https://spielehub.server-welt.com/sendGame",
-                data: {
-                    "gameID": joiningGame['gameID'],
-                    "msg": {
-                        "positions": [joiningGame['Position1'],joiningGame['Position2'],joiningGame['Position3'],joiningGame['Position4']],
-                        "status": joiningGame['status'],
-                        "nextPlayer": joiningGame['turn']
-                    }
-                }
-            }).then(function (response){
-                result = response
-            })
-        }
-        await axios({
-            method: 'post',
-            url: "https://spielehub.server-welt.com/joinGame",
-            data: {"gameID": joiningGame['gameID'], "clientID": player}
-        })
-    }catch (err){
-        console.log(err)
-        response.sendStatus(500)
-    }
-}
-
-async function CreateGame(player1) {
-    try {
-        const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [player1]);
-
-        if (result.warningStatus === 0) {
-            let gameID = parseInt(result.insertId.toString())
-            await axios({
-                method: 'post',
-                url: "https://spielehub.server-welt.com/createGame",
-                data: {
-                    "gameID": gameID,
-                    "clientID": player1
-                }
-            })
-            return gameID
-        }
-        else return 400
-    }catch (err){
-        console.log(err)
-        return 500
     }
 }
 
@@ -801,6 +558,259 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         }
     }
     return true;
+}
+
+
+
+async function joinAnyGame(request,response){
+    let result;
+    try {
+        result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
+        if (result[0] === undefined) {
+            result = await CreateGame(response.locals.user['userid'])
+
+            if (result === 400)response.sendStatus(400)
+            else if (result === 500) response.sendStatus(500)
+            else response.status(200).send({gameID: result, players: 1})
+        } else {
+            await joinGame(response, result[0], response.locals.user['userid'])
+        }
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+}
+
+async function joinSpecificGame(request, response){
+    let id = request.params.gameID;
+    let result;
+    try {
+        result = await pool.query("select * from mainGame where gameID = ?", [id])
+        if (result[0] === undefined) {
+            response.status(400).send({msg: "Game does not exist"})
+        } else {
+            await joinGame(response, result[0], response.locals.user['userid'])
+        }
+
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+}
+
+async function checkIfPlayerAlreadyInGame(request, response, next) {
+    let playerID = response.locals.user['userid']
+    try {
+        let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND status != ?", [playerID,playerID,playerID,playerID, "finished"])
+        let game = result[0]
+        if(game !== undefined){
+            if(game['Player1'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player1"})
+            else if(game['Player2'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player2"})
+            else if(game['Player3'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player3"})
+            else return response.status(200).send({gameID: game['gameID'], players: "Player4"})
+        }
+        else next()
+    }catch (err){
+        console.log(err)
+        return response.status(500).send("Player already in Game")
+    }
+}
+
+async function joinGame(response, joiningGame, player) {
+    try {
+        if (joiningGame['Player1'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 1})
+        }
+        else if (joiningGame['Player2'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 2})
+        }
+        else if (joiningGame['Player3'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 3})
+        }
+        else if (joiningGame['Player4'] == null)
+        {
+            await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
+            response.status(200).send({gameID: joiningGame['gameID'], players: 4})
+            await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [joiningGame['gameID']]);
+            await axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/sendGame",
+                data: {
+                    "gameID": joiningGame['gameID'],
+                    "msg": {
+                        "positions": [joiningGame['Position1'],joiningGame['Position2'],joiningGame['Position3'],joiningGame['Position4']],
+                        "status": joiningGame['status'],
+                        "nextPlayer": joiningGame['turn']
+                    }
+                }
+            }).then(function (response){
+                result = response
+            })
+        }
+        await axios({
+            method: 'post',
+            url: "https://spielehub.server-welt.com/joinGame",
+            data: {"gameID": joiningGame['gameID'], "clientID": player}
+        })
+    }catch (err){
+        console.log(err)
+        response.sendStatus(500)
+    }
+}
+
+
+
+async function getGame(request,response){
+    let id = request.params.gameID;
+    try {
+        const result = await pool.query("select * from mainGame where gameID = ?", [id]);
+        let positions = [result[0]['Position1'].split(","),result[0]['Position2'].split(","),result[0]['Position3'].split(","),result[0]['Position4'].split(",")]
+        return response.status(200).send({"positions": positions,
+            "Player1" : result[0]['Player1'],
+            "Player2" : result[0]['Player2'],
+            "Player3" : result[0]['Player3'],
+            "Player4" : result[0]['Player4'],
+            "status" : result[0]['status'],
+            "nextPlayer" : result[0]['turn'],
+            "allowedMoves" : result[0]['allowedMoves'].split(",")})
+    } catch (err) {
+        console.log(err)
+        return response.sendStatus(500);
+    }
+}
+
+
+
+async function finishGame(request,response){
+    let id = request.params.id;
+    try {
+        let result = await pool.query("select * from mainGame where gameID = ?", [id]);
+        let game = result[0]
+        if (result[0] === undefined) {
+            return response.status(400).send({msg: "Game does not exist"})
+        }
+        if (game['status'] !== 'Finished') return response.status(400).send({"msg": "Not finished jet"})
+        let players = [game['Player1'], game['Player2'], game['Player3'], game['Player4']]
+        let positions = [game['Position1'].split(","), game['Position2'].split(","), game['Position3'].split(","), game['Position4'].split(",")]
+        for (let i = 0; i <= 3; i++) {
+            if (checkFinished(positions[i])) {
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, wins = wins +1, winningRate = wins/gamesPlayed , level = level + 1 where userid = ?", [players[i]])
+            } else {
+                await pool.query("UPDATE statsMainGame SET gamesPlayed = gamesPlayed + 1, winningRate = wins/gamesPlayed , level = level + 0.3 where userid = ?", [players[i]])
+            }
+
+        }
+        await pool.query("Delete from mainGame where gameID = ?", [id])
+        const url = "https://spielehub.server-welt.com/deleteGame/" + id
+        await axios({method :'delete', url : url})
+        response.sendStatus(200);
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+}
+
+
+
+async function CreateGame(request, response) {
+    try {
+        const result = await pool.query("INSERT INTO mainGame (Player1) VALUES (?)", [response.locals.user['userid']]);
+
+        if (result.warningStatus === 0) {
+            let gameID = parseInt(result.insertId.toString())
+            await axios({
+                method: 'post',
+                url: "https://spielehub.server-welt.com/createGame",
+                data: {
+                    "gameID": gameID,
+                    "clientID": response.locals.user['userid']
+                }
+            })
+            return response.status(200).send({gameID: result, players: 1})
+        }
+        else return response.sendStatus(400)
+    }catch (err){
+        console.log(err)
+        return response.sendStatus(500)
+    }
+}
+
+
+async function leaveGame(request, response){
+    let id = request.params.gameID;
+    try{
+        let result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
+
+        if (result['0']['status'] !== 'notStarted') return response.sendStatus(403)
+
+        if (result[0]['Player1'] === response.locals.user['userid']){
+            await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player2'] === response.locals.user['userid']){
+            await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player3'] === response.locals.user['userid']){
+            await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
+        }
+        else if (result[0]['Player4'] === response.locals.user['userid']){
+            await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
+        }
+        else return response.sendStatus(308)
+        result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
+
+        if (result[0]['Player1'] === null && result[0]['Player2'] === null && result[0]['Player3'] === null && result[0]['Player4'] === null){
+            await pool.query("Delete from mainGame where gameID = ?", [id])
+            const url = "https://spielehub.server-welt.com/deleteGame/" + id
+            await axios({method :'delete', url : url})
+        }
+
+        response.status(200).send("Successfully leaved the game")
+    }catch (err){
+        console.log(err)
+        return response.sendStatus(500)
+    }
+}
+
+
+async function startGame(request, response){
+    let id = request.params.gameID;
+    try {
+        await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [id]);
+        response.sendStatus(200)
+    } catch (err) {
+        response.sendStatus(500);
+        console.log(err);
+    }
+}
+
+
+
+
+async function doMove(request, response){
+    let data = request.body;
+    let result;
+    try {
+        result = await pool.query("select * from mainGame where gameID = ?", [data.id]);
+        let game = result[0]
+        if (game === undefined) {
+            response.status(400).send({msg: "Game does not exist"})
+        }
+
+        if (game[game['turn']] !== response.locals.user['userid']) return response.sendStatus(403)
+
+        if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
+
+        else await makeMove(data, result[0], response)
+    } catch (err) {
+        response.sendStatus(500)
+        console.log(err);
+    }
 }
 
 function kickFigures(positions, data){
