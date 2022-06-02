@@ -8,7 +8,7 @@ export class SnackBarService {
   constructor() {
   }
 
-
+  /*Display snackbar with one of three colors (red, yellow, green) and a custom message*/
   showSnackBar(color: String, message: string) {
     var x = document.getElementById("snackbar");
     x.className = color +" show";

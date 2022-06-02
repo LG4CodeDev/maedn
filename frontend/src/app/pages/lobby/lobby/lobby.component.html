@@ -133,6 +133,7 @@
   <!--      END OF STATISTICS-->
 </div>
 
+<!-- Join Game with ID PopUp-->
 <nz-modal [(nzVisible)]="isVisible" nzTitle="Join Game" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <ng-container *nzModalContent>
     <input type="number" nz-input [formControl]="joinGameID" placeholder="ID"/>

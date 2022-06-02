@@ -17,17 +17,18 @@ export class LobbyComponent implements OnInit {
 
   joinIDForm!: FormGroup;
   token: String;
-  userID: number;
   updateAccount!: FormGroup;
   imageURL = "assets/avatar.jpeg";
   isVisible: boolean;
 
   ngOnInit(): void {
+    /*If there is no user logged in the user should be redirected to the login page*/
     if(localStorage.getItem('currentUser')){
 
     }else {
       this.router.navigate(['/login']);
     }
+
     this.joinIDForm = this.fb.group({
       joinGameID: ['', [Validators.required]],
     });
@@ -40,16 +41,20 @@ export class LobbyComponent implements OnInit {
       password: ['', [Validators.required]],
       retypePassword: [''],
     });
+
+    /*Initial fill of visible fields*/
     this.getStats();
     this.getUserInfo();
     this.getLeaderboard();
   }
 
+  /*Get entered ID from Form "Join game with ID"*/
   get joinGameID() {
     return this.joinIDForm.get('joinGameID') as FormControl;
   }
 
-
+/*Calls API to join into a random open game.
+* If successful, redirect to gameboard.*/
 joinRandom(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame', {},{
         headers: {
@@ -68,6 +73,8 @@ joinRandom(): void {
     });
   }
 
+  /*Calls API to join a specific game with a specific previously entered ID.
+  * If successful, redirect to gameboard*/
   joinID(): void {
     this.http.put<any>('https://spielehub.server-welt.com/api/joinGame/' + this.joinGameID.value, {},{
         headers: {
@@ -86,6 +93,8 @@ joinRandom(): void {
     });
   }
 
+  /*Calls API to create a new game and also join the new game.
+  * If successful, join the game and redirect to gameboard*/
   createGame(): void {
     this.http.post<any>('https://spielehub.server-welt.com/api/createMainGame', {}, {
         headers: {
@@ -104,6 +113,8 @@ joinRandom(): void {
     });
   }
 
+  /*Calls API to get statistical data from current user.
+  * Places received data inside of the specific html fields on the right side of the website.*/
   getStats(): void {
     this.http.get<any>('https://spielehub.server-welt.com/api/getUserStats/' + JSON.parse(localStorage.getItem('currentUser')).userid, {
 
@@ -126,6 +137,9 @@ joinRandom(): void {
     });
   }
 
+  /*Calls API to get all available information on the logged in user.
+  * Fills the according html fields with available data to display.
+  * Also fills the formfields responsible to update the useraccount*/
   getUserInfo(): void {
     this.http.get<any>('https://spielehub.server-welt.com/api/user/' + JSON.parse(localStorage.getItem('currentUser')).userid, {
         headers: {
@@ -148,6 +162,7 @@ joinRandom(): void {
     });
   }
 
+  /*Calls API to get the current leaderboard data*/
   getLeaderboard(): void{
     this.http.get<any>('https://spielehub.server-welt.com/api/mainGame/leaderboard', {
         headers: {
@@ -160,6 +175,8 @@ joinRandom(): void {
     });
   }
 
+  /*Responsible for dynamically creating the leaderboard table on the left handed side of the lobby.
+  * Fills table with available data.*/
   buildLeaderboard(body: any): void {
     let lb = document.getElementById('leaderboard');
     lb.childNodes.forEach((element) => {
@@ -223,6 +240,8 @@ joinRandom(): void {
     lb.appendChild(userWrapper);
   }
 
+  /*Same function as in login-page.
+  * Responsible for preview of account image on changes and encoding to base64 string.*/
   showPreview($event: Event) {
     const file = ($event.target as HTMLInputElement).files[0];
 
@@ -237,17 +256,23 @@ joinRandom(): void {
     reader.readAsDataURL(file)
   }
 
+  /*Responsible to show update useraccount form and hide current user info*/
   showUpdate() {
     document.getElementById("update-form").style.display = "block";
     document.getElementById("userInformation").style.display = "none";
   }
 
+  /*Responsible to hide update useraccount form and show user info again*/
   cancel() {
     document.getElementById("update-form").style.display = "none";
     document.getElementById("userInformation").style.display = "block";
     this.snackBar.showSnackBar('yellow', 'Update canceled!');
   }
 
+  /*Called if user submits update account form.
+  * Firstly uploads the avater picture and waits for the response with the according avatar id.
+  * Tries to update all user data afterwards. Everything will be updated, so every formfield must be filled.
+  * On success the update form will be hidden again and all relevant parts where something could have changed like leaderboard and userinfo are updated again.d*/
   onUpdate() {
     var avatarID = null;
     if (this.updateAccount.valid) {
@@ -295,14 +320,17 @@ joinRandom(): void {
     }
   }
 
+  /*Shows dialog for join game with ID id*/
   openDialog() {
     this.isVisible = true;
   }
 
+  /*Closes dialog of join game with id on cancel button*/
   handleCancel() {
     this.isVisible = false;
   }
-
+  /*Initiates join game with id sequence after dialog submit.
+  * Hides dialog again.*/
   handleOk() {
     this.joinID();
     this.isVisible = false;

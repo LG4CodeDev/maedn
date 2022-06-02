@@ -11,6 +11,7 @@
   </div>
 </div>
 
+<!-- Back to Lobby popup with leave game option-->
 <nz-modal [(nzVisible)]="isVisibleGame" nzTitle="Back to Lobby?" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <ng-container *nzModalContent>
     Do you want to leave the game, too?
@@ -22,6 +23,7 @@
   </div>
 </nz-modal>
 
+<!-- Back to lobby popup without leave game option-->
 <nz-modal [(nzVisible)]="isVisibleNoGame" nzTitle="Back to Lobby?" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <ng-container *nzModalContent>
     Do you want to go back to Lobby?

@@ -15,16 +15,21 @@ export class HeaderComponent  {
   constructor(public router: Router, private http: HttpClient, private snackBar: SnackBarService) {
   }
 
+  /*Redirect to login and clear user data from local storage*/
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
 
+  /*Cancel of back to lobby popups
+  * Hides popup.*/
   handleCancel() {
     this.isVisibleGame = false;
     this.isVisibleNoGame = false;
   }
 
+  /*Tries to leave current joined game stored in local storage.
+  * Hides popup afterwards.*/
   handleOk() {
     let game = JSON.parse(localStorage.getItem('currentGame')).gameID;
     if(JSON.parse(localStorage.getItem('currentGame')).gameID) {
@@ -50,12 +55,14 @@ export class HeaderComponent  {
     this.router.navigate(['/lobby']);
   }
 
+  /*Hides back to lobby popup and redirects to lobby without leaving any game.*/
   handleNo() {
     this.isVisibleGame = false;
     this.isVisibleNoGame = false;
     this.router.navigate(['/lobby']);
   }
 
+  /*Shows specific popup based if the user is part of a game or not.*/
   openPopup() {
     if(localStorage.getItem('currentGame')){
       this.isVisibleGame = true;

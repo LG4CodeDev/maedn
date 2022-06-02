@@ -169,6 +169,7 @@
 #cube.show-5 { transform: translateZ(-100px) rotateX( -90deg); }
 #cube.show-6 { transform: translateZ(-100px) rotateY(-180deg); }
 
+/*Different spin animations for each rolled number to end smoothly on the result.*/
 #cube.is-spinning-1 {
   animation: spinCube-1 3s linear;
 }
@@ -254,6 +255,7 @@
   text-align: center;
 }
 
+/*Design of cube faces*/
 .cube__face--1  { background: white; opacity: 1; border: 4px solid black; }
 .cube__face--2  { background: white; opacity: 1; border: 4px solid black; }
 .cube__face--3  { background: white; opacity: 1; border: 4px solid black; }
@@ -261,6 +263,7 @@
 .cube__face--5  { background: white; opacity: 1; border: 4px solid black; }
 .cube__face--6  { background: white; opacity: 1; border: 4px solid black; }
 
+/*3D Transformation of cube faces*/
 .cube__face--1  { transform: rotateY(  0deg) translateZ(50px); }
 .cube__face--2  { transform: rotateX(-90deg) translateZ(50px); }
 .cube__face--3  { transform: rotateY( 90deg) translateZ(50px); }
@@ -366,6 +369,7 @@ label { margin-right: 10px; }
   animation: breathing 1s infinite alternate ease;
 }
 
+/*Highlighed fields animation*/
 @keyframes breathing {
   0%{
     outline: 2px solid deepskyblue;
