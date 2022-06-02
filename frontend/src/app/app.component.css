@@ -44,6 +44,7 @@
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
+/*Animations of Snackbar for fadein and fadeout*/
 @-webkit-keyframes fadein {
   from {bottom: 56px; opacity: 0;}
   to {bottom: 86px; opacity: 1;}
