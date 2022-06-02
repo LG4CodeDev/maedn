@@ -32,12 +32,14 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //Check if user is already logged in. If so redirect to Lobby
     if(localStorage.getItem('currentUser') != null){
       var currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if(currentUser.token != null && currentUser.token != '' && currentUser.userid != null && currentUser.userid != ''){
         this.router.navigate(['/lobby']);
       }
     }
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -53,6 +55,11 @@ export class LoginPageComponent implements OnInit {
       retypePassword: [''],
     });
   }
+
+  /*Executed when user submits login-form.
+  * Sends a Http-request to the api if form is valid, otherwise marks invalid fields.
+  * On successful login a personal access token and the userid is stored locally.
+  * Also the user is redirected to Lobby.*/
   onLogin(): void {
     if (this.loginForm.valid) {
       this.http.post<any>('https://spielehub.server-welt.com/api/loginVerification', {
@@ -79,6 +86,12 @@ export class LoginPageComponent implements OnInit {
       });
     }
   }
+
+  /*Executed as user submits the register form.
+  * First tries to create and upload the avatar picture if a custom picture is selected.
+  * Retrieves an avatar-id to the corresponding entry in database.
+  * Sends all register form data together with avatar id to the backend for registration.
+  * On successful registration user is redirected to Lobby.*/
   onRegister(): void {
     var avatarID = null;
     if (this.registerForm.valid) {
@@ -140,17 +153,8 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  showLogin() {
-    document.getElementById("login-form").style.display = "block";
-    document.getElementById("register-form").style.display = "none";
-  }
-
-  showRegister() {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("register-form").style.display = "block";
-  }
-
-
+  /*Loads image from input field and converts it to base64.
+  * Also responsible for displaying the image in a small preview.*/
   showPreview($event: Event) {
     const file = ($event.target as HTMLInputElement).files[0];
     this.registerForm.get('avatar').updateValueAndValidity()
