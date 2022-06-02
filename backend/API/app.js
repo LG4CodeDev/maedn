@@ -108,7 +108,7 @@ app.get('/api/MainGame/leaderboard', validateAccess, getLeaderboard)
 Functions of user management
  */
 
-async function createUser(request, response){
+async function createUser(request, response) {
     let user = request.body
     //hashes Password with salt rounds
     let hashedPassword = bcrypt.hashSync(user.password, saltRounds)
@@ -125,7 +125,7 @@ async function createUser(request, response){
     }
 }
 
-async function createAvatar(request, response){
+async function createAvatar(request, response) {
     let avatar = request.body
     try {
         const result = await pool.query("SELECT * FROM avatar WHERE image = ?", [avatar.image]);
@@ -146,7 +146,7 @@ async function createAvatar(request, response){
     }
 }
 
-async function loginVerification(request, response){
+async function loginVerification(request, response) {
     let user = request.body;
     let result;
     try {
@@ -160,21 +160,20 @@ async function loginVerification(request, response){
         //compare hashed password with unhashed password
 
         bcrypt.compare(user.password, answer['password'], async (err, res) => {
-            if (err){
+            if (err) {
                 response.sendStatus(500)
                 console.log(err);
             }
-            if (res){
+            if (res) {
                 let token = bcrypt.hashSync('LoremIpsum12345', 10)
-                try{
+                try {
                     await pool.query("Update users set token = ? where userid = ?", [token, answer.userid])
-                    response.status(200).send({userid: answer.userid, "token" : token})
-                }catch (err){
+                    response.status(200).send({userid: answer.userid, "token": token})
+                } catch (err) {
                     response.sendStatus(500)
                     console.log(err)
                 }
-            }
-            else {
+            } else {
                 return response.sendStatus(401)
             }
         });
@@ -184,7 +183,7 @@ async function loginVerification(request, response){
     }
 }
 
-async function getUser(request, response){
+async function getUser(request, response) {
     let id = request.params.id;
     try {
         const result = await pool.query("select userid, username, image, email, firstname, surname from users LEFT Join avatar ON avatar = avatarID where userid = ?", [id]);
@@ -195,7 +194,7 @@ async function getUser(request, response){
     }
 }
 
-async function deleteUser(request, response){
+async function deleteUser(request, response) {
     let id = request.params.id;
     if (id !== response.locals.user['userid']) return response.sendStatus(403)
     try {
@@ -207,7 +206,7 @@ async function deleteUser(request, response){
     }
 }
 
-async function updateUser(request, response){
+async function updateUser(request, response) {
     let user = request.body;
     if (user.id !== response.locals.user['userid']) return response.sendStatus(403)
     let hashedPassword = await bcrypt.hash(user.password, saltRounds)
@@ -221,7 +220,7 @@ async function updateUser(request, response){
     }
 }
 
-async function getUserStats(request, response){
+async function getUserStats(request, response) {
     let id = request.params.id;
     try {
         const result = await pool.query("select * from statsMainGame where userid = ?", [id]);
@@ -232,24 +231,30 @@ async function getUserStats(request, response){
     }
 }
 
-async function getLeaderboard(request, response){
+async function getLeaderboard(request, response) {
     try {
         let result = await pool.query("Select username, Level, winningRate, wins, image from users LEFT Join avatar ON avatar = avatarID natural Join statsMainGame Order by Level DESC LIMIT 20")
         let index = 0
         let json = {}
-        for(let element of result){
-            json[index.toString()] = {"username": element["username"], "level" : element["Level"], "winningRate" : element["winningRate"], "wins" : element["wins"], "image" : element["image"]}
+        for (let element of result) {
+            json[index.toString()] = {
+                "username": element["username"],
+                "level": element["Level"],
+                "winningRate": element["winningRate"],
+                "wins": element["wins"],
+                "image": element["image"]
+            }
             index++
         }
 
         response.status(200).send(json)
-    }catch (err) {
+    } catch (err) {
         response.sendStatus(500)
         console.log(err)
     }
 }
 
-async function validateAccess(request, response, next){
+async function validateAccess(request, response, next) {
     const authHeader = request.headers["authorization"]
     let token;
     try {
@@ -261,14 +266,13 @@ async function validateAccess(request, response, next){
     if (token === null) {
         return response.status(401).send("Token not present, missing Authorization or wrong format")
     }
-    if (token === 'API'){
+    if (token === 'API') {
         next()
-    }
-    else{
+    } else {
         let result;
-        try{
-            result = await pool.query("Select * from users where token = ?",[token])
-        }catch (err) {
+        try {
+            result = await pool.query("Select * from users where token = ?", [token])
+        } catch (err) {
             console.log(err)
             return response.status(500)
         }
@@ -313,9 +317,9 @@ app.get('/api/getMoves/:gameID', validateAccess, getMoves);
 app.get('/api/getMainGame/:gameID', validateAccess, getGame);
 
 
-app.post('/api/createMainGame', validateAccess,checkIfPlayerAlreadyInGame,CreateGame);
+app.post('/api/createMainGame', validateAccess, checkIfPlayerAlreadyInGame, CreateGame);
 
-app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame,joinAnyGame);
+app.put('/api/joinGame', validateAccess, checkIfPlayerAlreadyInGame, joinAnyGame);
 
 app.put('/api/joinGame/:gameID', validateAccess, joinSpecificGame);
 
@@ -331,7 +335,7 @@ app.delete('/api/finishGame/:id', validateAccess, finishGame)
 Game Logic needed Functions
  */
 
-async function getMoves(request, response){
+async function getMoves(request, response) {
     let id = request.params.gameID;
     let result;
     let listOfMoves;
@@ -349,7 +353,10 @@ async function getMoves(request, response){
     if (game['status'] === "notStarted") return response.status(400).send({msg: 'Game not started'});
 
     if (game[game['turn']] !== response.locals.user['userid']) return response.status(403).send("others players turn")
-    if (game['allowedMoves'] !== "null, null, null, null" && game['allowedMoves'] !== ",,," ) return response.status(403).send({msg: "make Move first", "moves": game['allowedMoves'].split(",")})
+    if (game['allowedMoves'] !== "null, null, null, null" && game['allowedMoves'] !== ",,,") return response.status(403).send({
+        msg: "make Move first",
+        "moves": game['allowedMoves'].split(",")
+    })
 
     try {
         const diceResult = roleDice();
@@ -372,12 +379,12 @@ async function getMoves(request, response){
                 data: {
                     "gameID": parseInt(id),
                     "msg": {
-                        "positions": [game.Position1.split(","),game.Position2.split(","),game.Position3.split(","),game.Position4.split(",")],
+                        "positions": [game.Position1.split(","), game.Position2.split(","), game.Position3.split(","), game.Position4.split(",")],
                         "isFinished": game.isFinished,
                         "nextPlayer": nextPlayer
                     }
                 }
-            }).then(function (response){
+            }).then(function (response) {
                 result = response
             })
             let zero = 0
@@ -416,7 +423,7 @@ function getPlayerPosition(game) {
     }
 }
 
-function getRightAreaOfFigure(currentField, game){
+function getRightAreaOfFigure(currentField, game) {
     let newArea;
     //move player to the new Area
     switch (currentField[0]) {
@@ -442,19 +449,13 @@ function getRightAreaOfFigure(currentField, game){
         //else the move is not valid
         else return null
 
-    }
-    else if (game['turn'] === 'Player2' && newArea === 'BR')
-    {
+    } else if (game['turn'] === 'Player2' && newArea === 'BR') {
         if (currentField[1] <= 3) newArea = 'BF';
         else return null
-    }
-    else if (game['turn'] === 'Player3' && newArea === 'CR')
-    {
+    } else if (game['turn'] === 'Player3' && newArea === 'CR') {
         if (currentField[1] <= 3) newArea = 'CF';
         else return null
-    }
-    else if (game['turn'] === 'Player4' && newArea === 'DR')
-    {
+    } else if (game['turn'] === 'Player4' && newArea === 'DR') {
         if (currentField[1] <= 3) newArea = 'DF';
         else return null
     }
@@ -469,38 +470,33 @@ function calculateMoves(game, diceResult, playerFields) {
         element[1] = parseInt(element[1]);
 
         //if figure is in start and player did not role 6 no move available for that figure
-        if (diceResult !== 6 && element[0][1] === 'S')
-        {
+        if (diceResult !== 6 && element[0][1] === 'S') {
             listOfMoves.push(null);
             continue;
         }
         //if figure is in start and player did role 6, the figure can move to his first field
-        else if (diceResult === 6 && element[0][1] === 'S')
-        {
+        else if (diceResult === 6 && element[0][1] === 'S') {
             element[0] = element[0][0] + 'R'
             element[1] = 0
         }
         //if figure is in finish, check if he can step further in the finish for better position
-        else if (element[0][1] === 'F')
-        {
+        else if (element[0][1] === 'F') {
             element[1] += diceResult
-            if (element[1] > 3)
-            {
+            if (element[1] > 3) {
                 listOfMoves.push(null);
                 continue;
             }
         }
         //if player is on field check possible moves
-        else
-        {
+        else {
             //add dice result to current field
             element[1] += diceResult;
-            // if player gets in a new quader of the game check which one
+            // if player gets in a new quarter of the game check which one
             if (element[1] > 9) {
                 element[1] -= 10;
                 let tmp = getRightAreaOfFigure(element, game)
                 if (tmp !== null) element[0] = tmp
-                else{
+                else {
                     listOfMoves.push(null)
                     continue
                 }
@@ -531,45 +527,40 @@ function checkRoleAgain(playerFields, diceResult, moves) {
         let element = playerFieldsKey.split("_");
         //If figure is in start he potentially can role again
         element[1] = parseInt(element[1])
-        if (element[0][1] === 'S') {}
+        if (element[0][1] === 'S') {
+        }
         //else check if figure is at the end/right place of finish
-        else
-        {
-            if (element[0][1] === 'F')
-            {
-                if (element[1] === 3){}
+        else {
+            if (element[0][1] === 'F') {
+                if (element[1] === 3) {
+                }
                 //if figure stand in 3. Finish field check if 4. also is used by a figure
-                else if (element[1] === 2)
-                {
-                    if(playerFields.some(item => item.includes('F_3'))){}
-                    else return false
+                else if (element[1] === 2) {
+                    if (playerFields.some(item => item.includes('F_3'))) {
+                    } else return false
                 }
                 //if figure stand in 2. Finish field check if 3. and 4. also are used by a figure
-                else if (element[1] === 1)
-                {
-                    if(playerFields.some(item => item.includes('F_3')))
-                        if(playerFields.some(item => item.includes('F_2'))){}
-                        else return false
+                else if (element[1] === 1) {
+                    if (playerFields.some(item => item.includes('F_3')))
+                        if (playerFields.some(item => item.includes('F_2'))) {
+                        } else return false
                     else return false
-                }
-                else return false;
-            }
-            else return false;
+                } else return false;
+            } else return false;
         }
     }
     return true;
 }
 
 
-
-async function joinAnyGame(request,response){
+async function joinAnyGame(request, response) {
     let result;
     try {
         result = await pool.query("select * from mainGame where status = ?", ['notStarted']);
         if (result[0] === undefined) {
             result = await CreateGame(response.locals.user['userid'])
 
-            if (result === 400)response.sendStatus(400)
+            if (result === 400) response.sendStatus(400)
             else if (result === 500) response.sendStatus(500)
             else response.status(200).send({gameID: result, players: 1})
         } else {
@@ -581,7 +572,7 @@ async function joinAnyGame(request,response){
     }
 }
 
-async function joinSpecificGame(request, response){
+async function joinSpecificGame(request, response) {
     let id = request.params.gameID;
     let result;
     try {
@@ -601,16 +592,27 @@ async function joinSpecificGame(request, response){
 async function checkIfPlayerAlreadyInGame(request, response, next) {
     let playerID = response.locals.user['userid']
     try {
-        let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND status != ?", [playerID,playerID,playerID,playerID, "finished"])
+        let result = await pool.query("Select * from mainGame WHERE (Player1 = ? OR Player2 = ? OR Player3 = ? OR Player4 = ?) AND status != ?", [playerID, playerID, playerID, playerID, "finished"])
         let game = result[0]
-        if(game !== undefined){
-            if(game['Player1'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player1"})
-            else if(game['Player2'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player2"})
-            else if(game['Player3'] === playerID) return response.status(200).send({gameID: game['gameID'], players: "Player3"})
-            else return response.status(200).send({gameID: game['gameID'], players: "Player4"})
-        }
-        else next()
-    }catch (err){
+        if (game !== undefined) {
+            if (game['Player1'] === playerID) return response.status(200).send({
+                gameID: game['gameID'],
+                players: "Player1"
+            })
+            else if (game['Player2'] === playerID) return response.status(200).send({
+                gameID: game['gameID'],
+                players: "Player2"
+            })
+            else if (game['Player3'] === playerID) return response.status(200).send({
+                gameID: game['gameID'],
+                players: "Player3"
+            })
+            else return response.status(200).send({
+                    gameID: game['gameID'],
+                    players: "Player4"
+            })
+        } else next()
+    } catch (err) {
         console.log(err)
         return response.status(500).send("Player already in Game")
     }
@@ -618,23 +620,16 @@ async function checkIfPlayerAlreadyInGame(request, response, next) {
 
 async function joinGame(response, joiningGame, player) {
     try {
-        if (joiningGame['Player1'] == null)
-        {
+        if (joiningGame['Player1'] == null) {
             await pool.query("UPDATE mainGame SET Player1 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 1})
-        }
-        else if (joiningGame['Player2'] == null)
-        {
+        } else if (joiningGame['Player2'] == null) {
             await pool.query("UPDATE mainGame SET Player2 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 2})
-        }
-        else if (joiningGame['Player3'] == null)
-        {
+        } else if (joiningGame['Player3'] == null) {
             await pool.query("UPDATE mainGame SET Player3 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 3})
-        }
-        else if (joiningGame['Player4'] == null)
-        {
+        } else if (joiningGame['Player4'] == null) {
             await pool.query("UPDATE mainGame SET Player4 = ? where gameID = ?", [player, joiningGame['gameID']]);
             response.status(200).send({gameID: joiningGame['gameID'], players: 4})
             await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [joiningGame['gameID']]);
@@ -644,12 +639,12 @@ async function joinGame(response, joiningGame, player) {
                 data: {
                     "gameID": joiningGame['gameID'],
                     "msg": {
-                        "positions": [joiningGame['Position1'],joiningGame['Position2'],joiningGame['Position3'],joiningGame['Position4']],
+                        "positions": [joiningGame['Position1'], joiningGame['Position2'], joiningGame['Position3'], joiningGame['Position4']],
                         "status": joiningGame['status'],
                         "nextPlayer": joiningGame['turn']
                     }
                 }
-            }).then(function (response){
+            }).then(function (response) {
                 result = response
             })
         }
@@ -658,27 +653,28 @@ async function joinGame(response, joiningGame, player) {
             url: "https://spielehub.server-welt.com/joinGame",
             data: {"gameID": joiningGame['gameID'], "clientID": player}
         })
-    }catch (err){
+    } catch (err) {
         console.log(err)
         response.sendStatus(500)
     }
 }
 
 
-
-async function getGame(request,response){
+async function getGame(request, response) {
     let id = request.params.gameID;
     try {
         const result = await pool.query("select * from mainGame where gameID = ?", [id]);
-        let positions = [result[0]['Position1'].split(","),result[0]['Position2'].split(","),result[0]['Position3'].split(","),result[0]['Position4'].split(",")]
-        return response.status(200).send({"positions": positions,
-            "Player1" : result[0]['Player1'],
-            "Player2" : result[0]['Player2'],
-            "Player3" : result[0]['Player3'],
-            "Player4" : result[0]['Player4'],
-            "status" : result[0]['status'],
-            "nextPlayer" : result[0]['turn'],
-            "allowedMoves" : result[0]['allowedMoves'].split(",")})
+        let positions = [result[0]['Position1'].split(","), result[0]['Position2'].split(","), result[0]['Position3'].split(","), result[0]['Position4'].split(",")]
+        return response.status(200).send({
+            "positions": positions,
+            "Player1": result[0]['Player1'],
+            "Player2": result[0]['Player2'],
+            "Player3": result[0]['Player3'],
+            "Player4": result[0]['Player4'],
+            "status": result[0]['status'],
+            "nextPlayer": result[0]['turn'],
+            "allowedMoves": result[0]['allowedMoves'].split(",")
+        })
     } catch (err) {
         console.log(err)
         return response.sendStatus(500);
@@ -686,8 +682,7 @@ async function getGame(request,response){
 }
 
 
-
-async function finishGame(request,response){
+async function finishGame(request, response) {
     let id = request.params.id;
     try {
         let result = await pool.query("select * from mainGame where gameID = ?", [id]);
@@ -708,14 +703,13 @@ async function finishGame(request,response){
         }
         await pool.query("Delete from mainGame where gameID = ?", [id])
         const url = "https://spielehub.server-welt.com/deleteGame/" + id
-        await axios({method :'delete', url : url})
+        await axios({method: 'delete', url: url})
         response.sendStatus(200);
     } catch (err) {
         response.sendStatus(500);
         console.log(err);
     }
 }
-
 
 
 async function CreateGame(request, response) {
@@ -733,52 +727,47 @@ async function CreateGame(request, response) {
                 }
             })
             return response.status(200).send({gameID: result, players: 1})
-        }
-        else return response.sendStatus(400)
-    }catch (err){
+        } else return response.sendStatus(400)
+    } catch (err) {
         console.log(err)
         return response.sendStatus(500)
     }
 }
 
 
-async function leaveGame(request, response){
+async function leaveGame(request, response) {
     let id = request.params.gameID;
-    try{
+    try {
         let result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
 
         if (result['0']['status'] !== 'notStarted') return response.sendStatus(403)
 
-        if (result[0]['Player1'] === response.locals.user['userid']){
+        if (result[0]['Player1'] === response.locals.user['userid']) {
             await pool.query("Update mainGame Set Player1 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player2'] === response.locals.user['userid']){
+        } else if (result[0]['Player2'] === response.locals.user['userid']) {
             await pool.query("Update mainGame Set Player2 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player3'] === response.locals.user['userid']){
+        } else if (result[0]['Player3'] === response.locals.user['userid']) {
             await pool.query("Update mainGame Set Player3 = null where gameId = ?", [id])
-        }
-        else if (result[0]['Player4'] === response.locals.user['userid']){
+        } else if (result[0]['Player4'] === response.locals.user['userid']) {
             await pool.query("Update mainGame Set Player4 = null where gameId = ?", [id])
-        }
-        else return response.sendStatus(308)
+        } else return response.sendStatus(308)
         result = await pool.query("Select Player1,Player2,Player3,Player4,status from mainGame where gameID = ?", [id])
 
-        if (result[0]['Player1'] === null && result[0]['Player2'] === null && result[0]['Player3'] === null && result[0]['Player4'] === null){
+        if (result[0]['Player1'] === null && result[0]['Player2'] === null && result[0]['Player3'] === null && result[0]['Player4'] === null) {
             await pool.query("Delete from mainGame where gameID = ?", [id])
             const url = "https://spielehub.server-welt.com/deleteGame/" + id
-            await axios({method :'delete', url : url})
+            await axios({method: 'delete', url: url})
         }
 
-        response.status(200).send("Successfully leaved the game")
-    }catch (err){
+        response.status(200).send("Successfully left the game")
+    } catch (err) {
         console.log(err)
         return response.sendStatus(500)
     }
 }
 
 
-async function startGame(request, response){
+async function startGame(request, response) {
     let id = request.params.gameID;
     try {
         await pool.query("UPDATE mainGame SET status = 'started' where gameID = ?", [id]);
@@ -790,9 +779,7 @@ async function startGame(request, response){
 }
 
 
-
-
-async function doMove(request, response){
+async function doMove(request, response) {
     let data = request.body;
     let result;
     try {
@@ -813,7 +800,7 @@ async function doMove(request, response){
     }
 }
 
-function kickFigures(positions, data){
+function kickFigures(positions, data) {
     let indexPlayer = 0
     for (const playerPosition of positions) {
         let indexField = 0
@@ -873,8 +860,7 @@ async function makeMove(data, game, response) {
         let status
         if (isFinished) {
             status = "Finished"
-        }
-        else status = "started"
+        } else status = "started"
 
         try {
             // Send game updates over SSE to all players of game
@@ -890,27 +876,27 @@ async function makeMove(data, game, response) {
                         "nextPlayer": nextPlayer
                     }
                 }
-            }).then(function (response){
+            }).then(function (response) {
                 result = response
             })
-            if (result.status === 500 )return response.status(500).send("Error in sending Messages")
-            else if (result.status === 300)return response.status(500).send("Game does not exist")
-        }catch (err) {
+            if (result.status === 500) return response.status(500).send("Error in sending Messages")
+            else if (result.status === 300) return response.status(500).send("Game does not exist")
+        } catch (err) {
             console.log(err)
         }
 
-        try{
+        try {
             //Update Game in Database
             await pool.query("UPDATE mainGame SET Position1 = ?, Position2 = ?,Position3 = ?, Position4 = ?, turn = ?, status = ?, movesOfPerson = ?, allowedMoves = ? where gameID = ?"
                 , [positions[0].toString(), positions[1].toString(), positions[2].toString(), positions[3].toString(), nextPlayer, status, CountOfDoneMovesOfPlayer, ",,,", game['gameID']]);
-            if (isFinished){
+            if (isFinished) {
                 await axios({
                     method: 'delete',
-                    url: "https://spielehub.server-welt.com/api/finishGame/"+game.gameID,
+                    url: "https://spielehub.server-welt.com/api/finishGame/" + game.gameID,
                     headers: {
-                        "authorization" : "Bearer API"
-                        }
-                }).then(function (response){
+                        "authorization": "Bearer API"
+                    }
+                }).then(function (response) {
                     let result = response
                 })
             }
@@ -925,8 +911,7 @@ async function makeMove(data, game, response) {
             console.log(err)
             response.sendStatus(500)
         }
-    }
-    else return response.status(400).send('Invalid Move')
+    } else return response.status(400).send('Invalid Move')
 }
 
 function setPositions(oldPositionOfPlayer, allowedMoves, DoneMove) {
