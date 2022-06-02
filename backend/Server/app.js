@@ -10,8 +10,6 @@ const mariadb = require('mariadb');
 
 const app = express();
 
-
-
 let fs = require('fs');
 let util = require('util');
 let logFile = fs.createWriteStream('log.txt', {flags: 'w'});
@@ -33,7 +31,6 @@ const PORT = 4000;
 
 let clients = [];
 let games = [];
-let facts = [];
 
 app.listen(PORT, () => {
     reloadGames().then()
@@ -46,8 +43,6 @@ function eventsHandler(request, response) {
         'Cache-Control': 'no-cache'
     };
     response.writeHead(200, headers);
-
-    const data = `data: ${JSON.stringify(facts)}\n\n`;
 
     const clientId = request.params.id;
 
@@ -144,6 +139,12 @@ const pool =
         database: process.env.DB_Name
     })
 
+
+/*
+Function once executed when program starts
+Loads all games stored in DB so they can be played
+Adds a level of security if game crashes
+ */
 async function reloadGames(){
     let result = await pool.query("Select * from mainGame")
     for(let element of result){
