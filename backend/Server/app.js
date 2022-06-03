@@ -24,7 +24,7 @@ app.use(express.json(), cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-
+//returns current status
 app.get('/status', (request, response) => response.json({clients: clients.length}));
 
 const PORT = 4000;
@@ -36,7 +36,9 @@ app.listen(PORT, () => {
     reloadGames().then()
 })
 
+//creates a SSE connection to client and stores it at clientObject
 function eventsHandler(request, response) {
+    //creates stream
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -46,11 +48,11 @@ function eventsHandler(request, response) {
 
     const clientId = request.params.id;
 
+    //store client
     const newClient = {
         id: clientId,
         response
     };
-
     clients.push(newClient);
 
     request.on('close', () => {
@@ -61,22 +63,22 @@ function eventsHandler(request, response) {
 app.get('/startStream/:id', eventsHandler);
 
 
-
+//sending Game data to all players after move is done
 async function sendGame(request, response) {
+    const gameID = request.body.gameID;
+    const data = request.body.msg;
     try{
-        const gameID = request.body.gameID;
-        const data = request.body.msg;
+        //get right gameObject from gameID
         let game = games.filter(games => games.id === gameID)[0]
-        //(game)
         if(game !== undefined){
             game = game.clients
             let clientStreams = [];
+            //get clientObjects from all clientIds in the game
             for(const client of game){
                 clientStreams.push(clients.filter(clients => clients.id === client.toString())[0])
             }
-
+            //send gameData to every client after move is done
             clientStreams.forEach(client => client.response.write(`data: ${JSON.stringify(data)}\n\n`))
-
 
             response.sendStatus(200)
         }
@@ -85,9 +87,9 @@ async function sendGame(request, response) {
         console.log(err)
         response.sendStatus(500)
     }
-
 }
 
+//creates GameObject with game and ClientID
 async function createGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
@@ -99,6 +101,7 @@ async function createGame(request, response){
     return  response.json(gameID)
 }
 
+//add client to gameObject
 async function joinGame(request, response){
     const clientID = request.body.clientID
     const gameID = request.body.gameID
@@ -110,6 +113,7 @@ async function joinGame(request, response){
     return response.sendStatus(500)
 }
 
+//delete GameObject so data is no longer send to clients
 async function deleteGame(request, response){
     const gameID = request.params.id
     games = games.filter(game => game.id !== gameID)
@@ -124,7 +128,7 @@ app.post('/sendGame', sendGame);
 
 app.delete('/deleteGame/:id', deleteGame)
 
-
+//delivers frontend to client
 app.use(express.static(process.env.FRONTEND_DIST_PATH));
 app.use('/*',(req, res) => {
     res.sendFile('frontend/index.html', { root: __dirname })
